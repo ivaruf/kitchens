@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.7.1'; // counter items open their card; a small x puts them back
+const VERSION = 'v0.8.0'; // don't have it? stand-ins on every ingredient's card
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -36,6 +36,8 @@ const ASSETS = [
   './js/vietnam.js',
   './js/i18n.js',
   './js/sets.js',
+  './js/swaps/greek.js',
+  './js/swaps/vietnam.js',
   './js/nb.js',
   './js/nb/greek-pantry.js',
   './js/nb/greek-recipes-1.js',

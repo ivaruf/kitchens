@@ -387,6 +387,28 @@ function openCard(id) {
     contains.classList.toggle("clash", !!hit.length);
   }
 
+  /*
+   * Don't have it? The stand-ins, best first, each saying what to use, how
+   * much and what it changes — in the reader's language, and flagged when a
+   * stand-in brings something this table cannot eat.
+   */
+  const swaps = $("card-swaps");
+  swaps.replaceChildren(el("p", "kicker", t("card.swaps")));
+  const options = (K.swaps && K.swaps[id]) || [];
+  if (!options.length) swaps.append(el("p", "hint small", t("card.noSwap")));
+  for (const o of options) {
+    const words = o[getLang()] || o.en;
+    const hit = (o.contains || []).filter((n) => diet[n]);
+    const row = el("div", `swap${hit.length ? " clash" : ""}`);
+    const head = el("p", "swap-head");
+    head.append(el("b", null, words.use));
+    // "Leave it out" has no quantity; its amount is a dash, which is not shown.
+    if (words.amount && words.amount !== "—") head.append(el("span", "swap-amount", words.amount));
+    row.append(head, el("p", "swap-changes", words.changes));
+    if (hit.length) row.append(el("p", "swap-clash", t("swapClash", hit)));
+    swaps.append(row);
+  }
+
   const dishes = $("card-dishes");
   dishes.replaceChildren();
   const into = dishesWith(K.recipes, id);

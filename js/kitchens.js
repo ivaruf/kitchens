@@ -14,6 +14,8 @@
 import { SHELVES, INGREDIENTS } from "./pantry.js";
 import { RECIPES, FASTING_NOTE } from "./recipes.js";
 import { VN_SHELVES, VN_INGREDIENTS, VN_RECIPES } from "./vietnam.js";
+import { SWAPS_GREEK } from "./swaps/greek.js";
+import { SWAPS_VIETNAM } from "./swaps/vietnam.js";
 
 /*
  * Three facts the dish sets (js/sets.js) need, kept here beside each kitchen so
@@ -27,6 +29,8 @@ import { VN_SHELVES, VN_INGREDIENTS, VN_RECIPES } from "./vietnam.js";
  *             herbs, leaves, soft vegetables, meat and fish. Everything else —
  *             onions, garlic, potatoes, citrus, dried goods, bottles, spices —
  *             is assumed to keep, which is what "use it up this week" is about.
+ *   swaps     stand-ins for when you do not have it (js/swaps/), shown on
+ *             each ingredient's card. Bilingual in their own files.
  *   staples   what nearly every dish uses and every kitchen already has (salt,
  *             pepper, the cooking oil, fish sauce). Sharing them says nothing
  *             about two dishes belonging together, so they are not counted.
@@ -56,6 +60,7 @@ export const KITCHENS = [
     ingredients: INGREDIENTS,
     recipes: RECIPES,
     fastingNote: FASTING_NOTE,
+    swaps: SWAPS_GREEK,
     staples: ["salt", "blackpepper", "oil"],
     courses: {
       fasolada: "main", fakes: "main", avgolemono: "main", tahinosoupa: "main",
@@ -80,6 +85,7 @@ export const KITCHENS = [
     ingredients: VN_INGREDIENTS,
     recipes: VN_RECIPES,
     fastingNote: "",
+    swaps: SWAPS_VIETNAM,
     staples: ["fishsauce", "neutraloil", "sugar", "blackpepper"],
     courses: { pho: "main", cakho: "main", raumuong: "side", goicuon: "starter", nuoccham: "sauce" },
     spoils: [

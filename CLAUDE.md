@@ -44,6 +44,13 @@ choices and timing bars was built first and rejected for exactly that reason.
   English and is named once in the console. Native names (Greek, Vietnamese)
   are never translated. Recipe `prep` words stay English in the source:
   `js/art.js` reads them to pick a picture.
+- **Stand-ins** ("Don't have it?" on each ingredient's card) live in
+  `js/swaps/`, one file per kitchen, and are the one place English and bokmål
+  sit side by side in the same entry rather than in an overlay: each is three
+  short lines (what, how much, what it changes), and keeping both languages
+  together stops them drifting. A stand-in that brings dairy, egg or gluten
+  says so in `contains`. Scoped with the owner 2026-10-02: for when you do not
+  have it, on the card, from any shop.
 - Each kitchen in `js/kitchens.js` declares every dish's **course** and which
   ingredients **spoil**; the dish sets depend on both. A new dish needs its
   course, a new ingredient its keeps-or-spoils call.
