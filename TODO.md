@@ -39,3 +39,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   the data is easier to use. This reverses the planner's earlier "keep it
   simple, no people" answer. Stays on the device only, like the diet today.
   Being scoped one question at a time.
+  - *How the table is described:* **no names** — a number of adults and
+    children, and allergies ticked per person ("Adult 1: milk, egg, gluten",
+    "Child 1: none"). Nothing personal stored beyond that.
