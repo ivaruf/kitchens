@@ -15,3 +15,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     instead, and what will it change? Not primarily diet, not exploring.
   - *Where:* **on the ingredient's card** — its general stand-ins, wherever it
     is used. Not per-dish notes on the recipe.
+  - *What can stand in:* **anything from any shop**, named in words ("no Thai
+    basil? ordinary basil and a little mint"), not limited to this pantry's
+    jars and not tappable.
