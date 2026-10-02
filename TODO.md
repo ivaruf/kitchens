@@ -18,3 +18,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   - *What can stand in:* **anything from any shop**, named in words ("no Thai
     basil? ordinary basil and a little mint"), not limited to this pantry's
     jars and not tappable.
+  - *How much each says:* **all three** — the swap, how much of it, and
+    honestly what it changes ("ordinary basil and a little mint, the same
+    amount — sweeter, without the anise note").
