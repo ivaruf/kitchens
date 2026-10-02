@@ -143,7 +143,7 @@ export function bestSet(k, { mode, anchor = null, counter = null }) {
 }
 
 /* Courses in the order they come to the table. */
-const COURSE_ORDER = { starter: 0, main: 1, side: 2, sauce: 3 };
+const COURSE_ORDER = { starter: 0, main: 1, side: 2, veg: 3, sauce: 4 };
 function order(dishes) {
   return dishes.slice().sort((a, b) => COURSE_ORDER[a.course] - COURSE_ORDER[b.course]);
 }

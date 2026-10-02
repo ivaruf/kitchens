@@ -765,6 +765,68 @@ const DRAW = {
       <path d="M10 22 q-4 -4 -8 -4 M10 22 q-6 0 -8 2" fill="none" stroke="#5a5a4a" stroke-width="1"/>
       ${shine(26, 24, 7, 2.4, -10)}
     `),
+
+  /* -------------------------------------------------- the everyday kitchen */
+  gfpasta: () =>
+    svg(`
+      <path d="M14 18 h36 l-3 38 q0 4 -4 4 h-22 q-4 0 -4 -4 z" fill="#f2efe6" opacity="0.8" ${LINE}/>
+      ${[[22, 30, 20], [34, 28, -25], [28, 40, 40], [40, 42, -10], [22, 50, -30], [36, 52, 15]]
+        .map(([x, y, a]) => `<g transform="rotate(${a} ${x} ${y})"><rect x="${x - 6}" y="${y - 2.6}" width="12" height="5.2" rx="1" fill="#efcf7a" ${THIN}/><path d="M${x - 4} ${y - 2.6} v5.2 M${x} ${y - 2.6} v5.2 M${x + 4} ${y - 2.6} v5.2" stroke="#c9a24f" stroke-width="0.8"/></g>`)
+        .join("")}
+      <rect x="12" y="12" width="40" height="8" rx="2" fill="#2f6b4f" ${LINE}/>
+      <path d="M24 16 h16" stroke="#f3d27a" stroke-width="1.6"/>
+    `),
+
+  tamari: () =>
+    svg(`
+      <path d="M28 6 h8 v10 q0 4 4 7 q4 3 4 9 v24 q0 4 -4 4 h-16 q-4 0 -4 -4 v-24 q0 -6 4 -9 q4 -3 4 -7 z" fill="#3a2418" ${LINE}/>
+      <rect x="27" y="3" width="10" height="6" rx="1.5" fill="#2f6b4f" ${LINE}/>
+      <rect x="22" y="36" width="20" height="14" rx="2" fill="#f3e7c4" ${THIN}/>
+      <path d="M26 43 h12" stroke="#2f6b4f" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M24 26 v6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+    `),
+
+  ketchup: () =>
+    svg(`
+      <path d="M22 18 h20 q4 0 4 4 l-2 32 q0 6 -6 6 h-12 q-6 0 -6 -6 l-2 -32 q0 -4 4 -4 z" fill="#c8241c" ${LINE}/>
+      <path d="M40 22 l-2 32 q0 3 -3 4" fill="none" stroke="#9a1a14" stroke-width="3" opacity="0.7"/>
+      <path d="M26 8 h12 l2 10 h-16 z" fill="#f3f0e8" ${LINE}/>
+      <path d="M30 8 l2 -5 l2 5 z" fill="#f3f0e8" ${THIN}/>
+      <rect x="24" y="32" width="16" height="12" rx="2" fill="#f7efd8" ${THIN}/>
+      <circle cx="32" cy="38" r="3.4" fill="#d8442f"/>
+      <path d="M26 24 v6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity="0.5"/>
+    `),
+
+  peas: () =>
+    svg(`
+      <path d="M12 14 h40 l-2 42 q0 4 -4 4 h-28 q-4 0 -4 -4 z" fill="#dbe9f2" ${LINE}/>
+      <path d="M12 14 h40 l-1 8 h-38 z" fill="#2c6a96" ${LINE}/>
+      ${Array.from({ length: 22 }, (_, i) => `<circle cx="${18 + (i % 5) * 7 + ((i / 5) | 0) % 2 * 3}" cy="${28 + ((i / 5) | 0) * 7}" r="3.2" fill="#6aa83a" ${THIN}/>`).join("")}
+      <path d="M20 8 l3 6 M44 8 l-3 6" stroke="#9ab9cc" stroke-width="1.4"/>
+    `),
+
+  sweetcorn: () =>
+    svg(`
+      <ellipse cx="32" cy="20" rx="16" ry="5" fill="#cfd3d6" ${LINE}/>
+      <path d="M16 20 v30 q0 5 16 5 q16 0 16 -5 v-30" fill="#e8b83a" ${LINE}/>
+      <path d="M16 26 q16 5 32 0 M16 44 q16 5 32 0" fill="none" stroke="#2f6b4f" stroke-width="3"/>
+      <ellipse cx="32" cy="20" rx="12" ry="3" fill="#f2d24a"/>
+      ${[[26, 34], [32, 33], [38, 34], [29, 38], [35, 38]].map(([x, y]) => `<rect x="${x - 2}" y="${y - 2}" width="4" height="4" rx="1" fill="#f6dc5a" stroke="#c9961e" stroke-width="0.6"/>`).join("")}
+    `),
+
+  corncob: () =>
+    svg(`
+      <path d="M14 50 Q10 30 30 14 Q38 8 44 12 Q48 18 42 26 Q30 42 22 52 Q16 56 14 50 z" fill="#f2c94a" ${LINE}/>
+      ${Array.from({ length: 18 }, (_, i) => {
+        const t = (i % 6) / 6;
+        const row = (i / 6) | 0;
+        const x = 18 + t * 22 + row * 3;
+        const y = 46 - t * 28 + row * 2;
+        return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="4" height="4" rx="1.2" fill="#f7dc6a" stroke="#c9961e" stroke-width="0.6"/>`;
+      }).join("")}
+      <path d="M22 54 Q26 40 46 30 Q36 44 30 58 z" fill="#8fb366" ${THIN}/>
+      <path d="M12 52 Q8 40 18 26 Q14 42 20 56 z" fill="#7fae5a" ${THIN}/>
+    `),
 };
 
 /* Ingredients that share another's picture across kitchens. */
@@ -841,6 +903,18 @@ const PIECE = {
   shallot: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.8" transform="rotate(${r() * 180} ${x} ${y})" fill="none" stroke="#b46a8a" stroke-width="1.2"/>`,
   waterspinach: (x, y, r) => `<g transform="rotate(${r() * 180} ${x} ${y})"><path d="M${x - 7} ${y} h14" stroke="#7fae5a" stroke-width="2.2" stroke-linecap="round"/><path d="M${x - 2} ${y} l5 -3 l6 1 z" fill="#2f6428"/></g>`,
   lettuce: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 360})"><path d="M-6 0 Q0 -5 6 0 Q0 4 -6 0 z" fill="#9fca5a"/></g>`,
+
+  penne: (x, y, r) => `<g transform="rotate(${(r() * 180).toFixed(0)} ${x} ${y})"><rect x="${x - 5}" y="${y - 2}" width="10" height="4" rx="1" fill="#efcf7a" stroke="#c9a24f" stroke-width="0.7"/></g>`,
+  greenpea: (x, y) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#6aa83a" stroke="#4a7e22" stroke-width="0.6"/>`,
+  corn: (x, y) => `<rect x="${x - 1.6}" y="${y - 1.6}" width="3.2" height="3.2" rx="1" fill="#f6d84a" stroke="#c9961e" stroke-width="0.5"/>`,
+  chip: (x, y, r) => `<rect x="${x - 7}" y="${y - 1.8}" width="14" height="3.6" rx="1.2" transform="rotate(${(r() * 180).toFixed(0)} ${x} ${y})" fill="#efc867" stroke="#b8792c" stroke-width="0.9"/>`,
+  stick: (x, y, r) => {
+    const c = ["#e8772a", "#7fae5a", "#d8442f"][Math.floor(r() * 3)];
+    return `<rect x="${x - 8}" y="${y - 1.6}" width="16" height="3.2" rx="1.4" transform="rotate(${(r() * 50 - 25).toFixed(0)} ${x} ${y})" fill="${c}" stroke="${INK}" stroke-width="0.6"/>`;
+  },
+  cob: (x, y, r) => `<g transform="rotate(${(r() * 40 - 20).toFixed(0)} ${x} ${y})"><rect x="${x - 13}" y="${y - 4.5}" width="26" height="9" rx="4.5" fill="#f2c94a" ${THIN}/><path d="M${x - 9} ${y} h18" stroke="#f7dc6a" stroke-width="1.6" stroke-dasharray="2 1.5"/></g>`,
+  boiled: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="4.6" fill="#f0d98a" ${THIN}/><ellipse cx="${x - 2}" cy="${y - 1.5}" rx="1.8" ry="1" fill="#fff" opacity="0.5"/>`,
+  ketchup: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="7" ry="4" fill="#c8241c" ${THIN}/><ellipse cx="${x - 2}" cy="${y - 1}" rx="2" ry="1" fill="#fff" opacity="0.35"/>`,
   cinnamon: (x, y) => `<rect x="${x - 7}" y="${y - 1.8}" width="14" height="3.6" rx="1.8" transform="rotate(-15 ${x} ${y})" fill="#a5633a" ${THIN}/>`,
 };
 
@@ -869,6 +943,17 @@ const BOWLS = {
   goicuon: { vessel: "plate", pieces: [["roll", 5]] },
   cakho: { vessel: "pot", sauce: "#6a3418", sheen: true, pieces: [["fishsteak", 4], ["speck", 30], ["chilliring", 4], ["greenring", 8]] },
   raumuong: { vessel: "plate", sauce: "#f2eee4", pieces: [["waterspinach", 26], ["garlic", 10]] },
+
+  plainrice: { glaze: "#2c6a96", sauce: "#e6dcc4", pieces: [["rice", 80]] },
+  friedrice: { glaze: "#f2eee4", sauce: "#ead6a0", sheen: true, pieces: [["rice", 50], ["greenpea", 12], ["carrot", 6], ["greenring", 8]] },
+  boiledpotatoes: { glaze: "#2c6a96", sauce: "#f2ead6", pieces: [["boiled", 7], ["parsley", 0]] },
+  mash: { glaze: "#2c6a96", sauce: "#f1e2a8", sheen: true, pieces: [["speck", 2]] },
+  ovenchips: { vessel: "plate", pieces: [["chip", 20], ["ketchup", 1]] },
+  pasta: { glaze: "#2c6a96", sauce: "#f6ecd0", sheen: true, pieces: [["penne", 24]] },
+  plainnoodles: { glaze: "#2c6a96", sauce: "#e6dcc4", sheen: true, pieces: [["noodle", 18]] },
+  vegsticks: { vessel: "plate", pieces: [["stick", 16]] },
+  peascorn: { glaze: "#2c6a96", sauce: "#f2eee4", pieces: [["greenpea", 34], ["corn", 34]] },
+  corncobs: { vessel: "plate", pieces: [["cob", 3]] },
 };
 
 /*
@@ -972,6 +1057,7 @@ const IN_POT = {
   ginger: ["ginger", 4], staranise: ["staranise", 3], cassia: ["cinnamon", 1], shallots: ["shallot", 8], chilli: ["chilliring", 5],
   thaibasil: ["basil", 5], coriander: ["coriander", 8], beansprouts: ["sprout", 10], lettuce: ["lettuce", 6], waterspinach: ["waterspinach", 24],
   ricenoodles: ["noodle", 14], vermicelli: ["vermicelli", 20], prawns: ["prawn", 8], fish: ["fishsteak", 4],
+  gfpasta: ["penne", 22], peas: ["greenpea", 26], sweetcorn: ["corn", 26], corncob: ["cob", 3], ketchup: ["ketchup", 1],
 };
 
 /*
@@ -1006,6 +1092,7 @@ const PREPARED = {
   ginger: ["ginger", 8], shallots: ["shallot", 12], chilli: ["chilliring", 10], thaibasil: ["basil", 12], coriander: ["coriander", 12],
   beansprouts: ["sprout", 16], lettuce: ["lettuce", 8], waterspinach: ["waterspinach", 12], ricenoodles: ["noodle", 10],
   vermicelli: ["vermicelli", 18], prawns: ["prawn", 6], fish: ["fishsteak", 2],
+  gfpasta: ["penne", 14], peas: ["greenpea", 22], sweetcorn: ["corn", 22], corncob: ["cob", 2],
 };
 const PULP = [
   [/grated/, { tomato: "#d8442f", onion: "#efe2c0", redonion: "#c9a0b8" }],

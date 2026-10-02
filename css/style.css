@@ -1473,6 +1473,172 @@ input:focus-visible {
   margin-top: 10px;
 }
 
+
+/* ===================== the week planner ===================== */
+
+#plan {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+}
+#plan[hidden] {
+  display: none;
+}
+.plan-page {
+  max-width: 980px;
+}
+.door-plan {
+  --door: #b35a36;
+  width: 100%;
+  margin-top: 4px;
+}
+.door-everyday {
+  --door: #c9a24f;
+}
+/* The everyday kitchen in its own materials: kitchen-table yellow and pine. */
+:root[data-kitchen="everyday"] {
+  --blue: #2c6a96;
+  --terra: #c9802a;
+  --wood: #d8b878;
+}
+:root[data-kitchen="everyday"] .key {
+  background-color: #e8b83a;
+  background-image: repeating-linear-gradient(90deg, #e8b83a 0 10px, #f6e3a0 10px 12px);
+}
+.door-mix {
+  --door: #6b7a2a;
+}
+/* The moods: the same doors as the front door, one of them chosen. */
+.plan-moods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+.plan-moods .door[aria-pressed="true"] {
+  border-color: var(--door);
+  box-shadow: 0 0 0 3px var(--door);
+}
+.plan-moods .door[aria-pressed="false"] {
+  opacity: 0.75;
+}
+.plan-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 6px 0;
+}
+.plan-count .label {
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--muted);
+}
+.plan-n {
+  grid-template-columns: repeat(5, minmax(0, 3rem));
+  margin: 0;
+}
+/* The days: one row each, the main large, the plain side and veg beside. */
+.plan-days {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 16px;
+  display: grid;
+  gap: 10px;
+}
+.plan-day {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-areas: "day day" "main extras";
+  gap: 4px 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.plan-day > .kicker {
+  grid-area: day;
+}
+.plan-top {
+  grid-area: main;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.plan-extras {
+  grid-area: extras;
+  display: grid;
+  gap: 6px;
+  align-content: center;
+}
+.plan-main,
+.plan-extra-dish {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  text-align: left;
+}
+.plan-main:hover,
+.plan-extra-dish:hover {
+  background: #f6f1e6;
+}
+.plan-art {
+  display: block;
+  width: 110px;
+  height: 82px;
+}
+.plan-extra {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.plan-extra-art {
+  display: block;
+  width: 56px;
+  height: 42px;
+}
+.plan-words {
+  display: grid;
+  line-height: 1.25;
+}
+.plan-main .plan-words b {
+  font-size: 1.15rem;
+}
+.plan-words small {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.swap-btn {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.swap-btn svg {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 640px) {
+  .plan-day {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "day" "main" "extras";
+  }
+  .plan-art {
+    width: 84px;
+    height: 63px;
+  }
+}
+
 /* ===================== the Vietnamese kitchen ===================== */
 
 /*

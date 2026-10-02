@@ -30,3 +30,9 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   - *How many dinners:* **you choose**, 3 to 7, when you start.
   - *Is a plan kept:* **not yet** — nothing saved to the device for now. The
     owner is still finding the right layout; persistence comes after.
+  - **Built rough, 2026-10-02**, to judge the layout: "Plan the week" door on
+    the front page, moods, 3–7 dinners, swap any main/side/veg, one shopping
+    list, copy. An everyday kitchen (js/everyday.js) holds the plain sides.
+  - *Open:* the owner noted the children **can** eat egg, milk and gluten —
+    so the plain sides need not follow the restricted diet. How that should
+    shape the everyday kitchen is still to be asked.

@@ -11,8 +11,10 @@ import { NB_GREEK_PANTRY } from "./nb/greek-pantry.js";
 import { NB_GREEK_RECIPES_1 } from "./nb/greek-recipes-1.js";
 import { NB_GREEK_RECIPES_2 } from "./nb/greek-recipes-2.js";
 import { NB_VIETNAM } from "./nb/vietnam.js";
+import { NB_EVERYDAY } from "./nb/everyday.js";
 
 export const NB = {
   greek: { ...NB_GREEK_PANTRY, recipes: { ...NB_GREEK_RECIPES_1, ...NB_GREEK_RECIPES_2 } },
   vietnam: NB_VIETNAM,
+  everyday: NB_EVERYDAY,
 };

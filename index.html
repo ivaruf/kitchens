@@ -43,6 +43,14 @@
           <!-- One door per kitchen, each with a few things off its shelves;
                built by js/main.js from js/kitchens.js. -->
           <div id="doors" class="doors"></div>
+          <!-- Straight into a week of dinners, from any kitchen or several. -->
+          <button type="button" id="open-plan" class="door door-plan">
+            <span id="plan-door-art" class="door-art" aria-hidden="true"></span>
+            <span class="door-words">
+              <b data-i18n="plan.door">Plan the week</b>
+              <span class="greek-inline" data-i18n="plan.doorSub">across every kitchen</span>
+            </span>
+          </button>
           <button type="button" id="open-table" class="ghost" data-i18n="home.table">Who is eating?</button>
           <p id="table-summary" class="hint"></p>
           <!-- Hidden until a new worker is waiting; the only thing that posts
@@ -176,6 +184,32 @@
           <div id="recipe-set" class="set-peek"></div>
         </section>
         <button type="button" id="recipe-back" class="primary" data-i18n="recipe.back">Back to the pantry</button>
+      </article>
+    </section>
+
+    <!-- ============================ THE WEEK ============================
+         A week of dinners from a kitchen mood: each a main, a plain side
+         and a veg, any of them swapped in a tap, and one list to shop with.
+         Nothing here is saved yet (TODO.md); js/planner.js does the choosing. -->
+    <section id="plan" class="screen" hidden aria-labelledby="plan-title">
+      <article class="paper plan-page">
+        <div class="key" aria-hidden="true"></div>
+        <p class="kicker" data-i18n="plan.kicker">Plan the week</p>
+        <h2 id="plan-title" data-i18n="plan.title">What are we eating this week?</h2>
+        <div id="plan-moods" class="plan-moods" role="group" aria-label="Kitchen"></div>
+        <div class="plan-count">
+          <span class="label" data-i18n="plan.dinners">Dinners</span>
+          <div id="plan-n" class="set-tabs plan-n" role="group"></div>
+        </div>
+        <p id="plan-note" class="hint"></p>
+        <ol id="plan-days" class="plan-days"></ol>
+        <div class="recipe-tools">
+          <button type="button" id="plan-again" class="ghost" data-i18n="plan.again">Another week</button>
+          <button type="button" id="plan-copy" class="ghost" data-i18n="set.copy">Copy the list</button>
+        </div>
+        <p id="plan-copy-note" class="hint" aria-live="polite"></p>
+        <h3 data-i18n="set.list">Shopping list</h3>
+        <div id="plan-list" class="shop-list"></div>
       </article>
     </section>
 

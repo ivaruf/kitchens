@@ -22,6 +22,10 @@
  * evening, or a week built around what spoils — with one shopping list and
  * the whole set lit up or put on the counter in a tap.
  *
+ * AND A WEEK CAN BE PLANNED WITHOUT CHOOSING A KITCHEN (js/planner.js): from
+ * the front door, a kitchen mood and a number of dinners give a week, each
+ * dinner a main with a plain side and a veg from the everyday kitchen.
+ *
  * SCREENS are sibling <section>s and exactly one is visible. The ingredient
  * card is a sheet over whatever screen is showing.
  */
@@ -32,6 +36,7 @@ import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
 import { CookAlong } from "./cookalong.js";
 import { bestSet } from "./sets.js";
+import { planWeek, swapMain, swapSide, weekList } from "./planner.js";
 import { t, list as listOf, localize, getLang, setLang, paintStatic } from "./i18n.js";
 
 const $ = (id) => document.getElementById(id);
@@ -54,7 +59,7 @@ let counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
 
 /* ---------------------------------------------------------------- screens */
 
-const SCREENS = ["home", "table", "pantry", "recipe", "cook", "set"];
+const SCREENS = ["home", "table", "pantry", "recipe", "cook", "set", "plan"];
 let current = "home";
 const cameFrom = {};
 
@@ -89,6 +94,7 @@ for (const b of document.querySelectorAll(".need")) {
   b.addEventListener("click", () => {
     diet = { ...diet, [b.dataset.need]: !diet[b.dataset.need] };
     saveDiet(diet);
+    plan.week = null;
     paintTable();
   });
 }
@@ -479,7 +485,7 @@ function openRecipe(id, inPlace = false) {
     box.append(el("p", "kicker", t("table.for")));
     for (const need of needs) {
       const p = el("p");
-      p.append(el("b", null, t("tableNo", need)), r.table[need] || t("asWritten", need));
+      p.append(el("b", null, t("tableNo", need)), (r.table || {})[need] || t("asWritten", need));
       box.append(p);
     }
     box0.append(box);
@@ -532,6 +538,11 @@ function openRecipe(id, inPlace = false) {
 let recipeId = null;
 
 $("recipe-back").addEventListener("click", () => {
+  if (recipeReturn === "plan") {
+    recipeReturn = null;
+    openPlan();
+    return;
+  }
   paintPantry();
   show("pantry");
 });
@@ -544,6 +555,204 @@ $("recipe-all").addEventListener("click", () => {
   $("recipe-all-note").textContent = putAll(K.recipeById[recipeId]);
   openRecipe(recipeId, true);
 });
+
+/* ------------------------------------------------------------- the week */
+
+/*
+ * The plan lives here and nowhere else: nothing is saved to the device yet
+ * (TODO.md). It holds ids only, so a language switch simply redraws it.
+ */
+const plan = { mood: "greek", n: 5, week: null };
+let recipeReturn = null;
+const everyKitchen = () => KITCHENS.map(localize);
+const kitchenNow = (id) => everyKitchen().find((k) => k.id === id);
+
+function openPlan() {
+  delete document.documentElement.dataset.kitchen;
+  if (!plan.week) plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet });
+  paintPlan();
+  show("plan");
+}
+
+function remake() {
+  plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet });
+  paintPlan();
+}
+
+/* Open a dish from the plan in its own kitchen; its Back comes home to the plan. */
+function openFromPlan(part) {
+  if (K.id !== part.kitchen) {
+    K = localize(KITCHEN_BY_ID[part.kitchen]);
+    counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
+    lit = null;
+  }
+  document.documentElement.dataset.kitchen = K.id;
+  recipeReturn = "plan";
+  openRecipe(part.recipe);
+}
+
+function paintPlan() {
+  const ks = everyKitchen();
+  // The moods: a week in one kitchen, or a mix. The everyday kitchen is not
+  // a mood — it is where every dinner's plain side comes from.
+  const moods = $("plan-moods");
+  moods.replaceChildren(
+    ...[...ks.filter((k) => k.id !== "everyday").map((k) => ({ id: k.id, name: k.name, sub: k.native, lang: k.lang, art: k.door })), {
+      id: "mix",
+      name: t("plan.mix"),
+      sub: t("plan.mixSub"),
+      art: [ks[0].door[0], ks[1].door[1], ks[0].door[2], ks[1].door[3]],
+    }].map((m) => {
+      const b = el("button", `door door-${m.id}`);
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(plan.mood === m.id));
+      const pics = el("span", "door-art");
+      pics.setAttribute("aria-hidden", "true");
+      pics.append(...m.art.map((id) => art("door-item", ingredient(id))));
+      const words = el("span", "door-words");
+      const sub = el("span", "greek-inline", m.sub);
+      if (m.lang) sub.lang = m.lang;
+      words.append(el("b", null, m.name), sub);
+      b.append(pics, words);
+      b.addEventListener("click", () => {
+        plan.mood = m.id;
+        remake();
+      });
+      return b;
+    }),
+  );
+
+  const nBox = $("plan-n");
+  nBox.replaceChildren(
+    ...[3, 4, 5, 6, 7].map((n) => {
+      const b = el("button", "chip", String(n));
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(plan.n === n));
+      b.addEventListener("click", () => {
+        plan.n = n;
+        remake();
+      });
+      return b;
+    }),
+  );
+
+  const w = plan.week;
+  const notes = [t("plan.hint")];
+  if (w.borrowed) notes.push(t("planBorrowed", w.borrowed));
+  if (w.short) notes.push(t("planShort", w.days.length));
+  $("plan-note").textContent = notes.join(" ");
+
+  // The days: the main large, the plain side and the veg beside it.
+  const days = $("plan-days");
+  days.replaceChildren();
+  w.days.forEach((d, i) => {
+    const li = el("li", "plan-day");
+    li.append(el("p", "kicker", t("weekday")[i]));
+    const main = kitchenNow(d.main.kitchen);
+    const r = main.recipeById[d.main.recipe];
+    const mainBtn = el("button", "plan-main");
+    mainBtn.type = "button";
+    const mWords = el("span", "plan-words");
+    const kTag = el("small", null, main.name);
+    mWords.append(el("b", null, r.name), kTag);
+    mainBtn.append(art("plan-art", dish(r)), mWords);
+    mainBtn.addEventListener("click", () => openFromPlan(d.main));
+    const swapM = swapBtn(t("plan.swapMain"), () => {
+      plan.week = swapMain(everyKitchen(), plan.week, i, diet);
+      paintPlan();
+    });
+
+    const extras = el("div", "plan-extras");
+    for (const [which, label, swapLabel] of [["side", t("plan.plain"), t("plan.swapSide")], ["veg", t("plan.veg"), t("plan.swapVeg")]]) {
+      const ek = kitchenNow(d[which].kitchen);
+      const er = ek.recipeById[d[which].recipe];
+      const box = el("span", "plan-extra");
+      const b = el("button", "plan-extra-dish");
+      b.type = "button";
+      const words = el("span", "plan-words");
+      words.append(el("small", null, label), el("b", null, er.name));
+      b.append(art("plan-extra-art", dish(er)), words);
+      b.addEventListener("click", () => openFromPlan(d[which]));
+      box.append(
+        b,
+        swapBtn(swapLabel, () => {
+          plan.week = swapSide(plan.week, i, which);
+          paintPlan();
+        }),
+      );
+      extras.append(box);
+    }
+    const top = el("div", "plan-top");
+    top.append(mainBtn, swapM);
+    li.append(top, extras);
+    days.append(li);
+  });
+
+  paintPlanList();
+}
+
+/* A small round "another one" button: the same glyph for every swap. */
+function swapBtn(label, onClick) {
+  const b = el("button", "icon-button swap-btn");
+  b.type = "button";
+  b.setAttribute("aria-label", label);
+  b.title = label;
+  b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4" /></svg>';
+  b.addEventListener("click", onClick);
+  return b;
+}
+
+/* The week's one shopping list: fresh first, each dinner's amounts beneath. */
+function paintPlanList() {
+  const { fresh, keeps } = weekList(everyKitchen(), plan.week);
+  const list = $("plan-list");
+  list.replaceChildren();
+  for (const [key, lines] of [["set.listFresh", fresh], ["set.listKeeps", keeps]]) {
+    if (!lines.length) continue;
+    const group = el("div", "shop-group");
+    group.append(el("p", "kicker", t(key)));
+    const ul = el("ul");
+    for (const line of lines) {
+      const li = el("li");
+      li.append(art("shop-art", ingredient(line.id)));
+      const words = el("span", "shop-words");
+      words.append(el("b", null, line.item.name));
+      for (const a of line.amounts) words.append(el("small", null, `${t("weekday")[a.day]} · ${a.dish}: ${a.amount}`));
+      li.append(words);
+      ul.append(li);
+    }
+    group.append(ul);
+    list.append(group);
+  }
+}
+
+function planText() {
+  const { fresh, keeps } = weekList(everyKitchen(), plan.week);
+  const out = [t("plan.title"), ""];
+  plan.week.days.forEach((d, i) => {
+    const name = (part) => kitchenNow(part.kitchen).recipeById[part.recipe].name;
+    out.push(`${t("weekday")[i]}: ${name(d.main)} + ${name(d.side)} + ${name(d.veg)}`);
+  });
+  out.push("", t("set.list"));
+  for (const [key, lines] of [["set.listFresh", fresh], ["set.listKeeps", keeps]]) {
+    if (!lines.length) continue;
+    out.push("", t(key));
+    for (const l of lines) out.push(`- ${l.item.name} — ${l.amounts.map((a) => `${a.dish}: ${a.amount}`).join("; ")}`);
+  }
+  return out.join("\n");
+}
+
+$("open-plan").addEventListener("click", openPlan);
+$("plan-again").addEventListener("click", remake);
+$("plan-copy").addEventListener("click", () => {
+  const say = (key) => ($("plan-copy-note").textContent = t(key));
+  try {
+    navigator.clipboard.writeText(planText()).then(() => say("set.copied"), () => say("set.copyFail"));
+  } catch {
+    say("set.copyFail");
+  }
+});
+$("plan-door-art").replaceChildren(...["rice", "potato", "carrot", "lemon", "staranise"].map((id) => art("door-item", ingredient(id))));
 
 /* ------------------------------------------------------------- the sets */
 
@@ -828,6 +1037,7 @@ function switchLang(id) {
     if (again) openSet(again);
   }
   if (!$("card").hidden && cardId) openCard(cardId);
+  if (current === "plan") paintPlan();
 }
 
 paintStatic();

@@ -16,14 +16,17 @@ import { RECIPES, FASTING_NOTE } from "./recipes.js";
 import { VN_SHELVES, VN_INGREDIENTS, VN_RECIPES } from "./vietnam.js";
 import { SWAPS_GREEK } from "./swaps/greek.js";
 import { SWAPS_VIETNAM } from "./swaps/vietnam.js";
+import { ED_SHELVES, ED_INGREDIENTS, ED_RECIPES, ED_KITCHEN_INTRO } from "./everyday.js";
+import { SWAPS_EVERYDAY } from "./swaps/everyday.js";
 
 /*
  * Three facts the dish sets (js/sets.js) need, kept here beside each kitchen so
  * they can be read and argued with in one place:
  *
  *   courses   what each dish is at a table: "main", "side", "starter" (a meze,
- *             a salad, a fresh roll) or "sauce" (served with something else,
- *             never a course of its own). Greek soups and ladera are mains —
+ *             a salad, a fresh roll), "sauce" (served with something else,
+ *             never a course of its own) or "veg" (the everyday kitchen's
+ *             plain vegetables, served beside every planned dinner). Greek soups and ladera are mains —
  *             that is how they are eaten.
  *   spoils    the ingredients that will not keep a week once bought: fresh
  *             herbs, leaves, soft vegetables, meat and fish. Everything else —
@@ -92,6 +95,31 @@ export const KITCHENS = [
       "thaibasil", "coriander", "mint", "springonion", "chilli", "beansprouts",
       "lettuce", "waterspinach", "beef", "prawns", "fish",
     ],
+  }),
+  /*
+   * The everyday kitchen: plain rice, potatoes, pasta and simple veg, for the
+   * ones at the table who want the boring thing. Every planned dinner takes
+   * its side and its veg from here (js/planner.js). Its "native" language is
+   * Norwegian, the language of the kitchen it was written for.
+   */
+  kitchen({
+    id: "everyday",
+    name: "The everyday kitchen",
+    native: "hverdagskjøkkenet",
+    lang: "nb",
+    intro: ED_KITCHEN_INTRO,
+    door: ["rice", "potato", "ketchup", "carrot", "gfpasta"],
+    shelves: ED_SHELVES,
+    ingredients: ED_INGREDIENTS,
+    recipes: ED_RECIPES,
+    fastingNote: "",
+    swaps: SWAPS_EVERYDAY,
+    staples: ["salt", "oil"],
+    courses: {
+      plainrice: "side", friedrice: "side", boiledpotatoes: "side", mash: "side", ovenchips: "side",
+      pasta: "side", plainnoodles: "side", vegsticks: "veg", peascorn: "veg", corncobs: "veg",
+    },
+    spoils: ["cucumber", "pepper", "corncob", "springonion"],
   }),
 ];
 

@@ -22,6 +22,11 @@ Working name; the slug is `kitchens` until it is not.
 - **Don't have it?** Every ingredient's card offers stand-ins from any
   shop, each saying what to use, how much, and honestly what it changes —
   flagged when a stand-in brings something the table cannot eat.
+- **Plan the week**, from the front door, without choosing a kitchen first:
+  a Greek week, a Vietnamese week or a mix, three to seven dinners, each a
+  main with a plain side and a veg from the everyday kitchen (rice,
+  potatoes, pasta, carrots — what the children will eat). Swap any part,
+  open any dish, copy one shopping list. Rough: nothing is saved yet.
 - **Who is eating?** Mark what the table cooks without (dairy, eggs, gluten).
   Shelf tags, the counter and every recipe then say what that means.
   Stored on this device only.
@@ -70,6 +75,7 @@ Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 | `js/main.js` | Screens, shelves, counter, card, recipe page, language flags |
 | `js/store.js` | localStorage, all under `kitchens.` |
 | `js/swaps/` | Stand-ins per kitchen, English and bokmål side by side |
+| `js/planner.js`, `js/everyday.js` | The week planner, and the everyday kitchen of plain sides |
 | `js/sets.js` | Dish sets: the meal and week search over a kitchen's dishes |
 | `js/cookalong.js` | The step-by-step cook-along: prepare on the board, watch the pot fill |
 | `js/i18n.js`, `js/nb.js`, `js/nb/` | English and bokmål: interface words and the Norwegian content overlays |
