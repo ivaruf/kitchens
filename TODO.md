@@ -13,3 +13,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   Plus **plain sides the kids will eat**: plain fried rice, potatoes with
   ketchup, the "boring" things that sit beside an adventurous main.
   Being scoped one question at a time.
+  - *Where plain sides live:* **their own kitchen**, an "everyday" kitchen of
+    basics that every week plan draws from, and that can grow. The owner asked
+    for suggestions of what goes in it.
