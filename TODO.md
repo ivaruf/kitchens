@@ -27,3 +27,4 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     kitchen, whatever the main is.
   - *How the planner starts:* **pick a kitchen mood**: "Greek week",
     "Vietnamese week" or "mix it up", then it proposes the week.
+  - *How many dinners:* **you choose**, 3 to 7, when you start.
