@@ -11,6 +11,15 @@ Sits under the hub's `../CLAUDE.md` and wins where the two disagree.
   default."* Do not add `user-select: none` or a touch guard back. Only the
   tap-highlight flash and double-tap zoom are suppressed.
 
+- **The corner holds two language flags and fullscreen**, not the hub's
+  menu, mute and fullscreen, and there is **no sound panel** (MUSIC /
+  EFFECTS). The owner, 2026-10-02: *"We can do away with music and sound
+  menus, this is also inherited from games, and it's not relevant, the menu /
+  sound can be changed to flags like nor/eng."* The kitchen makes no sound and
+  nothing in it can be paused, so neither control did anything. Do not put
+  them back. Fullscreen stays, with all four of the hub's rules for it, and so
+  does the way back to the arcade on the front door.
+
 ## What this is
 
 A browsable Greek pantry (painted shelves of SVG ingredients), a counter

@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.5.0'; // the whole cookbook in bokmål as well as English
+const VERSION = 'v0.6.0'; // flags for the language in the corner, and no sound settings
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;

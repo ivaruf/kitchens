@@ -1,6 +1,6 @@
 /*
  * main.js — the house: the pantry shelves, the counter, the ingredient card,
- * the recipe page, the table settings, the corner and the menu.
+ * the recipe page, the table settings and the corner's language flags.
  *
  * THE IDEA IN ONE LINE: browsing, not filling in. Nothing here asks the player
  * a question. They look along painted shelves, tap what catches their eye to
@@ -18,15 +18,15 @@
  * at a time (js/cookalong.js).
  *
  * SCREENS are sibling <section>s and exactly one is visible. The ingredient
- * card and the menu are sheets over whatever screen is showing.
+ * card is a sheet over whatever screen is showing.
  */
 
-import { loadDiet, saveDiet, loadCounter, saveCounter, loadSound, saveSound, NEEDS } from "./store.js";
+import { loadDiet, saveDiet, loadCounter, saveCounter, NEEDS } from "./store.js";
 import { dishesWith, suggest, containsOf } from "./recipes.js";
 import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
 import { CookAlong } from "./cookalong.js";
-import { t, list as listOf, noun, localize, getLang, setLang, LANGS, paintStatic } from "./i18n.js";
+import { t, list as listOf, localize, getLang, setLang, paintStatic } from "./i18n.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -45,7 +45,6 @@ let diet = loadDiet();
 /* The kitchen being browsed, and its counter. Every kitchen keeps its own. */
 let K = localize(KITCHENS[0]);
 let counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
-const sound = loadSound();
 
 /* ---------------------------------------------------------------- screens */
 
@@ -567,71 +566,26 @@ function wireExits() {
 }
 wireExits();
 
-/* ------------------------------------------------------- menu and corner */
-
-/* Nothing in a pantry moves on its own, so the menu has nothing to pause. */
-$("menu-open").addEventListener("click", () => ($("menu").hidden ? openSheet($("menu")) : closeSheets()));
-$("menu-close").addEventListener("click", closeSheets);
+/* Escape closes the ingredient card; there is no menu for it to open. */
 window.addEventListener("keydown", (e) => {
-  if (e.key !== "Escape") return;
-  const open = [...document.querySelectorAll(".sheet")].some((s) => !s.hidden);
-  if (open) closeSheets();
-  else openSheet($("menu"));
+  if (e.key === "Escape" && !$("card").hidden) closeSheets();
 });
-
-/* Mute: a toggle and nothing else — no panel, no focus moved. */
-const mute = $("mute-toggle");
-function paintMute() {
-  mute.setAttribute("aria-pressed", String(sound.muted));
-  const label = sound.muted ? t("corner.unmute") : t("corner.mute");
-  mute.setAttribute("aria-label", label);
-  mute.title = label;
-}
-mute.addEventListener("click", () => {
-  sound.muted = !sound.muted;
-  saveSound(sound);
-  paintMute();
-});
-
-/* The two levels: real and persisted, waiting for the kitchen to have sound. */
-for (const [key, id] of [["music", "music-vol"], ["sfx", "sfx-vol"]]) {
-  const input = $(id);
-  const out = $(`${id}-out`);
-  input.value = String(Math.round(sound[key] * 100));
-  out.textContent = input.value;
-  input.addEventListener("input", () => {
-    sound[key] = Number(input.value) / 100;
-    // Moving a level lifts the mute (hub §2).
-    if (sound.muted) {
-      sound.muted = false;
-      paintMute();
-    }
-    out.textContent = input.value;
-    saveSound(sound);
-  });
-}
 
 /* ------------------------------------------------------------ language */
 
 /*
- * English or Norsk, from the front door and the menu. Switching repaints
+ * English or Norsk, from the two flags in the corner. Switching repaints
  * whatever is on screen in place — the recipe stays open at the same step,
  * the counter keeps what is on it — because the content is only re-read,
  * never reloaded.
  */
-function paintLangButtons() {
-  for (const box of document.querySelectorAll(".lang-pick")) {
-    box.replaceChildren(
-      ...LANGS.map((l) => {
-        const b = el("button", "chip lang", l.name);
-        b.type = "button";
-        b.lang = l.id;
-        b.setAttribute("aria-pressed", String(getLang() === l.id));
-        b.addEventListener("click", () => switchLang(l.id));
-        return b;
-      }),
-    );
+function paintFlags() {
+  for (const b of document.querySelectorAll("#corner .flag")) {
+    b.setAttribute("aria-pressed", String(getLang() === b.dataset.lang));
   }
+}
+for (const b of document.querySelectorAll("#corner .flag")) {
+  b.addEventListener("click", () => switchLang(b.dataset.lang));
 }
 
 function switchLang(id) {
@@ -639,10 +593,9 @@ function switchLang(id) {
   setLang(id);
   K = localize(KITCHEN_BY_ID[K.id]);
   paintStatic();
-  paintLangButtons();
+  paintFlags();
   paintDoors();
   paintTable();
-  paintMute();
   wireExits();
   if (current === "pantry") {
     paintPantryHead();
@@ -654,6 +607,5 @@ function switchLang(id) {
 }
 
 paintStatic();
-paintLangButtons();
-paintMute();
+paintFlags();
 paintTable();

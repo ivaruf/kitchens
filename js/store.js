@@ -1,7 +1,7 @@
 /*
  * store.js — everything this game remembers, and nothing it sends anywhere.
  *
- * Three things persist, all in localStorage, all under the `kitchens.` prefix
+ * Two things persist, all in localStorage, all under the `kitchens.` prefix
  * (hub CLAUDE.md §6: every game on ivaruf.github.io shares one namespace, and
  * anything at all may have written there, so every read is defensive):
  *
@@ -12,9 +12,6 @@
  *   kitchens.counter.v1    what is on each kitchen's counter, as
  *                          { kitchenId: [pantry ids] }, so a browse can be
  *                          picked up where it was left.
- *   kitchens.vol.*.v1      the two sound levels and the mute (hub §2). The
- *                          kitchen is silent for now; the levels are real so the
- *                          day it is not, it arrives at the level already chosen.
  *
  * Every access is wrapped: private windows throw, quotas run out, and a
  * missing store must leave the game fully playable with defaults.
@@ -22,9 +19,6 @@
 
 const DIET_KEY = "kitchens.diet.v1";
 const COUNTER_KEY = "kitchens.counter.v1";
-const MUSIC_KEY = "kitchens.vol.music.v1";
-const SFX_KEY = "kitchens.vol.sfx.v1";
-const MUTED_KEY = "kitchens.muted.v1";
 
 function read(key) {
   try {
@@ -76,24 +70,4 @@ export function saveCounter(kitchen, set) {
   if (!saved || typeof saved !== "object") saved = {};
   saved[kitchen] = [...set];
   write(COUNTER_KEY, saved);
-}
-
-/** A level 0..1, rejecting anything non-finite somebody else may have left. */
-function level(key, fallback) {
-  const v = read(key);
-  return typeof v === "number" && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : fallback;
-}
-
-export function loadSound() {
-  return {
-    music: level(MUSIC_KEY, 0.6),
-    sfx: level(SFX_KEY, 0.8),
-    muted: read(MUTED_KEY) === true,
-  };
-}
-
-export function saveSound(sound) {
-  write(MUSIC_KEY, sound.music);
-  write(SFX_KEY, sound.sfx);
-  write(MUTED_KEY, !!sound.muted);
 }

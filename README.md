@@ -43,8 +43,8 @@ Greek one and brings its own palette, border and lessons, among them that
 soy sauce and most hoisin contain wheat. Kitchens are registered in
 `js/kitchens.js`; the Vietnamese content is `js/vietnam.js`.
 
-The whole cookbook reads in English or Norwegian bokmål, chosen on the front
-door or in the menu, and defaulting to bokmål for a browser that prefers
+The whole cookbook reads in English or Norwegian bokmål, chosen with the two
+flags in the corner, and defaulting to bokmål for a browser that prefers
 Norwegian. Interface words are in `js/i18n.js`; the Norwegian content is
 overlaid from `js/nb/`.
 
@@ -60,10 +60,9 @@ Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 | `js/main.js` | Screens, shelves, counter, card, recipe page, corner and menu |
 | `js/store.js` | localStorage, all under `kitchens.` |
 | `js/cookalong.js` | The step-by-step cook-along: prepare on the board, watch the pot fill |
+| `js/i18n.js`, `js/nb.js`, `js/nb/` | English and bokmål: interface words and the Norwegian content overlays |
 | `js/screen.js`, `js/update.js` | Hub floors: fullscreen, opt-in updates |
 
 Bump `VERSION` in `sw.js` with every change that deploys. Icons come from
 `python3 tools/make-icons.py`.
 
-No sound yet: the menu's two levels are real and persist, and say plainly
-that the kitchen is silent.
