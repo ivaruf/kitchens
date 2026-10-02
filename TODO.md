@@ -29,6 +29,10 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     one combined shopping list (shared items counted once) that can be copied
     out; and light up the pantry / put the whole set on the counter in one
     tap, as a single dish does now.
+  - *Shopping list detail:* **items with each dish's amount** listed under
+    them ("Carrots: 2 for fasolada, 1 for fakes"). Not summed — the amounts
+    are free text in two languages, and adding them up would need every one
+    rewritten as number and unit.
 
 - **Alternative ingredient suggestions.** Asked for 2026-10-02. To be scoped
   with the owner after the synergy item, one question at a time.
