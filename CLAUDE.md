@@ -33,6 +33,11 @@ choices and timing bars was built first and rejected for exactly that reason.
 - Every dish must be cookable dairy-free, egg-free and gluten-free together
   (a family member needs all three), and each recipe says plainly what it is
   usually *served* with that is not.
+- **The everyday kitchen is the exception, deliberately.** Its plain sides are
+  for the children, who eat egg, milk and gluten (owner, 2026-10-02), so they
+  are written the ordinary way — buttered pasta, egg fried rice — and the
+  free version is the table note. They stay *cookable* free; they are just
+  not written free.
 - Diet claims are about the dish, never about a product or a brand.
 - Content lives in `js/pantry.js`, `js/recipes.js` and `js/vietnam.js`;
   check facts there.
