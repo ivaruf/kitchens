@@ -6,7 +6,7 @@
     <title>Kitchens</title>
     <meta
       name="description"
-      content="An immersive cookbook. Browse a painted Greek pantry, put what tempts you on the counter, and see which traditional dishes it could become — with recipes that explain why, and notes for a table with different needs."
+      content="An immersive cookbook. Browse a painted Greek or Vietnamese pantry, put what tempts you on the counter, and see which traditional dishes it could become — with recipes that explain why, and notes for a table with different needs."
     />
     <meta name="theme-color" content="#1f5f8b" />
     <meta name="color-scheme" content="light" />
@@ -38,11 +38,11 @@
         <div class="key" aria-hidden="true"></div>
         <p class="kicker">An immersive cookbook</p>
         <h1 id="logo">Kitchens</h1>
-        <p class="tagline">Browse a pantry. Put what tempts you on the counter. See what it could become.</p>
-        <!-- A few things off the shelves, drawn by js/main.js from js/art.js. -->
-        <div class="home-art" id="home-art" aria-hidden="true"></div>
+        <p class="tagline">Choose a kitchen. Browse its pantry. Put what tempts you on the counter, and see what it could become.</p>
         <div class="home-doors">
-          <button type="button" id="enter" class="primary">Open the Greek pantry</button>
+          <!-- One door per kitchen, each with a few things off its shelves;
+               built by js/main.js from js/kitchens.js. -->
+          <div id="doors" class="doors"></div>
           <button type="button" id="open-table" class="ghost">Who is eating?</button>
           <p id="table-summary" class="hint"></p>
           <!-- Hidden until a new worker is waiting; the only thing that posts
@@ -93,12 +93,9 @@
     <section id="pantry" class="screen" hidden aria-labelledby="pantry-title">
       <div class="shelves">
         <header class="pantry-head">
-          <p class="kicker">The Greek kitchen <span class="greek-inline" lang="el">· η κουζίνα</span></p>
+          <p class="kicker" id="pantry-kicker"></p>
           <h2 id="pantry-title">The pantry</h2>
-          <p class="hint">
-            Olive oil by the glassful, lemon at the end, oregano dried and cinnamon in
-            the meat. Tap anything to read about it.
-          </p>
+          <p class="hint" id="pantry-intro"></p>
           <div class="head-tools">
             <button type="button" id="table-chip" class="chip"></button>
             <button type="button" id="pantry-home" class="chip">Back</button>
@@ -147,7 +144,7 @@
         <div class="recipe-hero">
           <div id="recipe-art" class="recipe-art" aria-hidden="true"></div>
           <div>
-            <p class="greek-name" id="recipe-greek" lang="el"></p>
+            <p class="greek-name" id="recipe-greek"></p>
             <h2 id="recipe-title"></h2>
             <p id="recipe-line" class="lead"></p>
             <p id="recipe-meta" class="meta"></p>
@@ -199,7 +196,7 @@
     <div id="scrim" hidden></div>
     <section id="card" class="sheet" hidden tabindex="-1" aria-labelledby="card-title">
       <div class="card-art" id="card-art" aria-hidden="true"></div>
-      <p class="greek-name" id="card-greek" lang="el"></p>
+      <p class="greek-name" id="card-greek"></p>
       <h2 id="card-title"></h2>
       <p id="card-info"></p>
       <p id="card-contains" class="contains" hidden></p>

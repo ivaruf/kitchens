@@ -22,8 +22,8 @@
  */
 
 import { loadDiet, saveDiet, loadCounter, saveCounter, loadSound, saveSound, NEEDS } from "./store.js";
-import { INGREDIENTS, SHELVES, BY_ID } from "./pantry.js";
-import { RECIPES, RECIPE_BY_ID, dishesWith, suggest, containsOf, FASTING_NOTE } from "./recipes.js";
+import { dishesWith, suggest, containsOf } from "./recipes.js";
+import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
 import { CookAlong } from "./cookalong.js";
 
@@ -43,7 +43,9 @@ const art = (cls, markup) => {
 const NEED_WORD = { dairy: "dairy", egg: "egg", gluten: "gluten" };
 
 let diet = loadDiet();
-const counter = loadCounter(new Set(Object.keys(BY_ID)));
+/* The kitchen being browsed, and its counter. Every kitchen keeps its own. */
+let K = KITCHENS[0];
+let counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
 const sound = loadSound();
 
 /* ---------------------------------------------------------------- screens */
@@ -108,12 +110,12 @@ const clashes = (item) => (item.contains || []).filter((n) => diet[n]);
 function paintShelves() {
   const list = $("shelf-list");
   list.replaceChildren();
-  for (const shelf of SHELVES) {
+  for (const shelf of K.shelves) {
     const sec = el("section", `shelf shelf-${shelf.id}`);
     const head = el("header", "shelf-head");
     head.append(el("h3", null, shelf.name), el("p", null, shelf.note));
     const row = el("div", "items");
-    for (const item of INGREDIENTS.filter((i) => i.shelf === shelf.id)) {
+    for (const item of K.ingredients.filter((i) => i.shelf === shelf.id)) {
       const b = el("button", "item");
       b.type = "button";
       b.dataset.id = item.id;
@@ -140,16 +142,16 @@ function paintShelves() {
 let lit = null;
 
 function markShelves() {
-  const ideas = suggest(counter);
+  const ideas = suggest(K.recipes, counter);
   const wanted = new Set(ideas.length ? ideas[0].missing : []);
-  const uses = lit ? new Set(RECIPE_BY_ID[lit].ingredients.map((i) => i.id)) : null;
+  const uses = lit ? new Set(K.recipeById[lit].ingredients.map((i) => i.id)) : null;
   $("pantry").classList.toggle("lighting", !!uses);
   for (const b of document.querySelectorAll("#shelf-list .item")) {
     const on = counter.has(b.dataset.id);
     b.classList.toggle("on", on);
     b.classList.toggle("lit", !!uses && uses.has(b.dataset.id));
     b.classList.toggle("wanted", !uses && !on && wanted.has(b.dataset.id));
-    b.setAttribute("aria-label", `${BY_ID[b.dataset.id].name}${on ? ", on the counter" : ""}`);
+    b.setAttribute("aria-label", `${K.byId[b.dataset.id].name}${on ? ", on the counter" : ""}`);
   }
 }
 
@@ -163,11 +165,11 @@ function paintCounter() {
     items.append(el("p", "hint", "Nothing yet. Pick whatever tempts you from the shelves."));
   }
   for (const id of ids) {
-    const hit = clashes(BY_ID[id]);
+    const hit = clashes(K.byId[id]);
     const b = el("button", `counter-item${hit.length ? " clash" : ""}`);
     b.type = "button";
-    b.title = `${BY_ID[id].name} — tap to put back`;
-    b.setAttribute("aria-label", `${BY_ID[id].name}, put back on the shelf`);
+    b.title = `${K.byId[id].name} — tap to put back`;
+    b.setAttribute("aria-label", `${K.byId[id].name}, put back on the shelf`);
     b.append(art("mini", ingredient(id)));
     b.addEventListener("click", () => {
       counter.delete(id);
@@ -178,10 +180,10 @@ function paintCounter() {
   // Anything here this table cannot eat is said once, plainly, under the board.
   const board = $("counter-items").parentElement;
   board.querySelector(".counter-warn")?.remove();
-  const off = ids.filter((id) => clashes(BY_ID[id]).length);
+  const off = ids.filter((id) => clashes(K.byId[id]).length);
   if (off.length) {
-    const names = listOf(off.map((id) => BY_ID[id].name.toLowerCase()));
-    const needs = listOf([...new Set(off.flatMap((id) => clashes(BY_ID[id])))]);
+    const names = listOf(off.map((id) => K.byId[id].name.toLowerCase()));
+    const needs = listOf([...new Set(off.flatMap((id) => clashes(K.byId[id])))]);
     board.append(el("p", "counter-warn", `Not for a ${needs}-free plate: ${names}. Serve it on its own plate, or leave it out.`));
   }
   $("counter-clear").hidden = !ids.length;
@@ -194,7 +196,7 @@ function paintCounter() {
   // The ideas: what the counter could become.
   const ideas = $("ideas");
   ideas.replaceChildren();
-  const found = suggest(counter);
+  const found = suggest(K.recipes, counter);
   if (!ids.length) {
     ideas.append(el("p", "hint", "Put a few things on the counter and the dishes they could become will gather here."));
   } else if (!found.length) {
@@ -203,7 +205,7 @@ function paintCounter() {
   for (const s of found.slice(0, 4)) ideas.append(ideaCard(s));
 
   const all = $("all-dishes");
-  all.replaceChildren(...RECIPES.map((r) => dishLink(r)));
+  all.replaceChildren(...K.recipes.map((r) => dishLink(r)));
   markShelves();
 }
 
@@ -225,10 +227,10 @@ function ideaCard({ recipe, have, missing }) {
     const need = el("span", "idea-missing");
     for (const id of missing) {
       const m = art("missing", ingredient(id));
-      m.title = BY_ID[id].name;
+      m.title = K.byId[id].name;
       need.append(m);
     }
-    need.append(el("span", "sr", listOf(missing.map((id) => BY_ID[id].name.toLowerCase()))));
+    need.append(el("span", "sr", listOf(missing.map((id) => K.byId[id].name.toLowerCase()))));
     text.append(need);
   }
   clashMark(recipe, text);
@@ -239,7 +241,7 @@ function ideaCard({ recipe, have, missing }) {
 
 /* A small mark on a dish card when the dish brings something the table cannot eat. */
 function clashMark(recipe, into) {
-  const hit = containsOf(recipe, BY_ID).filter((n) => diet[n]);
+  const hit = containsOf(recipe, K.byId).filter((n) => diet[n]);
   if (!hit.length) return;
   const m = el("span", "dish-clash", `has ${listOf(hit)} — see the table notes`);
   into.append(m);
@@ -258,7 +260,7 @@ function dishLink(recipe) {
 }
 
 function changed() {
-  saveCounter(counter);
+  saveCounter(K.id, counter);
   paintCounter();
 }
 
@@ -280,7 +282,7 @@ function paintLitBar(note = "") {
   const bar = $("lit-bar");
   bar.hidden = !lit;
   if (!lit) return;
-  const r = RECIPE_BY_ID[lit];
+  const r = K.recipeById[lit];
   $("lit-art").innerHTML = dish(r);
   $("lit-title").textContent = `What goes into ${r.name}`;
   const have = r.ingredients.filter((i) => counter.has(i.id)).length;
@@ -294,7 +296,7 @@ function paintLitBar(note = "") {
 function putAll(recipe) {
   const left = [];
   for (const ing of recipe.ingredients) {
-    if (clashes(BY_ID[ing.id]).length) left.push(BY_ID[ing.id].name.toLowerCase());
+    if (clashes(K.byId[ing.id]).length) left.push(K.byId[ing.id].name.toLowerCase());
     else counter.add(ing.id);
   }
   changed();
@@ -310,7 +312,7 @@ function lightUp(id) {
   if (first) first.scrollIntoView({ block: "center", behavior: "smooth" });
 }
 
-$("lit-all").addEventListener("click", () => paintLitBar(putAll(RECIPE_BY_ID[lit])));
+$("lit-all").addEventListener("click", () => paintLitBar(putAll(K.recipeById[lit])));
 $("lit-recipe").addEventListener("click", () => openRecipe(lit));
 $("lit-off").addEventListener("click", () => {
   lit = null;
@@ -349,10 +351,11 @@ function closeSheets() {
 scrim.addEventListener("click", closeSheets);
 
 function openCard(id) {
-  const item = BY_ID[id];
+  const item = K.byId[id];
   cardId = id;
   $("card-art").innerHTML = ingredient(id);
-  $("card-greek").textContent = item.greek;
+  $("card-greek").textContent = item.native;
+  $("card-greek").lang = K.lang;
   $("card-title").textContent = item.name;
   $("card-info").textContent = item.info;
 
@@ -369,7 +372,7 @@ function openCard(id) {
 
   const dishes = $("card-dishes");
   dishes.replaceChildren();
-  const into = dishesWith(id);
+  const into = dishesWith(K.recipes, id);
   if (!into.length) dishes.append(el("p", "hint small", "Served alongside rather than cooked in — see the recipes' table notes."));
   for (const r of into) {
     const b = el("button", "dish-chip");
@@ -392,20 +395,31 @@ function paintPut() {
   put.textContent = on ? "On the counter ✓ — put it back" : "Put on the counter";
 }
 
+/*
+ * Putting something on the counter closes the card at once: the player has
+ * decided, and what they want to see now is the counter answering. Putting
+ * it back leaves the card open, since they are still reading about it.
+ */
 $("card-put").addEventListener("click", () => {
-  if (counter.has(cardId)) counter.delete(cardId);
-  else counter.add(cardId);
+  if (counter.has(cardId)) {
+    counter.delete(cardId);
+    changed();
+    paintPut();
+    return;
+  }
+  counter.add(cardId);
   changed();
-  paintPut();
+  closeSheets();
 });
 $("card-close").addEventListener("click", closeSheets);
 
 /* ------------------------------------------------------------ the recipe */
 
 function openRecipe(id, inPlace = false) {
-  const r = RECIPE_BY_ID[id];
+  const r = K.recipeById[id];
   $("recipe-art").innerHTML = dish(r);
-  $("recipe-greek").textContent = r.greek;
+  $("recipe-greek").textContent = r.native;
+  $("recipe-greek").lang = K.lang;
   $("recipe-title").textContent = r.name;
   $("recipe-line").textContent = r.line;
   $("recipe-meta").textContent = `Serves ${r.serves} · ${r.time}`;
@@ -417,7 +431,7 @@ function openRecipe(id, inPlace = false) {
   const needs = activeNeeds();
   if (r.fasting) {
     const d = el("details", "note fasting");
-    d.append(el("summary", null, "A fasting dish — dairy-free and egg-free by tradition"), el("p", null, FASTING_NOTE));
+    d.append(el("summary", null, "A fasting dish — dairy-free and egg-free by tradition"), el("p", null, K.fastingNote));
     t.append(d);
   }
   if (needs.length) {
@@ -432,9 +446,9 @@ function openRecipe(id, inPlace = false) {
   }
 
   // Anything in the dish itself this table cannot eat, said before the list.
-  const hit = containsOf(r, BY_ID).filter((n) => diet[n]);
+  const hit = containsOf(r, K.byId).filter((n) => diet[n]);
   if (hit.length) {
-    const offenders = r.ingredients.filter((i) => clashes(BY_ID[i.id]).length).map((i) => BY_ID[i.id].name.toLowerCase());
+    const offenders = r.ingredients.filter((i) => clashes(K.byId[i.id]).length).map((i) => K.byId[i.id].name.toLowerCase());
     t.prepend(el("p", "note clash-note", `The ${listOf(offenders)} in this recipe is not for a ${listOf(hit)}-free plate — see below for what to do instead.`));
   }
 
@@ -445,7 +459,7 @@ function openRecipe(id, inPlace = false) {
   const tiles = $("recipe-ingredients");
   tiles.replaceChildren();
   for (const ing of r.ingredients) {
-    const item = BY_ID[ing.id];
+    const item = K.byId[ing.id];
     const b = el("button", `tile${counter.has(ing.id) ? " have" : ""}${clashes(item).length ? " clash" : ""}`);
     b.type = "button";
     b.append(art("tile-art", ingredient(ing.id)));
@@ -482,16 +496,17 @@ $("recipe-back").addEventListener("click", () => {
 });
 $("recipe-cook").addEventListener("click", () => {
   show("cook");
-  cookAlong.start(RECIPE_BY_ID[recipeId]);
+  cookAlong.start(K.recipeById[recipeId]);
 });
 $("recipe-light").addEventListener("click", () => lightUp(recipeId));
 $("recipe-all").addEventListener("click", () => {
-  $("recipe-all-note").textContent = putAll(RECIPE_BY_ID[recipeId]);
+  $("recipe-all-note").textContent = putAll(K.recipeById[recipeId]);
   openRecipe(recipeId, true);
 });
 
 const cookAlong = new CookAlong({
   openCard: (id) => openCard(id),
+  byId: () => K.byId,
   onExit: () => openRecipe(cookAlong.recipe.id),
 });
 
@@ -501,11 +516,40 @@ function cap(s) {
 
 /* -------------------------------------------------------------- the doors */
 
-$("enter").addEventListener("click", () => {
+/* Walk into a kitchen: its pantry, its counter, its colours. */
+function enterKitchen(id) {
+  if (K.id !== id) {
+    K = KITCHEN_BY_ID[id];
+    counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
+    lit = null;
+  }
+  document.documentElement.dataset.kitchen = K.id;
+  $("pantry-kicker").replaceChildren(K.name + " ", Object.assign(el("span", "greek-inline", `· ${K.native}`), { lang: K.lang }));
+  $("pantry-intro").textContent = K.intro;
   paintPantry();
   show("pantry", "home");
+}
+
+/* The front door: one door per kitchen, each a few things off its shelves. */
+$("doors").replaceChildren(
+  ...KITCHENS.map((k) => {
+    const b = el("button", `door door-${k.id}`);
+    b.type = "button";
+    const pics = el("span", "door-art");
+    pics.setAttribute("aria-hidden", "true");
+    pics.append(...k.door.map((id) => art("door-item", ingredient(id))));
+    const words = el("span", "door-words");
+    words.append(el("b", null, k.name), Object.assign(el("span", "greek-inline", k.native), { lang: k.lang }));
+    b.append(pics, words);
+    b.addEventListener("click", () => enterKitchen(k.id));
+    return b;
+  }),
+);
+$("pantry-home").addEventListener("click", () => {
+  // The front door belongs to no kitchen, so it takes back the house colours.
+  delete document.documentElement.dataset.kitchen;
+  show("home");
 });
-$("pantry-home").addEventListener("click", () => show("home"));
 $("open-table").addEventListener("click", () => {
   paintTable();
   show("table", "home");
@@ -514,11 +558,6 @@ $("table-chip").addEventListener("click", () => {
   paintTable();
   show("table", "pantry");
 });
-
-// A handful of things off the shelves, on the front door.
-$("home-art").replaceChildren(
-  ...["lemon", "oil", "oregano", "tomato", "chickpeas", "garlic", "aubergine"].map((id) => art("home-item", ingredient(id))),
-);
 
 /*
  * The way back to the arcade. exit.js decides what quitting does; these

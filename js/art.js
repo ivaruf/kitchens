@@ -578,10 +578,200 @@ const DRAW = {
       <path d="M8 40 h48" stroke="${INK}" stroke-width="1.6"/>
       <path d="M14 46 q18 8 36 0" fill="none" stroke="#f1ddb8" stroke-width="1.6" stroke-dasharray="1 5" stroke-linecap="round"/>
     `),
+
+  /* ------------------------------------------------- the Vietnamese pantry */
+  thaibasil: () =>
+    svg(`
+      <path d="M32 60 V14" stroke="#6a2e5a" stroke-width="2.2" stroke-linecap="round"/>
+      ${[[16, 1], [24, -1], [32, 1], [40, -1], [48, 1]]
+        .map(([y, s], i) => {
+          const w = 12 - i * 1.4;
+          return `<g transform="translate(32 ${62 - y}) scale(${s} 1)"><path d="M0 0 Q${w * 0.5} ${-w * 0.9} ${w * 1.5} ${-w * 0.5} Q${w * 0.9} ${w * 0.35} 0 0 z" fill="${i % 2 ? "#3f7a3a" : "#4a8a42"}" ${THIN}/></g>`;
+        })
+        .join("")}
+      <path d="M28 14 l4 -8 l4 8 z" fill="#8a4a8a" ${THIN}/>
+    `),
+
+  coriander: () =>
+    svg(`
+      ${[22, 28, 34, 40].map((x, i) => `<path d="M${x} 60 Q${x - 2 + i} 40 ${x - 10 + i * 6} 22" fill="none" stroke="#6f9a3a" stroke-width="1.4"/>`).join("")}
+      ${[[12, 22], [20, 14], [30, 12], [40, 14], [48, 20], [16, 30], [26, 22], [36, 22], [46, 30], [30, 30]]
+        .map(([x, y], i) => `<g transform="translate(${x} ${y}) rotate(${i * 36})"><path d="M0 -6 l3 2 l2 4 l-2 4 l-3 2 l-3 -2 l-2 -4 l2 -4 z" fill="${i % 2 ? "#4f8a3a" : "#5f9c45"}" ${THIN}/></g>`)
+        .join("")}
+    `),
+
+  staranise: () =>
+    svg(`
+      ${[[30, 30, 0], [20, 46, 20], [42, 46, -15]]
+        .map(
+          ([x, y, a]) => `<g transform="translate(${x} ${y}) rotate(${a})">
+          ${[0, 45, 90, 135, 180, 225, 270, 315].map((d) => `<path d="M0 0 L-3 -5 Q0 -13 3 -5 z" transform="rotate(${d})" fill="#7a3e22" ${THIN}/>`).join("")}
+          <circle r="2.4" fill="#5a2c16"/>
+          ${[0, 90, 180, 270].map((d) => `<ellipse cx="0" cy="-7" rx="1" ry="1.6" transform="rotate(${d + 22})" fill="#c98a4a"/>`).join("")}</g>`,
+        )
+        .join("")}
+    `),
+
+  ginger: () =>
+    svg(`
+      <path d="M10 40 Q8 30 18 30 Q20 20 30 22 Q36 14 44 20 Q54 20 54 30 Q60 36 54 42 Q50 50 40 46 Q32 54 22 48 Q12 50 10 40 z" fill="#d9b06a" ${LINE}/>
+      <path d="M44 20 q4 -6 10 -6 M30 22 q-2 -6 2 -10" fill="none" stroke="#b98a4a" stroke-width="3" stroke-linecap="round"/>
+      <path d="M16 38 q8 2 14 -2 M34 34 q8 2 14 -2 M24 44 q6 2 12 -1" fill="none" stroke="#b8904e" stroke-width="1.2"/>
+      ${shine(22, 34, 5, 2.4, -10)}
+    `),
+
+  chilli: () =>
+    svg(
+      [
+        [0, "#d42a1e", 0],
+        [10, "#e0442a", 14],
+      ]
+        .map(
+          ([dy, c, a]) => `<g transform="translate(0 ${dy}) rotate(${a} 32 32)">
+        <path d="M44 14 q4 -6 10 -6" fill="none" stroke="#4a6e2c" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M40 14 Q48 14 46 22 Q36 42 12 52 Q22 40 30 24 Q34 14 40 14 z" fill="${c}" ${LINE}/>
+        <path d="M40 14 q4 2 6 6" fill="none" stroke="#5e8a3a" stroke-width="3"/>
+        ${shine(34, 24, 1.6, 6, 40)}</g>`,
+        )
+        .join(""),
+    ),
+
+  lime: () =>
+    svg(`
+      <path d="M10 34 Q10 18 28 18 Q46 18 48 32 Q48 48 30 50 Q12 50 10 34 z" fill="#5e9a2e" ${LINE}/>
+      <path d="M44 38 Q40 50 26 48 Q40 44 42 32 z" fill="#4a7e22" opacity="0.7"/>
+      ${shine(22, 28, 6, 3, -15)}
+      <g transform="translate(40 44)">
+        <circle r="12" fill="#cfe39a" ${LINE}/>
+        <circle r="9.5" fill="#a8cf5a"/>
+        ${[0, 60, 120, 180, 240, 300].map((a) => `<path d="M0 0 L${(9 * Math.cos((a * Math.PI) / 180)).toFixed(1)} ${(9 * Math.sin((a * Math.PI) / 180)).toFixed(1)}" stroke="#e4f1c4" stroke-width="1.4"/>`).join("")}
+      </g>
+    `),
+
+  beansprouts: () =>
+    svg(`
+      <ellipse cx="32" cy="46" rx="24" ry="8" fill="#e9ddc6" ${LINE}/>
+      <path d="M8 46 q24 18 48 0" fill="#c9a777" ${LINE}/>
+      ${Array.from({ length: 16 }, (_, i) => {
+        const x = 14 + (i * 37) % 36;
+        const y = 40 - (i % 4) * 3;
+        const a = (i * 47) % 120 - 60;
+        return `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 0 q4 -6 2 -14" fill="none" stroke="#f4efdc" stroke-width="2.6" stroke-linecap="round"/><path d="M0 0 q4 -6 2 -14" fill="none" stroke="#c8bf9a" stroke-width="0.6"/><ellipse cx="2" cy="-15" rx="2" ry="1.4" fill="#d8d07a"/></g>`;
+      }).join("")}
+    `),
+
+  lettuce: () =>
+    svg(`
+      <path d="M8 44 Q4 26 20 20 Q28 8 40 16 Q56 16 56 32 Q60 46 46 52 Q32 60 18 54 Q8 52 8 44 z" fill="#9fca5a" ${LINE}/>
+      <path d="M16 46 Q20 30 32 26 Q44 24 50 34 Q46 46 32 50 Q22 52 16 46 z" fill="#b9db78" ${THIN}/>
+      <path d="M24 44 Q30 34 40 34" fill="none" stroke="#e6f2c6" stroke-width="2"/>
+      <path d="M32 30 V50" stroke="#e6f2c6" stroke-width="1.6"/>
+    `),
+
+  waterspinach: () =>
+    svg(`
+      ${[16, 22, 28, 34, 40, 46].map((x, i) => `<path d="M${x} 60 Q${x + 2} 40 ${x - 6 + i * 3} 18" fill="none" stroke="#7fae5a" stroke-width="3" stroke-linecap="round"/>`).join("")}
+      ${[[10, 20], [20, 12], [30, 10], [40, 12], [50, 18], [16, 28], [44, 28]]
+        .map(([x, y], i) => `<g transform="translate(${x} ${y}) rotate(${i * 30 - 80})"><path d="M0 0 L5 -2 L14 0 L5 2 z" fill="${i % 2 ? "#3f7a32" : "#4f8a3a"}" ${THIN}/></g>`)
+        .join("")}
+      <path d="M14 46 Q30 52 48 46" fill="none" stroke="#c9a46a" stroke-width="3"/>
+    `),
+
+  ricenoodles: () =>
+    svg(`
+      <rect x="10" y="20" width="44" height="30" rx="4" fill="#f6efe0" ${LINE}/>
+      ${[24, 29, 34, 39, 44].map((y) => `<path d="M14 ${y} q9 -3 18 0 t18 0" fill="none" stroke="#e3d8bf" stroke-width="2.4"/>`).join("")}
+      <rect x="22" y="12" width="20" height="10" rx="2" fill="#b8322a" ${LINE}/>
+      <path d="M26 17 h12" stroke="#f3d27a" stroke-width="1.6"/>
+    `),
+
+  vermicelli: () =>
+    svg(`
+      <ellipse cx="32" cy="36" rx="22" ry="14" fill="#f6f1e4" ${LINE}/>
+      ${Array.from({ length: 9 }, (_, i) => `<path d="M${14 + i * 2} ${28 + (i % 3) * 3} q${8 + i} -8 ${16 + i} 0 t${10} 6" fill="none" stroke="#ddd3bc" stroke-width="1"/>`).join("")}
+      <path d="M22 34 h20" stroke="#2f6b4f" stroke-width="5"/>
+      <path d="M22 34 h20" stroke="${INK}" stroke-width="5" opacity="0.15"/>
+    `),
+
+  ricepaper: () =>
+    svg(`
+      ${[[30, 38], [34, 34], [38, 30]]
+        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="20" fill="#f3ecdd" opacity="0.92" ${LINE}/>`)
+        .join("")}
+      ${Array.from({ length: 12 }, (_, i) => `<path d="M${22 + (i % 4) * 9} ${18 + Math.floor(i / 4) * 9} l4 2" stroke="#d9cdb2" stroke-width="1"/>`).join("")}
+    `),
+
+  sugar: () =>
+    jar(`<rect x="0" y="28" width="64" height="40" fill="#fbfaf5"/>` + heap(30, 28, (x, y) => `<rect x="${x}" y="${y}" width="1.6" height="1.6" fill="#e3e1d8"/>`, 41), 28, "#2f6b4f"),
+
+  fishsauce: () =>
+    svg(`
+      <path d="M28 4 h8 v12 q0 4 5 7 q5 3 5 10 v22 q0 5 -5 5 h-18 q-5 0 -5 -5 v-22 q0 -7 5 -10 q5 -3 5 -7 z" fill="#f3e6c8" opacity="0.5" ${LINE}/>
+      <path d="M18 34 q0 -6 5 -9 h18 q5 3 5 9 v21 q0 5 -5 5 h-18 q-5 0 -5 -5 z" fill="#b5651e"/>
+      <path d="M28 4 h8 v12 q0 4 5 7 q5 3 5 10 v22 q0 5 -5 5 h-18 q-5 0 -5 -5 v-22 q0 -7 5 -10 q5 -3 5 -7 z" fill="none" ${LINE}/>
+      <rect x="27" y="1" width="10" height="6" rx="1.5" fill="#b8322a" ${LINE}/>
+      <rect x="21" y="38" width="22" height="13" rx="2" fill="#f7efd8" ${THIN}/>
+      <path d="M25 44 q4 -4 8 0 q4 4 8 0" fill="none" stroke="#2c6a96" stroke-width="1.4"/>
+      <path d="M23 28 v6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+    `),
+
+  neutraloil: () =>
+    svg(`
+      <path d="M26 6 h12 v8 q0 3 4 6 q6 5 6 12 v22 q0 6 -6 6 h-20 q-6 0 -6 -6 v-22 q0 -7 6 -12 q4 -3 4 -6 z" fill="#f6e7a6" opacity="0.65" ${LINE}/>
+      <path d="M18 32 q0 -6 6 -10 h16 q6 4 6 10 v22 q0 5 -5 5 h-18 q-5 0 -5 -5 z" fill="#ead27a"/>
+      <path d="M26 6 h12 v8 q0 3 4 6 q6 5 6 12 v22 q0 6 -6 6 h-20 q-6 0 -6 -6 v-22 q0 -7 6 -12 q4 -3 4 -6 z" fill="none" ${LINE}/>
+      <rect x="25" y="2" width="14" height="6" rx="1.5" fill="#2f6b4f" ${LINE}/>
+      <path d="M22 28 v14" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity="0.5"/>
+    `),
+
+  soysauce: () =>
+    svg(`
+      <path d="M28 6 h8 v10 q0 4 4 7 q4 3 4 9 v24 q0 4 -4 4 h-16 q-4 0 -4 -4 v-24 q0 -6 4 -9 q4 -3 4 -7 z" fill="#2a1a14" ${LINE}/>
+      <rect x="27" y="3" width="10" height="6" rx="1.5" fill="#b8322a" ${LINE}/>
+      <rect x="22" y="36" width="20" height="14" rx="2" fill="#f3e7c4" ${THIN}/>
+      <circle cx="32" cy="43" r="4" fill="none" stroke="#b8322a" stroke-width="1.6"/>
+      <path d="M24 26 v6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+    `),
+
+  hoisin: () =>
+    jar(
+      `<rect x="0" y="22" width="64" height="40" fill="#3a1e18"/>
+       <path d="M18 30 q8 -4 14 0 t14 0" fill="none" stroke="#5a3226" stroke-width="2"/>`,
+      22,
+      "#b8322a",
+    ),
+
+  prawns: () =>
+    svg(
+      [
+        [22, 30, -10],
+        [40, 40, 20],
+      ]
+        .map(
+          ([x, y, a]) => `<g transform="translate(${x} ${y}) rotate(${a})">
+        <path d="M14 -6 A15 15 0 1 0 -6 16 L-2 10 A9 9 0 1 1 9 -2 z" fill="#f08a5a" ${LINE}/>
+        ${[0, 1, 2, 3].map((k) => `<path d="M${(12 - k * 5).toFixed(0)} ${(-4 + k * 5).toFixed(0)} l-4 -4" stroke="#c9603a" stroke-width="1.2"/>`).join("")}
+        <path d="M-6 16 l-6 2 l2 -6 z" fill="#e8704a" ${THIN}/>
+        <path d="M14 -6 q6 -6 10 -14 M12 -8 q2 -8 0 -16" fill="none" stroke="#c9603a" stroke-width="0.9"/></g>`,
+        )
+        .join(""),
+    ),
+
+  fish: () =>
+    svg(`
+      <path d="M6 32 Q20 14 40 22 L54 12 L52 32 L54 52 L40 42 Q20 50 6 32 z" fill="#8a8a7a" ${LINE}/>
+      <path d="M8 34 Q22 46 40 40 L52 48 L52 34 z" fill="#c9c7b2" opacity="0.8"/>
+      <circle cx="16" cy="29" r="2.4" fill="#2b2622"/>
+      <path d="M10 22 q-4 -4 -8 -4 M10 22 q-6 0 -8 2" fill="none" stroke="#5a5a4a" stroke-width="1"/>
+      ${shine(26, 24, 7, 2.4, -10)}
+    `),
 };
 
+/* Ingredients that share another's picture across kitchens. */
+const ALIAS = { cassia: "cinnamon", shallots: "pearl" };
+
 export function ingredient(id) {
-  const draw = DRAW[id];
+  const draw = DRAW[ALIAS[id] || id];
   return draw ? draw() : svg(`<circle cx="32" cy="32" r="20" fill="#ddd4c2" ${LINE}/>`);
 }
 
@@ -635,6 +825,22 @@ const PIECE = {
   speck: (x, y) => `<circle cx="${x}" cy="${y}" r="0.7" fill="#2b2622"/>`,
   stuffedTomato: (x, y) => `<circle cx="${x}" cy="${y}" r="9" fill="#c73b28" ${THIN}/><ellipse cx="${x}" cy="${y - 2}" rx="6" ry="4" fill="#9e2e1e"/><path d="M${x - 2} ${y - 4} l2 -3 l2 3" fill="#5e8a3a"/><ellipse cx="${x - 3}" cy="${y + 2}" rx="2" ry="3" fill="#fff" opacity="0.3"/>`,
   stuffedPepper: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="9" fill="#5c9433" ${THIN}/><ellipse cx="${x}" cy="${y - 5}" rx="4" ry="2.4" fill="#4a7e2a"/><path d="M${x} ${y - 7} v-3" stroke="#4a6e2c" stroke-width="1.6"/>`,
+
+  noodle: (x, y, r) => `<path d="M${x - 8} ${y} q4 -3 8 0 t8 0" transform="rotate(${r() * 40 - 20} ${x} ${y})" fill="none" stroke="#f6efe0" stroke-width="2.6" stroke-linecap="round"/>`,
+  vermicelli: (x, y, r) => `<path d="M${x - 6} ${y} q3 -2 6 0 t6 0" transform="rotate(${r() * 180} ${x} ${y})" fill="none" stroke="#f6f1e4" stroke-width="1" stroke-linecap="round"/>`,
+  sprout: (x, y, r) => `<path d="M${x} ${y} q3 -4 1 -9" transform="rotate(${r() * 360} ${x} ${y})" fill="none" stroke="#f4efdc" stroke-width="1.8" stroke-linecap="round"/>`,
+  basil: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 360})"><path d="M-4 0 Q0 -3.5 5 0 Q0 3 -4 0 z" fill="#3f7a3a"/></g>`,
+  coriander: (x, y, r) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#5f9c45"/><circle cx="${+x + 2}" cy="${+y - 1.4}" r="1.6" fill="#4f8a3a"/>`,
+  chilliring: (x, y) => `<circle cx="${x}" cy="${y}" r="2" fill="none" stroke="#d42a1e" stroke-width="1.6"/>`,
+  prawn: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 360}) scale(0.4)"><path d="M14 -6 A15 15 0 1 0 -6 16 L-2 10 A9 9 0 1 1 9 -2 z" fill="#f08a5a" ${THIN}/></g>`,
+  fishsteak: (x, y, r) => `<g transform="rotate(${r() * 60 - 30} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="9" ry="6" fill="#9a5a2a" ${THIN}/><ellipse cx="${x}" cy="${y}" rx="5" ry="3" fill="#b8763a"/><circle cx="${x}" cy="${y}" r="1" fill="#f1e6c6"/></g>`,
+  roll: (x, y, r) => `<g transform="rotate(${r() * 30 - 15} ${x} ${y})"><rect x="${x - 12}" y="${y - 4.5}" width="24" height="9" rx="4.5" fill="#f3ecdd" opacity="0.95" ${THIN}/><path d="M${x - 8} ${y} q3 -2 5 0 M${+x + 2} ${y} q3 -2 5 0" fill="none" stroke="#f08a5a" stroke-width="2"/><path d="M${x - 10} ${+y + 2} h20" stroke="#7fae5a" stroke-width="1.2" opacity="0.7"/></g>`,
+  ginger: (x, y) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#e6c98a" stroke="#b8904e" stroke-width="0.8"/>`,
+  staranise: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 90}) scale(0.5)">${[0, 45, 90, 135, 180, 225, 270, 315].map((d) => `<path d="M0 0 L-3 -5 Q0 -13 3 -5 z" transform="rotate(${d})" fill="#7a3e22"/>`).join("")}</g>`,
+  beefslice: (x, y, r) => `<path d="M${x - 6} ${y - 2} q6 -3 12 0 q-2 5 -12 2 z" transform="rotate(${r() * 180} ${x} ${y})" fill="#9a5040" stroke="#6a3020" stroke-width="0.7"/>`,
+  shallot: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.8" transform="rotate(${r() * 180} ${x} ${y})" fill="none" stroke="#b46a8a" stroke-width="1.2"/>`,
+  waterspinach: (x, y, r) => `<g transform="rotate(${r() * 180} ${x} ${y})"><path d="M${x - 7} ${y} h14" stroke="#7fae5a" stroke-width="2.2" stroke-linecap="round"/><path d="M${x - 2} ${y} l5 -3 l6 1 z" fill="#2f6428"/></g>`,
+  lettuce: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 360})"><path d="M-6 0 Q0 -5 6 0 Q0 4 -6 0 z" fill="#9fca5a"/></g>`,
   cinnamon: (x, y) => `<rect x="${x - 7}" y="${y - 1.8}" width="14" height="3.6" rx="1.8" transform="rotate(-15 ${x} ${y})" fill="#a5633a" ${THIN}/>`,
 };
 
@@ -657,6 +863,12 @@ const BOWLS = {
   fava: { sauce: "#f0cc58", sheen: true, pieces: [["ring", 6], ["caper", 10]] },
   melitzanosalata: { sauce: "#c9b494", sheen: true, pieces: [["parsley", 12], ["olive", 2]] },
   skordalia: { sauce: "#f3eacb", sheen: true, pieces: [["olive", 2], ["parsley", 4]] },
+
+  pho: { glaze: "#f2eee4", sauce: "#b98a4a", sheen: true, pieces: [["noodle", 14], ["beefslice", 8], ["greenring", 10], ["coriander", 6], ["basil", 3], ["sprout", 6], ["chilliring", 3]], lime: true },
+  nuoccham: { glaze: "#f2eee4", sauce: "#e8c88a", pieces: [["garlic", 10], ["chilliring", 8]] },
+  goicuon: { vessel: "plate", pieces: [["roll", 5]] },
+  cakho: { vessel: "pot", sauce: "#6a3418", sheen: true, pieces: [["fishsteak", 4], ["speck", 30], ["chilliring", 4], ["greenring", 8]] },
+  raumuong: { vessel: "plate", sauce: "#f2eee4", pieces: [["waterspinach", 26], ["garlic", 10]] },
 };
 
 /*
@@ -665,7 +877,7 @@ const BOWLS = {
  * count] pairs from PIECE, scattered inside by a generator seeded from `seed`
  * so the same contents always land in the same places.
  */
-function vessel({ kind = "bowl", sauce = null, pieces = [], seed = "x", sheen = false, lemon = false, glaze = "#b35a36", heat = null }) {
+function vessel({ kind = "bowl", sauce = null, pieces = [], seed = "x", sheen = false, lemon = false, lime = false, glaze = "#b35a36", heat = null }) {
   const r = rng(seed);
   const clip = uid();
   const cx = 60;
@@ -677,6 +889,14 @@ function vessel({ kind = "bowl", sauce = null, pieces = [], seed = "x", sheen = 
   if (kind === "tin") {
     body = `<path d="M8 36 Q8 58 60 60 Q112 58 112 36 z" fill="#a9adb1" ${LINE}/>
       <path d="M100 42 Q98 56 60 58 Q96 52 106 38 z" fill="#8a8e93" opacity="0.7"/>`;
+  } else if (kind === "wok") {
+    body = `<path d="M8 36 Q14 66 60 68 Q106 66 112 36 z" fill="#2b2a2a" ${LINE}/>
+      <path d="M100 42 Q96 62 62 66 Q94 58 106 38 z" fill="#111" opacity="0.6"/>
+      <rect x="110" y="32" width="10" height="5" rx="2" fill="#5a3a22" ${LINE}/>
+      <rect x="118" y="31" width="2" height="7" fill="#3b2a20"/>`;
+  } else if (kind === "plate") {
+    body = `<ellipse cx="60" cy="40" rx="56" ry="24" fill="#f7f4ec" ${LINE}/>
+      <ellipse cx="60" cy="40" rx="50" ry="20" fill="none" stroke="#2c6a96" stroke-width="2"/>`;
   } else if (kind === "pot") {
     body = `<path d="M8 36 Q8 72 60 74 Q112 72 112 36 z" fill="#8f4428" ${LINE}/>
       <path d="M100 42 Q98 68 62 72 Q96 64 106 38 z" fill="#6e321d" opacity="0.7"/>
@@ -687,7 +907,8 @@ function vessel({ kind = "bowl", sauce = null, pieces = [], seed = "x", sheen = 
       <path d="M100 44 Q98 72 62 80 Q96 68 104 40 z" fill="#000" opacity="0.18"/>
       <path d="M18 52 Q60 66 102 52" fill="none" stroke="#f1ddb8" stroke-width="2.4" stroke-dasharray="1 6" stroke-linecap="round"/>`;
   }
-  const rim = kind === "tin" ? "#c3c6c9" : kind === "pot" ? "#a3502f" : glaze === "#b35a36" ? "#c46a43" : glaze;
+  const rim =
+    kind === "tin" ? "#c3c6c9" : kind === "pot" ? "#a3502f" : kind === "wok" ? "#3d3b3a" : kind === "plate" ? "#f7f4ec" : glaze === "#b35a36" ? "#c46a43" : glaze;
 
   // Flames under a pot on the hob: as many tongues as the heat is high.
   let fire = "";
@@ -722,12 +943,13 @@ function vessel({ kind = "bowl", sauce = null, pieces = [], seed = "x", sheen = 
      ${body}
      <ellipse cx="${cx}" cy="${cy}" rx="${rx + 6}" ry="${ry + 5}" fill="${rim}" ${LINE}/>
      <defs><clipPath id="${clip}"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/></clipPath></defs>
-     <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sauce || (kind === "tin" ? "#8a8e93" : "#4a2e22")}" ${THIN}/>
+     <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sauce || (kind === "tin" ? "#8a8e93" : kind === "plate" ? "#f7f4ec" : kind === "wok" ? "#1f1e1e" : "#4a2e22")}" ${kind === "plate" ? "" : THIN}/>
      <g clip-path="url(#${clip})">
        ${bits}
        ${sheen ? `<ellipse cx="${cx - 14}" cy="${cy - 6}" rx="16" ry="3.5" fill="#ffe8a8" opacity="0.28"/>` : ""}
      </g>
-     ${slice}`,
+     ${slice}
+     ${lime ? `<g transform="translate(98 26) rotate(-20)"><path d="M-10 0 A10 10 0 0 1 10 0 z" fill="#a8cf5a" ${LINE}/><path d="M0 0 L-5 -5 M0 0 L0 -7 M0 0 L5 -5" stroke="#e4f1c4" stroke-width="1"/></g>` : ""}`,
     "0 0 120 90",
   );
 }
@@ -747,6 +969,9 @@ const IN_POT = {
   beef: ["beef", 7], chicken: ["chicken", 9], olives: ["olive", 7], capers: ["caper", 10],
   bay: ["bay", 1], cinnamon: ["cinnamon", 1], allspice: ["berry", 5], cloves: ["berry", 3], oregano: ["oregano", 12],
   blackpepper: ["speck", 8], parsley: ["parsley", 10], dill: ["dill", 10], mint: ["mint", 8],
+  ginger: ["ginger", 4], staranise: ["staranise", 3], cassia: ["cinnamon", 1], shallots: ["shallot", 8], chilli: ["chilliring", 5],
+  thaibasil: ["basil", 5], coriander: ["coriander", 8], beansprouts: ["sprout", 10], lettuce: ["lettuce", 6], waterspinach: ["waterspinach", 24],
+  ricenoodles: ["noodle", 14], vermicelli: ["vermicelli", 20], prawns: ["prawn", 8], fish: ["fishsteak", 4],
 };
 
 /*
@@ -755,13 +980,15 @@ const IN_POT = {
  * vegetables are the one case where what goes in is not what shows.
  */
 export function cooking({ recipe, added, sauce, heat }) {
-  const kind = recipe.vessel === "tin" ? "tin" : recipe.vessel === "bowl" ? "bowl" : "pot";
+  const kind = ["tin", "bowl", "wok", "plate"].includes(recipe.vessel) ? recipe.vessel : "pot";
   let pieces = [...new Set(added)].map((id) => IN_POT[id]).filter(Boolean);
   if (recipe.id === "gemista" && added.includes("rice")) {
     pieces = [["wedge", 6], ["stuffedPepper", 3], ["stuffedTomato", 4], ["parsley", 6]];
   }
-  const sheen = added.includes("oil");
-  return vessel({ kind, seed: recipe.id + added.length, sauce, pieces, sheen, heat, glaze: kind === "bowl" ? "#2c6a96" : "#b35a36" });
+  const sheen = added.includes("oil") || added.includes("neutraloil");
+  if (recipe.id === "goicuon" && added.includes("prawns")) pieces = [["roll", 5]];
+  const glaze = recipe.glaze || (kind === "bowl" ? "#2c6a96" : "#b35a36");
+  return vessel({ kind, seed: recipe.id + added.length, sauce, pieces, sheen: sheen && kind !== "plate", heat, glaze });
 }
 
 /*
@@ -776,14 +1003,18 @@ const PREPARED = {
   courgette: ["courgette", 8], pepper: ["pepper", 8], cucumber: ["cucumber", 7], spinach: ["spinach", 14], greenbeans: ["greenbean", 12],
   beans: ["bean", 22], chickpeas: ["chickpea", 20], lentils: ["lentil", 50], gigantes: ["gigante", 12], splitpeas: ["pea", 34],
   beef: ["beef", 6], parsley: ["parsley", 22], dill: ["dill", 18], mint: ["mint", 14], capers: ["caper", 12],
+  ginger: ["ginger", 8], shallots: ["shallot", 12], chilli: ["chilliring", 10], thaibasil: ["basil", 12], coriander: ["coriander", 12],
+  beansprouts: ["sprout", 16], lettuce: ["lettuce", 8], waterspinach: ["waterspinach", 12], ricenoodles: ["noodle", 10],
+  vermicelli: ["vermicelli", 18], prawns: ["prawn", 6], fish: ["fishsteak", 2],
 };
 const PULP = [
   [/grated/, { tomato: "#d8442f", onion: "#efe2c0", redonion: "#c9a0b8" }],
-  [/juiced/, { lemon: "#f3dc6a" }],
+  [/juiced/, { lemon: "#f3dc6a", lime: "#d6e8a0" }],
   [/beaten/, { eggs: "#f2c84a" }],
   [/whisked/, { tahini: "#e2cfa6" }],
   [/charred/, { aubergine: "#a8906e" }],
-  [/crushed|pounded/, { garlic: "#efe6cc" }],
+  [/crushed|pounded|minced/, { garlic: "#efe6cc" }],
+  [/charred/, { onion: "#4a3428", ginger: "#6a4a2a" }],
 ];
 
 export function prepared(id, how = "") {

@@ -17,7 +17,6 @@
  * recipe page can never tell two different stories.
  */
 
-import { BY_ID } from "./pantry.js";
 import { ingredient, prepared, cooking, dish } from "./art.js";
 
 const el = (tag, cls, text) => {
@@ -40,9 +39,11 @@ export class CookAlong {
    * @param {object} o
    * @param {(id: string) => void} o.openCard   shows an ingredient's card
    * @param {() => void} o.onExit               back to the recipe page
+   * @param {() => object} o.byId               the current kitchen's pantry
    */
-  constructor({ openCard, onExit }) {
+  constructor({ openCard, onExit, byId }) {
     this.openCard = openCard;
+    this.byId = byId;
     this.onExit = onExit;
     this.root = document.getElementById("cook");
     this.vesselEl = document.getElementById("cook-vessel");
@@ -141,7 +142,7 @@ export class CookAlong {
       b.type = "button";
       const pic = art("prep-art", ready ? prepared(id, this.howBefore(id)) : ingredient(id));
       const words = el("span", "prep-words");
-      const name = el("b", null, BY_ID[id].name);
+      const name = el("b", null, this.byId()[id].name);
       const state = el("span", "prep-state", how ? `tap to prepare — ${how}` : ready ? this.howBefore(id) || "ready" : "goes in as it is");
       words.append(name, state);
       b.append(pic, words);
@@ -211,6 +212,12 @@ export class CookAlong {
       }
       this.apply(this.st, step);
       setTimeout(() => {
+        // What went in has left the board; close the gap it would leave.
+        for (const id of step.add || []) {
+          const chip = this.chips.get(id);
+          if (chip) chip.b.hidden = true;
+        }
+        this.boardEl.hidden = ![...this.chips.values()].some((c) => !c.b.hidden);
         this.paintVessel(this.st);
         if (step.why) this.whyEl.open = true;
         this.done = true;

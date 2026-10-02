@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.3.0'; // seventeen dishes, a pantry that lights up, and a step-by-step cook-along
+const VERSION = 'v0.4.0'; // a second kitchen: Vietnam, five dishes, beside the Greek one
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -32,6 +32,8 @@ const ASSETS = [
   './js/recipes.js',
   './js/art.js',
   './js/cookalong.js',
+  './js/kitchens.js',
+  './js/vietnam.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-180.png',

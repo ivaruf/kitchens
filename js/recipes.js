@@ -33,7 +33,7 @@ export const RECIPES = [
   {
     id: "fasolada",
     name: "Fasolada",
-    greek: "Φασολάδα",
+    native: "Φασολάδα",
     line: "White bean soup with carrot, celery and tomato in plenty of olive oil.",
     story: "Often called the national dish of Greece, and the most ordinary food there is: a pot of beans for a winter weekday, made rich by nothing more than olive oil and patience.",
     serves: "4",
@@ -105,7 +105,7 @@ export const RECIPES = [
   {
     id: "fakes",
     name: "Fakes",
-    greek: "Φακές",
+    native: "Φακές",
     line: "Brown lentil soup with bay and tomato, finished with a splash of vinegar.",
     story: "The cheapest, quickest pot in the Greek kitchen and, for many people, the taste of a school-day lunch. Ready in under an hour, with no soaking.",
     serves: "4",
@@ -166,7 +166,7 @@ export const RECIPES = [
   {
     id: "avgolemono",
     name: "Chicken avgolemono",
-    greek: "Κοτόσουπα αυγολέμονο",
+    native: "Κοτόσουπα αυγολέμονο",
     line: "Chicken and rice soup made silky with egg and lemon.",
     story: "The soup for a cold, for a new mother, for a grandmother's visit. The trick everyone's yiayia knows is the tempering: hot broth whisked into the eggs a ladle at a time, so they thicken rather than scramble.",
     serves: "4 to 6",
@@ -225,7 +225,7 @@ export const RECIPES = [
   {
     id: "tahinosoupa",
     name: "Tahinosoupa",
-    greek: "Ταχινόσουπα",
+    native: "Ταχινόσουπα",
     line: "The Lenten soup: rice simmered in water, made creamy with tahini and lemon.",
     story: "Avgolemono's fasting twin, eaten on the strict days of Lent when eggs are off the table. Tahini whisked with lemon does the egg's work, and the soup comes out just as silky.",
     serves: "4",
@@ -273,7 +273,7 @@ export const RECIPES = [
   {
     id: "revithada",
     name: "Revithada",
-    greek: "Ρεβιθάδα",
+    native: "Ρεβιθάδα",
     line: "Chickpeas baked slowly with a great many onions, olive oil and lemon.",
     story: "From Sifnos, where on Saturday night every household carried its clay pot to the baker's oven, still hot from the bread, and collected it after church on Sunday, silky and golden.",
     serves: "4",
@@ -328,7 +328,7 @@ export const RECIPES = [
   {
     id: "fasolakia",
     name: "Fasolakia",
-    greek: "Φασολάκια λαδερά",
+    native: "Φασολάκια λαδερά",
     line: "Green beans and potatoes cooked long and soft in olive oil and tomato.",
     story: "The summer lunch of every Greek household, eaten warm or at room temperature, with the bread doing the work of a spoon. Cooked until the beans are soft and the oil and tomato have become one sauce.",
     serves: "4",
@@ -392,7 +392,7 @@ export const RECIPES = [
   {
     id: "spanakorizo",
     name: "Spanakorizo",
-    greek: "Σπανακόρυζο",
+    native: "Σπανακόρυζο",
     line: "Spinach and rice cooked together with spring onion, dill and lemon.",
     story: "A spring dish for when the spinach is everywhere and cheap: a bowl of green rice that is somewhere between a pilaf and a risotto, finished with a lot of lemon.",
     serves: "4",
@@ -454,7 +454,7 @@ export const RECIPES = [
   {
     id: "soufico",
     name: "Soufico",
-    greek: "Σουφικό",
+    native: "Σουφικό",
     line: "Ikaria's summer vegetables layered in one pot and cooked down in olive oil and tomato.",
     story: "From Ikaria, the island known for its long-lived people. Whatever the garden gave in August went into one pot, without a drop of water, and came out as something much more than vegetables.",
     serves: "4",
@@ -513,7 +513,7 @@ export const RECIPES = [
   {
     id: "gemista",
     name: "Gemista",
-    greek: "Γεμιστά",
+    native: "Γεμιστά",
     line: "Tomatoes and peppers stuffed with herbed rice, baked among potato wedges.",
     story: "The dish of high summer, when the tomatoes are almost bursting. Every family argues about the herbs; everyone agrees the potatoes at the bottom of the tin, soaked in the juices, are the best part.",
     serves: "4",
@@ -569,7 +569,7 @@ export const RECIPES = [
   {
     id: "gigantes",
     name: "Gigantes plaki",
-    greek: "Γίγαντες πλακί",
+    native: "Γίγαντες πλακί",
     line: "Giant beans baked in a thick tomato sauce with dill and celery.",
     story: "Meze in every taverna and a main course in every home. Plaki means baked in a tin, and the best part is the jammy sauce at the edges, where it catches.",
     serves: "4 to 6",
@@ -625,7 +625,7 @@ export const RECIPES = [
   {
     id: "briam",
     name: "Briam",
-    greek: "Μπριάμ",
+    native: "Μπριάμ",
     line: "Summer vegetables roasted together in olive oil until soft and sticky.",
     story: "Soufico's cousin from the oven: the same garden vegetables, sliced and tumbled into one tin with plenty of oil, and left alone until the edges blacken a little.",
     serves: "4",
@@ -677,7 +677,7 @@ export const RECIPES = [
   {
     id: "lemonates",
     name: "Lemon potatoes",
-    greek: "Πατάτες λεμονάτες",
+    native: "Πατάτες λεμονάτες",
     line: "Potatoes roasted in lemon, olive oil, garlic and oregano until soft inside and golden at the edges.",
     story: "Usually the side dish to a Sunday roast chicken, and frequently the part everyone actually fights over.",
     serves: "4",
@@ -723,7 +723,7 @@ export const RECIPES = [
   {
     id: "stifado",
     name: "Stifado",
-    greek: "Στιφάδο",
+    native: "Στιφάδο",
     line: "Beef braised for hours with whole small onions, red wine, vinegar and cinnamon.",
     story: "A Sunday dish, though not an expensive one: cheap meat, a mountain of onions and a long, slow afternoon. It is just as often made with rabbit, and by the sea with octopus.",
     serves: "4 to 6",
@@ -805,7 +805,7 @@ export const RECIPES = [
   {
     id: "horiatiki",
     name: "Horiatiki",
-    greek: "Χωριάτικη σαλάτα",
+    native: "Χωριάτικη σαλάτα",
     line: "The village salad: tomato, cucumber, onion, pepper and olives, with oregano and olive oil.",
     story: "No lettuce, ever. Made only in summer when the tomatoes are worth eating raw, and served with the oil and juices pooling at the bottom of the bowl — which is what the bread is for.",
     serves: "4",
@@ -853,7 +853,7 @@ export const RECIPES = [
   {
     id: "fava",
     name: "Fava",
-    greek: "Φάβα",
+    native: "Φάβα",
     line: "A golden purée of yellow split peas, with raw onion, capers and olive oil on top.",
     story: "On Santorini it is made from a grass pea grown in the island's volcanic soil and is protected by name; everywhere else, yellow split peas. Served warm, smooth as velvet, with everything sharp piled on top.",
     serves: "4",
@@ -910,7 +910,7 @@ export const RECIPES = [
   {
     id: "melitzanosalata",
     name: "Melitzanosalata",
-    greek: "Μελιτζανοσαλάτα",
+    native: "Μελιτζανοσαλάτα",
     line: "Smoky aubergine dip with garlic, vinegar, parsley and olive oil.",
     story: "The aubergines are burnt whole over a flame until they collapse, which gives the dip its smoke. Every meze table has one, and every cook guards their own proportions.",
     serves: "4 as a meze",
@@ -959,7 +959,7 @@ export const RECIPES = [
   {
     id: "skordalia",
     name: "Skordalia",
-    greek: "Σκορδαλιά",
+    native: "Σκορδαλιά",
     line: "A thick, fierce garlic and potato dip, sharpened with vinegar.",
     story: "The traditional partner of fried salt cod on the 25th of March, and of beetroot and fried courgettes all year. Made with potato, as here, or with stale bread, which is not gluten-free.",
     serves: "4 as a meze",
@@ -1005,20 +1005,18 @@ export const RECIPES = [
   },
 ];
 
-export const RECIPE_BY_ID = Object.fromEntries(RECIPES.map((r) => [r.id, r]));
-
-/** The dishes an ingredient goes into, for its card. */
-export function dishesWith(id) {
-  return RECIPES.filter((r) => r.ingredients.some((i) => i.id === id));
+/** The dishes in `recipes` an ingredient goes into, for its card. */
+export function dishesWith(recipes, id) {
+  return recipes.filter((r) => r.ingredients.some((i) => i.id === id));
 }
 
 /**
  * What the counter could become: every dish with at least one of its key
  * ingredients on the counter, best first. `have` and `missing` are key ids.
  */
-export function suggest(counter) {
+export function suggest(recipes, counter) {
   const out = [];
-  for (const r of RECIPES) {
+  for (const r of recipes) {
     const have = r.key.filter((id) => counter.has(id));
     if (!have.length) continue;
     out.push({ recipe: r, have, missing: r.key.filter((id) => !counter.has(id)) });

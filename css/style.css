@@ -256,22 +256,56 @@ input:focus-visible {
 .home {
   text-align: center;
 }
-.home-art {
+/* The doors: one per kitchen, the same size side by side (hub §2), each a
+   few things off its own shelves above its name, in its own colours. */
+.doors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 12px;
+  margin: 10px 0 4px;
+}
+.door {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 16px 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-top: 10px solid var(--door, var(--blue));
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(60, 40, 20, 0.08);
+}
+.door:hover {
+  border-color: var(--door, var(--blue));
+  transform: translateY(-2px);
+}
+.door-greek {
+  --door: #1f5f8b;
+}
+.door-vietnam {
+  --door: #2f6b4f;
+}
+.door-art {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 2px 6px;
-  margin: 4px 0 18px;
 }
-.home-item {
-  width: 54px;
-  height: 54px;
+.door-item {
+  width: 46px;
+  height: 46px;
+  margin: 0 -3px;
 }
-.home-item:nth-child(odd) {
-  transform: translateY(4px) rotate(-4deg);
+.door-item:nth-child(odd) {
+  transform: translateY(3px) rotate(-5deg);
 }
-.home-item:nth-child(even) {
+.door-item:nth-child(even) {
   transform: rotate(5deg);
+}
+.door-words {
+  display: grid;
+  justify-items: center;
+}
+.door-words b {
+  font-size: 1.2rem;
 }
 .home-doors {
   display: grid;
@@ -719,6 +753,10 @@ input:focus-visible {
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 8px;
   margin-top: 8px;
+}
+.dish-chips > p {
+  grid-column: 1 / -1;
+  margin: 0;
 }
 .dish-chip {
   display: grid;
@@ -1173,6 +1211,50 @@ input:focus-visible {
     var(--wall);
 }
 
+
+/* ===================== the Vietnamese kitchen ===================== */
+
+/*
+ * The same structure in another kitchen's materials: jade-green lacquer for
+ * the paint that is shutter blue in Greece, lacquer red for the accents, a
+ * bamboo plank and a cream paper. Only the tokens change; every rule above
+ * reads them. The painted border along each sheet becomes a row of gold
+ * coins on red, in place of the Greek key.
+ */
+:root[data-kitchen="vietnam"] {
+  --blue: #2f6b4f;
+  --blue-deep: #1f4d38;
+  --terra: #b8322a;
+  --olive: #6b7a2a;
+  --lemon: #e8b83a;
+  --wood: #c9a24f;
+  --wash: #f3eee2;
+}
+:root[data-kitchen="vietnam"] .key {
+  background-color: #b8322a;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12' viewBox='0 0 14 12'%3E%3Ccircle cx='7' cy='6' r='3.6' fill='none' stroke='%23e8b83a' stroke-width='1.4'/%3E%3Crect x='5.6' y='4.6' width='2.8' height='2.8' fill='none' stroke='%23e8b83a' stroke-width='0.9'/%3E%3C/svg%3E");
+}
+:root[data-kitchen="vietnam"] .shelf-herbs {
+  --plank: #2f6b4f;
+}
+:root[data-kitchen="vietnam"] .shelf-spices {
+  --plank: #8a2a22;
+}
+:root[data-kitchen="vietnam"] .shelf-market {
+  --plank: #c9a24f;
+}
+:root[data-kitchen="vietnam"] .shelf-dry {
+  --plank: #b8925c;
+}
+:root[data-kitchen="vietnam"] .shelf-cold {
+  --plank: #6a7a80;
+}
+:root[data-kitchen="vietnam"] .cook-stage {
+  background:
+    linear-gradient(to bottom, transparent 70%, #c9a24f 70%, #c9a24f 100%),
+    repeating-linear-gradient(90deg, #e9dfc6 0 22px, #f3eee2 22px 26px);
+}
+
 /* ===================== corner and crash ===================== */
 
 #corner {
@@ -1419,8 +1501,7 @@ input[type="range"]::-moz-range-thumb {
     grid-template-areas:
       "kick doors"
       "logo doors"
-      "tag doors"
-      "art doors";
+      "tag doors";
     column-gap: 24px;
     align-items: center;
   }
@@ -1435,16 +1516,16 @@ input[type="range"]::-moz-range-thumb {
     grid-area: tag;
     margin: 0;
   }
-  .home > .home-art {
-    grid-area: art;
-    margin: 8px 0 0;
-  }
+
   .home > .home-doors {
     grid-area: doors;
   }
-  .home-item {
-    width: 40px;
-    height: 40px;
+  .door-item {
+    width: 34px;
+    height: 34px;
+  }
+  .door {
+    padding: 10px;
   }
   .pantry-head {
     padding-right: 150px;

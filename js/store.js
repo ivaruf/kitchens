@@ -9,8 +9,9 @@
  *                          true meaning "cook without it". This is health
  *                          information about somebody's family, which is the
  *                          strongest possible reason it never leaves the device.
- *   kitchens.counter.v1    what is on the counter, as pantry ids, so a browse
- *                          can be picked up where it was left.
+ *   kitchens.counter.v1    what is on each kitchen's counter, as
+ *                          { kitchenId: [pantry ids] }, so a browse can be
+ *                          picked up where it was left.
  *   kitchens.vol.*.v1      the two sound levels and the mute (hub §2). The
  *                          kitchen is silent for now; the levels are real so the
  *                          day it is not, it arrives at the level already chosen.
@@ -58,14 +59,23 @@ export function saveDiet(diet) {
   write(DIET_KEY, { dairy: !!diet.dairy, egg: !!diet.egg, gluten: !!diet.gluten });
 }
 
-/** The counter, filtered to ids the pantry still has. */
-export function loadCounter(known) {
-  const saved = read(COUNTER_KEY);
-  return new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string" && known.has(id)) : []);
+/**
+ * One kitchen's counter, filtered to ids its pantry still has. Before there
+ * were two kitchens this key held a bare array; that was the Greek counter.
+ */
+export function loadCounter(kitchen, known) {
+  let saved = read(COUNTER_KEY);
+  if (Array.isArray(saved)) saved = { greek: saved };
+  const ids = saved && typeof saved === "object" && Array.isArray(saved[kitchen]) ? saved[kitchen] : [];
+  return new Set(ids.filter((id) => typeof id === "string" && known.has(id)));
 }
 
-export function saveCounter(set) {
-  write(COUNTER_KEY, [...set]);
+export function saveCounter(kitchen, set) {
+  let saved = read(COUNTER_KEY);
+  if (Array.isArray(saved)) saved = { greek: saved };
+  if (!saved || typeof saved !== "object") saved = {};
+  saved[kitchen] = [...set];
+  write(COUNTER_KEY, saved);
 }
 
 /** A level 0..1, rejecting anything non-finite somebody else may have left. */

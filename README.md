@@ -1,6 +1,6 @@
 # Kitchens
 
-An immersive cookbook. Browse a painted Greek pantry, put what tempts you on
+An immersive cookbook. Choose a kitchen, Greek or Vietnamese, browse its painted pantry, put what tempts you on
 the counter, and see which traditional dishes it could become, with recipes
 that explain why each step matters, and notes for a table with different
 needs.
@@ -37,7 +37,13 @@ avgolemono and its Lenten twin tahinosoupa), ladera (revithada, fasolakia,
 spanakorizo, soufico), oven dishes (gemista, gigantes plaki, briam, lemon
 potatoes), stifado, and meze (horiatiki, fava, melitzanosalata, skordalia).
 
-Text is selectable on purpose; see `CLAUDE.md`.
+A second, smaller kitchen, Vietnamese, has five dishes: phở bò, nước chấm,
+gỏi cuốn, cá kho tộ and rau muống xào tỏi. It shares every screen with the
+Greek one and brings its own palette, border and lessons, among them that
+soy sauce and most hoisin contain wheat. Kitchens are registered in
+`js/kitchens.js`; the Vietnamese content is `js/vietnam.js`.
+
+Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 
 ## Files
 
