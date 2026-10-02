@@ -17,6 +17,9 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     one shop, less waste).
   - *Where a set starts:* **both**: a recipe page offers the dishes that go
     with it, and the counter offers sets built from what is on it.
+  - *Shape of a meal:* **by course, flexible**: prefer main + side + meze or
+    salad, and fall back to any well-sharing pair when a kitchen has no good
+    fit (Vietnam has only five dishes). Each dish will need a course tag.
 
 - **Alternative ingredient suggestions.** Asked for 2026-10-02. To be scoped
   with the owner after the synergy item, one question at a time.
