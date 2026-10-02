@@ -2,9 +2,13 @@
 
 Things agreed as wanted but not yet built. Newest at the bottom.
 
-- **How the counter is used.** Today it holds what tempts you and suggests
-  dishes by key ingredients. What it is *for* beyond that is still to be
-  decided.
+- **How the counter is used.** The owner found it "mostly redundant" as it
+  was (2026-10-02): a holding area whose suggestions repeat the recipes and
+  sets, and whose "put it all on the counter" led nowhere.
+  - *Its new job:* **"What I have at home."** Mark what is already in the
+    fridge and cupboard; the planner prefers dinners that use it up, and
+    every shopping list leaves it off. "Put it all on the counter" goes away.
+    Being scoped one question at a time.
 
 - **Plan meals without choosing a kitchen first.** Asked for 2026-10-02.
   Dive into suggestions and a meal plan straight from the front door, across
