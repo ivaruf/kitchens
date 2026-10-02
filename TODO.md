@@ -22,3 +22,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     would eat it and the younger (5) maybe only carrots: *"we need to keep
     serving still"*. Veg is offered at every table, not left out because it
     may be refused.
+  - *Who the planner knows:* **keep it simple**: no people, no "children"
+    switch. Every planned meal gets a plain side and a veg from the everyday
+    kitchen, whatever the main is.
