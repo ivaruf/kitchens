@@ -57,7 +57,7 @@ Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 | `js/pantry.js` | Content: every ingredient and what a player reads about it |
 | `js/recipes.js` | Content: the dishes, their method and reasons, table notes, and the counter's matching |
 | `js/art.js` | Every picture, as SVG: the ingredients and the finished bowls |
-| `js/main.js` | Screens, shelves, counter, card, recipe page, corner and menu |
+| `js/main.js` | Screens, shelves, counter, card, recipe page, language flags |
 | `js/store.js` | localStorage, all under `kitchens.` |
 | `js/cookalong.js` | The step-by-step cook-along: prepare on the board, watch the pot fill |
 | `js/i18n.js`, `js/nb.js`, `js/nb/` | English and bokmål: interface words and the Norwegian content overlays |
