@@ -1,0 +1,16 @@
+{
+  "name": "Kitchens — Real dishes, one step at a time",
+  "short_name": "Kitchens",
+  "description": "An immersive cookbook. Cook real dishes from traditional kitchens step by step, see what each choice does to the pot and why, and cook for a table with different needs.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1f5f8b",
+  "theme_color": "#1f5f8b",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

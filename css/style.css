@@ -1,0 +1,924 @@
+/*
+ * style.css — a whitewashed Greek kitchen, in paper and paint.
+ *
+ * THE MATERIALS: lime-washed walls, shutter blue, terracotta, olive wood, a
+ * lemon on the sill. Panels are sheets of recipe paper with a painted Greek
+ * key along the top; the yiayia's notes are set in an italic serif like a
+ * hand-copied card. When the next kitchen arrives it brings its own palette
+ * through these custom properties and the structure stays put.
+ *
+ * NO WEB FONTS (hub §1): an old-style serif stack that every platform has
+ * something close to, and the system sans for controls.
+ *
+ * Two layout rules from hub §2 are load-bearing: labels share one gutter so
+ * controls line up down the card, and equal choices are `flex: 1 1 0` so the
+ * equal options look equal. The landscape-phone block at the bottom is the
+ * third.
+ */
+
+:root {
+  --wash: #f4efe4;
+  --paper: #fbf8f1;
+  --ink: #2b2622;
+  --muted: #6f655b;
+  --line: #ddd4c2;
+  --blue: #1f5f8b;
+  --blue-deep: #164766;
+  --terra: #b35a36;
+  --olive: #5e6b32;
+  --lemon: #e8c547;
+  --good: #4f6b2a;
+  --warn: #9a6a1f;
+  --bad: #a8322a;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --tap: 44px;
+  --gutter: 8.5rem;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--wash);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* A game, not a document (hub §2). A floury thumb resting on the card is a
+   long press; nothing selects and nothing opens a callout except a real
+   field. js/touch-guard.js is the other half. */
+html,
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* ===================== type ===================== */
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0.2em 0 0.4em;
+}
+h1 {
+  font-size: clamp(2.6rem, 9vw, 4.2rem);
+  color: var(--blue-deep);
+  letter-spacing: 0.01em;
+}
+h2 {
+  font-size: clamp(1.5rem, 4.5vw, 2rem);
+}
+h3 {
+  font-size: 1.15rem;
+}
+h1:focus,
+h2:focus {
+  outline: none;
+}
+.kicker {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terra);
+  font-weight: 600;
+}
+.tagline,
+.hint {
+  color: var(--muted);
+  margin: 0.4em 0 1em;
+}
+.small {
+  font-size: 0.85rem;
+}
+
+/* ===================== screens and paper ===================== */
+
+.screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) max(16px, env(safe-area-inset-right, 0px))
+    calc(env(safe-area-inset-bottom, 0px) + 24px) max(16px, env(safe-area-inset-left, 0px));
+  display: grid;
+  justify-items: center;
+  align-content: start;
+}
+
+/* A sheet of recipe paper. */
+.paper {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 28px clamp(16px, 4vw, 32px) 24px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 10px 30px rgba(60, 40, 20, 0.08);
+}
+.paper.wide {
+  max-width: 980px;
+}
+
+/* The Greek key, painted along the top edge of every sheet. */
+.key {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 12px;
+  border-radius: 6px 6px 0 0;
+  background-color: var(--blue);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='12' viewBox='0 0 16 12'%3E%3Cpath d='M0 10.5h12.5v-9h-9v6h5v-3' fill='none' stroke='%23fbf8f1' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: 4px 0;
+}
+
+/* ===================== buttons ===================== */
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button:focus-visible,
+.option:focus-visible,
+summary:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--lemon);
+  outline-offset: 2px;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.primary,
+.ghost {
+  min-height: var(--tap);
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.primary {
+  background: var(--blue);
+  color: #fff;
+  border: 1px solid var(--blue-deep);
+}
+.primary:not(:disabled):hover {
+  background: var(--blue-deep);
+}
+.ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.ghost:not(:disabled):hover {
+  border-color: var(--blue);
+  color: var(--blue-deep);
+}
+
+/* Peers in one row get one size (hub §2): flex 1 1 0, never auto. */
+.pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.pair > * {
+  flex: 1 1 0;
+  min-width: 10rem;
+}
+
+/* ===================== home ===================== */
+
+.home-head {
+  text-align: center;
+  padding-top: 8px;
+}
+.home-doors {
+  display: grid;
+  gap: 10px;
+}
+.home-doors > .primary {
+  font-size: 1.1rem;
+  min-height: 52px;
+}
+#table-summary {
+  text-align: center;
+  margin: 4px 0 0;
+}
+.home-foot {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+#update {
+  display: grid;
+  min-height: var(--tap);
+  border-radius: 10px;
+  border: 1px dashed var(--terra);
+  background: #fff6ea;
+  padding: 8px 14px;
+  text-align: center;
+}
+#update[hidden] {
+  display: none;
+}
+.update-title {
+  font-weight: 700;
+  color: var(--terra);
+}
+.update-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+#build {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ===================== the table ===================== */
+
+.needs {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+.need,
+.option {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  min-height: var(--tap);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+.need small,
+.option small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.need[aria-pressed="true"],
+.option[aria-pressed="true"] {
+  background: var(--blue);
+  border-color: var(--blue-deep);
+  color: #fff;
+}
+.need[aria-pressed="true"] small,
+.option[aria-pressed="true"] small {
+  color: rgba(255, 255, 255, 0.82);
+}
+.need b::before {
+  content: "";
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.5em;
+  vertical-align: -0.1em;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+.need[aria-pressed="true"] b::before {
+  background: var(--lemon);
+  border-color: var(--lemon);
+}
+
+/* ===================== the board ===================== */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 14px;
+  margin: 14px 0 18px;
+}
+.dish {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: #fff;
+  border-top: 4px solid var(--terra);
+}
+.dish.later {
+  border-top-color: var(--line);
+}
+.dish header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dish h3 {
+  margin: 0;
+}
+.greek {
+  font-family: var(--serif);
+  color: var(--muted);
+  font-style: italic;
+}
+.dish p {
+  margin: 8px 0 0;
+}
+.teaches {
+  color: var(--olive);
+  font-size: 0.88rem;
+}
+.fit {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  font-size: 0.86rem;
+  display: grid;
+  gap: 6px;
+}
+.fit li {
+  padding-left: 12px;
+  border-left: 3px solid var(--good);
+}
+.fit li.care {
+  border-left-color: var(--warn);
+}
+.fit b {
+  color: var(--ink);
+}
+.dish .pair {
+  margin-top: 14px;
+}
+
+/* ===================== lessons ===================== */
+
+.lesson {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--olive);
+  border-radius: 6px;
+  background: #fff;
+  padding: 0 14px;
+  margin: 8px 0;
+}
+.lesson summary {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.02rem;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.lesson p {
+  margin: 0 0 12px;
+}
+.lesson.intro {
+  border-left-color: var(--blue);
+}
+.new {
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--lemon);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.lessons {
+  margin-top: 14px;
+}
+.lesson-line {
+  margin: 4px 0;
+  font-family: var(--serif);
+}
+
+/* ===================== the kitchen ===================== */
+
+#kitchen {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 1fr);
+  gap: 16px;
+  align-items: start;
+  justify-items: stretch;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+#kitchen[hidden] {
+  display: none;
+}
+.stove-wrap {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--wash);
+}
+#stove {
+  display: block;
+  width: 100%;
+  height: min(70vh, 560px);
+  touch-action: none;
+}
+#pot-line {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(251, 248, 241, 0.88);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+#pot-line:empty {
+  display: none;
+}
+#card {
+  max-width: none;
+}
+
+/* Yiayia's voice: a hand-copied card. */
+.yiayia {
+  margin: 4px 0 16px;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid var(--terra);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.06rem;
+  color: #3e352e;
+}
+
+/* A row: one shared gutter for every label (hub §2). */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  margin: 10px 0;
+}
+.label {
+  flex: 0 0 var(--gutter);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+/*
+ * On the recipe card a choice's caption sits above its options rather than
+ * in a side gutter: the card is narrow, and three alternatives must stay one
+ * row of three equal boxes rather than wrapping two-and-one, which reads as
+ * the lone third option being different in kind (hub §2). Every caption
+ * still starts at the same x. Up to three options are always one row; more
+ * than that fall into equal columns.
+ */
+#card .row {
+  display: grid;
+  gap: 6px;
+}
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: 8px;
+}
+.options[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.options[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.options.compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.options.compact .option {
+  padding: 8px 10px;
+  text-align: center;
+  justify-items: center;
+}
+.tag {
+  justify-self: start;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  color: var(--muted);
+}
+.tag.clash {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: #fff;
+}
+.option[aria-pressed="true"] .tag:not(.clash) {
+  color: #fff;
+}
+
+.card-actions {
+  display: grid;
+  margin-top: 18px;
+}
+#step-go {
+  min-height: 52px;
+  font-size: 1.05rem;
+}
+
+/* The meter: zones painted along the bar, the sweet spot outlined. */
+.run-label {
+  margin: 4px 0 8px;
+  font-weight: 600;
+}
+.meter {
+  position: relative;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+.meter .sweet {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  border: 2px solid var(--lemon);
+  border-radius: 8px;
+}
+.meter .mark {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 4px;
+  margin-left: -2px;
+  background: var(--ink);
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px var(--paper);
+}
+.zone {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-style: italic;
+  margin: 10px 0 0;
+  min-height: 1.6em;
+}
+
+/* What yiayia says. */
+.say {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #f3eee3;
+  border-left: 3px solid var(--line);
+}
+.say.good {
+  border-left-color: var(--good);
+}
+.say.warn {
+  border-left-color: var(--warn);
+}
+.say.bad {
+  border-left-color: var(--bad);
+}
+
+/* The simmer and the spoon. */
+.clock {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  margin: 0 0 8px;
+}
+.gauges,
+.taste {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+.gauge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.track {
+  position: relative;
+  flex: 1;
+  height: 12px;
+  border-radius: 999px;
+  background: #ebe4d6;
+  overflow: visible;
+}
+.track > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--olive);
+}
+.track.band > b {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(94, 107, 50, 0.3);
+  border-radius: 999px;
+}
+.track.band > .dot {
+  inset: -4px auto -4px auto;
+  width: 20px;
+  margin-left: -10px;
+  background: var(--good);
+  border: 2px solid var(--paper);
+}
+.gauge.off .dot {
+  background: var(--bad);
+}
+.tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+.tools .option {
+  text-align: center;
+  justify-items: center;
+  align-content: center;
+}
+.log {
+  min-height: 3em;
+}
+
+/* ===================== the meal ===================== */
+
+.verdict {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 16px;
+  margin: 10px 0 16px;
+}
+.verdict-row {
+  display: contents;
+}
+.verdict-row b {
+  font-family: var(--serif);
+}
+.verdict-row span {
+  padding-left: 12px;
+  border-left: 3px solid var(--good);
+}
+.verdict-row.off span {
+  border-left-color: var(--warn);
+}
+.table-check {
+  margin-bottom: 8px;
+}
+#result-board {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* ===================== the recipe ===================== */
+
+.ingredients,
+.method {
+  padding-left: 1.3em;
+}
+.ingredients li,
+.method li {
+  margin: 6px 0;
+}
+.ingredients .note {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--warn);
+}
+
+/* ===================== menu, corner, crash ===================== */
+
+#menu-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 38, 34, 0.35);
+  z-index: 20;
+}
+#menu {
+  position: fixed;
+  z-index: 21;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 440px);
+  max-height: 92vh;
+  overflow: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 12px solid var(--blue);
+  border-radius: 8px;
+  padding: 20px 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  display: grid;
+  gap: 6px;
+}
+#menu:focus {
+  outline: none;
+}
+#menu .label {
+  flex-basis: 5.5rem;
+}
+.slider {
+  flex: 1 1 10rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.slider output {
+  min-width: 2.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 28px;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #e3dbcb;
+}
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #e3dbcb;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--terra);
+  border: 3px solid var(--paper);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--terra);
+  border: 3px solid var(--paper);
+}
+
+#corner {
+  position: fixed;
+  z-index: 30;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  right: max(10px, env(safe-area-inset-right, 0px));
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(251, 248, 241, 0.92);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(60, 40, 20, 0.1);
+}
+.icon-button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--blue-deep);
+}
+/* [hidden] loses to display:grid without this — written every time (hub §2). */
+.icon-button[hidden] {
+  display: none;
+}
+.icon-button:hover {
+  background: rgba(31, 95, 139, 0.1);
+}
+.icon-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon-button .icon-on,
+.icon-button .icon-slash {
+  display: none;
+}
+.icon-button[aria-pressed="true"] .icon-off,
+#mute-toggle[aria-pressed="true"] .icon-waves {
+  display: none;
+}
+.icon-button[aria-pressed="true"] .icon-on,
+#mute-toggle[aria-pressed="true"] .icon-slash {
+  display: inline;
+}
+#mute-toggle[aria-pressed="true"] {
+  color: var(--terra);
+}
+
+#crash {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 10px);
+  background: var(--bad);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+/* ===================== narrow and upright ===================== */
+
+/* Upright: the pot on top, the card beneath it. The pot stays in view as you
+   scroll the card, so a choice and its picture are never apart. */
+@media (max-width: 760px) {
+  #kitchen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .stove-wrap {
+    z-index: 5;
+  }
+  #stove {
+    height: 34vh;
+  }
+  :root {
+    --gutter: 100%;
+  }
+  .label {
+    flex-basis: 100%;
+  }
+}
+
+/*
+ * A phone on its side (hub §2): 300–430px tall, width to spare. The home
+ * screen becomes two columns — the wordmark one side, the doors the other —
+ * laid over the same markup, and the kitchen keeps its side-by-side layout
+ * with a shorter pot. Tablets are taller than 500px either way up and keep
+ * the layouts above.
+ */
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+  }
+  #home .paper {
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+  h1 {
+    font-size: 2.6rem;
+  }
+  .home-doors > .primary {
+    min-height: 44px;
+  }
+  #kitchen {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 1.1fr);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 60px);
+  }
+  .stove-wrap {
+    top: calc(env(safe-area-inset-top, 0px) + 60px);
+  }
+  #stove {
+    height: calc(100vh - 90px);
+  }
+  :root {
+    --gutter: 6.5rem;
+  }
+  .label {
+    flex-basis: var(--gutter);
+  }
+}
