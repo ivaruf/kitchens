@@ -13,3 +13,5 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   - *Why someone swaps (2026-10-02):* **"I don't have it"** — practical: the
     shop had no Thai basil, the cupboard no giant beans. What can I use
     instead, and what will it change? Not primarily diet, not exploring.
+  - *Where:* **on the ingredient's card** — its general stand-ins, wherever it
+    is used. Not per-dish notes on the recipe.
