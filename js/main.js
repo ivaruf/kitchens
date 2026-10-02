@@ -1,21 +1,25 @@
 /*
- * main.js — the house: which screen is showing, the corner, the menu, the
- * table settings, the dish board, the notebook and the meal at the end.
+ * main.js — the house: the pantry shelves, the counter, the ingredient card,
+ * the recipe page, the table settings, the corner and the menu.
  *
- * The cooking itself is js/cook.js running a dish file (js/stifado.js) against
- * the pot model (js/pot.js), drawn by js/draw.js. This file never reaches into
- * a step; it starts a cook, and is told when the cook sits down to eat.
+ * THE IDEA IN ONE LINE: browsing, not filling in. Nothing here asks the player
+ * a question. They look along painted shelves, tap what catches their eye to
+ * read about it, put what tempts them on the counter, and the counter answers
+ * with the dishes those things could become — what they already have, and the
+ * little that is missing. A recipe is a page to read, with the reason behind
+ * every step one tap away.
  *
- * SCREENS are sibling <section>s and exactly one is visible. The recipe, the
- * notebook and the table settings can be opened from more than one place, so
- * each remembers where it was opened from and its Back goes there.
+ * Content lives in js/pantry.js and js/recipes.js; every picture comes from
+ * js/art.js. This file only arranges them and keeps the counter.
+ *
+ * SCREENS are sibling <section>s and exactly one is visible. The ingredient
+ * card and the menu are sheets over whatever screen is showing.
  */
 
-import { loadDiet, saveDiet, loadNotebook, saveNotebook, loadSound, saveSound, NEEDS } from "./store.js";
-import { DISHES, LESSONS, NEED_LABEL, STIFADO_RECIPE } from "./dishes.js";
-import { STIFADO, verdict } from "./stifado.js";
-import { Stove } from "./draw.js";
-import { Cook } from "./cook.js";
+import { loadDiet, saveDiet, loadCounter, saveCounter, loadSound, saveSound, NEEDS } from "./store.js";
+import { INGREDIENTS, SHELVES, BY_ID } from "./pantry.js";
+import { RECIPES, RECIPE_BY_ID, dishesWith, suggest, FASTING_NOTE } from "./recipes.js";
+import { ingredient, dish } from "./art.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -24,14 +28,21 @@ const el = (tag, cls, text) => {
   if (text != null) n.textContent = text;
   return n;
 };
+const art = (cls, markup) => {
+  const n = el("span", cls);
+  n.innerHTML = markup;
+  return n;
+};
+
+const NEED_WORD = { dairy: "dairy", egg: "egg", gluten: "gluten" };
 
 let diet = loadDiet();
-const notebook = loadNotebook();
+const counter = loadCounter(new Set(Object.keys(BY_ID)));
 const sound = loadSound();
 
 /* ---------------------------------------------------------------- screens */
 
-const SCREENS = ["home", "table", "dishes", "kitchen", "result", "recipe", "notebook"];
+const SCREENS = ["home", "table", "pantry", "recipe"];
 let current = "home";
 const cameFrom = {};
 
@@ -47,29 +58,26 @@ function show(id, from) {
   }
 }
 
-for (const btn of document.querySelectorAll(".back-btn")) {
-  const screen = btn.closest(".screen").id;
-  btn.addEventListener("click", () => {
-    const to = cameFrom[screen] || "home";
-    if (screen === "table") paintBoard();
-    show(to);
-  });
-}
-
 /* ------------------------------------------------------------- the table */
 
-function activeNeeds() {
-  return NEEDS.filter((n) => diet[n]);
+const activeNeeds = () => NEEDS.filter((n) => diet[n]);
+
+function listOf(words) {
+  if (words.length < 2) return words.join("");
+  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
+}
+
+function tableWords() {
+  const needs = activeNeeds();
+  return needs.length ? `Cooking without ${listOf(needs.map((n) => NEED_WORD[n]))}` : "Cooking for everyone";
 }
 
 function paintTable() {
   for (const b of document.querySelectorAll(".need")) {
     b.setAttribute("aria-pressed", String(!!diet[b.dataset.need]));
   }
-  const needs = activeNeeds();
-  $("table-summary").textContent = needs.length
-    ? `Cooking without ${listOf(needs.map((n) => NEED_LABEL[n]))}.`
-    : "Cooking for a table that eats everything.";
+  $("table-summary").textContent = `${tableWords()}.`;
+  $("table-chip").textContent = tableWords();
 }
 
 for (const b of document.querySelectorAll(".need")) {
@@ -80,180 +88,347 @@ for (const b of document.querySelectorAll(".need")) {
   });
 }
 
-function listOf(words) {
-  if (words.length < 2) return words.join("");
-  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
+document.querySelector("#table .back-btn").addEventListener("click", () => {
+  const to = cameFrom.table || "home";
+  if (to === "pantry") paintPantry();
+  show(to);
+});
+
+/* Does this ingredient clash with the table? Returns the needs it breaks. */
+const clashes = (item) => (item.contains || []).filter((n) => diet[n]);
+
+/* ------------------------------------------------------------ the shelves */
+
+function paintShelves() {
+  const list = $("shelf-list");
+  list.replaceChildren();
+  for (const shelf of SHELVES) {
+    const sec = el("section", `shelf shelf-${shelf.id}`);
+    const head = el("header", "shelf-head");
+    head.append(el("h3", null, shelf.name), el("p", null, shelf.note));
+    const row = el("div", "items");
+    for (const item of INGREDIENTS.filter((i) => i.shelf === shelf.id)) {
+      const b = el("button", "item");
+      b.type = "button";
+      b.dataset.id = item.id;
+      b.append(art("item-art", ingredient(item.id)));
+      const tag = el("span", "tag", item.name);
+      if (clashes(item).length) {
+        tag.classList.add("clash");
+        tag.append(el("span", "sr", ` — contains ${listOf(clashes(item))}`));
+      }
+      b.append(tag);
+      b.addEventListener("click", () => openCard(item.id));
+      row.append(b);
+    }
+    sec.append(head, row);
+    list.append(sec);
+  }
+  markShelves();
 }
 
-/* ------------------------------------------------------------- the board */
-
-function paintBoard() {
-  const fasting = $("fasting");
-  fasting.replaceChildren(el("summary", null, LESSONS.fasting.title), el("p", null, LESSONS.fasting.body));
-  // Reading it is learning it: the one lesson the board teaches, not the stove.
-  fasting.ontoggle = () => fasting.open && learn("fasting");
-
-  const board = $("board");
-  board.replaceChildren();
-  const needs = activeNeeds();
-  for (const dish of DISHES) {
-    const card = el("article", `dish${dish.playable ? "" : " later"}`);
-    const head = el("header");
-    head.append(el("h3", null, dish.name), el("span", "greek", dish.greek));
-    card.append(head, el("p", null, dish.line), el("p", "teaches", `Teaches: ${dish.teaches}`));
-
-    // What this dish means for this table, need by need.
-    const fit = el("ul", "fit");
-    for (const need of needs) {
-      const how = dish.freeBy[need];
-      const li = el("li", how ? "care" : "free");
-      li.append(el("b", null, how ? `${cap(NEED_LABEL[need])}-free with care` : `${cap(NEED_LABEL[need])}-free as it is`));
-      if (how) li.append(el("span", null, ` — ${how}`));
-      fit.append(li);
-    }
-    if (needs.length) card.append(fit);
-
-    const actions = el("div", "pair");
-    if (dish.playable) {
-      const cook = el("button", "primary", "Cook it");
-      cook.type = "button";
-      cook.addEventListener("click", () => startCook());
-      const rec = el("button", "ghost", "The real recipe");
-      rec.type = "button";
-      rec.addEventListener("click", () => openRecipe("dishes"));
-      actions.append(cook, rec);
-    } else {
-      actions.append(el("p", "hint small", "Not on the stove yet."));
-    }
-    card.append(actions);
-    board.append(card);
+/* Which jars are on the counter, and which the counter's best idea still wants. */
+function markShelves() {
+  const ideas = suggest(counter);
+  const wanted = new Set(ideas.length ? ideas[0].missing : []);
+  for (const b of document.querySelectorAll("#shelf-list .item")) {
+    const on = counter.has(b.dataset.id);
+    b.classList.toggle("on", on);
+    b.classList.toggle("wanted", !on && wanted.has(b.dataset.id));
+    b.setAttribute("aria-label", `${BY_ID[b.dataset.id].name}${on ? ", on the counter" : ""}`);
   }
 }
+
+/* ------------------------------------------------------------ the counter */
+
+function paintCounter() {
+  const items = $("counter-items");
+  items.replaceChildren();
+  const ids = [...counter];
+  if (!ids.length) {
+    items.append(el("p", "hint", "Nothing yet. Pick whatever tempts you from the shelves."));
+  }
+  for (const id of ids) {
+    const hit = clashes(BY_ID[id]);
+    const b = el("button", `counter-item${hit.length ? " clash" : ""}`);
+    b.type = "button";
+    b.title = `${BY_ID[id].name} — tap to put back`;
+    b.setAttribute("aria-label", `${BY_ID[id].name}, put back on the shelf`);
+    b.append(art("mini", ingredient(id)));
+    b.addEventListener("click", () => {
+      counter.delete(id);
+      changed();
+    });
+    items.append(b);
+  }
+  // Anything here this table cannot eat is said once, plainly, under the board.
+  const board = $("counter-items").parentElement;
+  board.querySelector(".counter-warn")?.remove();
+  const off = ids.filter((id) => clashes(BY_ID[id]).length);
+  if (off.length) {
+    const names = listOf(off.map((id) => BY_ID[id].name.toLowerCase()));
+    const needs = listOf([...new Set(off.flatMap((id) => clashes(BY_ID[id])))]);
+    board.append(el("p", "counter-warn", `Not for a ${needs}-free plate: ${names}. Serve it on its own plate, or leave it out.`));
+  }
+  $("counter-clear").hidden = !ids.length;
+  $("counter-count").textContent = ids.length ? `${ids.length}` : "";
+
+  // The tray's closed face on a narrow screen: a peek at what is there.
+  const peek = $("counter-peek");
+  peek.replaceChildren(...ids.slice(-5).map((id) => art("peek", ingredient(id))));
+
+  // The ideas: what the counter could become.
+  const ideas = $("ideas");
+  ideas.replaceChildren();
+  const found = suggest(counter);
+  if (!ids.length) {
+    ideas.append(el("p", "hint", "Put a few things on the counter and the dishes they could become will gather here."));
+  } else if (!found.length) {
+    ideas.append(el("p", "hint", "Nothing in this kitchen starts from these alone. Try adding an onion — almost everything does."));
+  }
+  for (const s of found.slice(0, 4)) ideas.append(ideaCard(s));
+
+  const all = $("all-dishes");
+  all.replaceChildren(...RECIPES.map((r) => dishLink(r)));
+  markShelves();
+}
+
+/* A dish the counter could become: what is there, and what is still missing. */
+function ideaCard({ recipe, have, missing }) {
+  const b = el("button", `idea${missing.length ? "" : " ready"}`);
+  b.type = "button";
+  b.append(art("idea-art", dish(recipe)));
+  const text = el("span", "idea-text");
+  text.append(el("b", null, recipe.name));
+  text.append(
+    el(
+      "span",
+      "idea-score",
+      missing.length ? `${have.length} of ${recipe.key.length} — still wants` : "Everything it needs is here",
+    ),
+  );
+  if (missing.length) {
+    const need = el("span", "idea-missing");
+    for (const id of missing) {
+      const m = art("missing", ingredient(id));
+      m.title = BY_ID[id].name;
+      need.append(m);
+    }
+    need.append(el("span", "sr", listOf(missing.map((id) => BY_ID[id].name.toLowerCase()))));
+    text.append(need);
+  }
+  b.append(text);
+  b.addEventListener("click", () => openRecipe(recipe.id));
+  return b;
+}
+
+function dishLink(recipe) {
+  const b = el("button", "idea small");
+  b.type = "button";
+  b.append(art("idea-art", dish(recipe)));
+  const text = el("span", "idea-text");
+  text.append(el("b", null, recipe.name), el("span", "idea-score", recipe.line));
+  b.append(text);
+  b.addEventListener("click", () => openRecipe(recipe.id));
+  return b;
+}
+
+function changed() {
+  saveCounter(counter);
+  paintCounter();
+}
+
+$("counter-clear").addEventListener("click", () => {
+  counter.clear();
+  changed();
+});
+
+/* Upright, the counter is a tray along the bottom that opens into a sheet. */
+const counterEl = $("counter");
+$("counter-toggle").addEventListener("click", () => {
+  const open = !counterEl.classList.contains("open");
+  counterEl.classList.toggle("open", open);
+  $("counter-toggle").setAttribute("aria-expanded", String(open));
+});
+
+function paintPantry() {
+  paintTable();
+  paintShelves();
+  paintCounter();
+}
+
+/* --------------------------------------------------------- the card sheet */
+
+const scrim = $("scrim");
+let sheetFrom = null;
+let cardId = null;
+
+function openSheet(sheet) {
+  for (const s of document.querySelectorAll(".sheet")) s.hidden = s !== sheet;
+  sheetFrom = sheetFrom || document.activeElement;
+  scrim.hidden = false;
+  sheet.hidden = false;
+  sheet.scrollTop = 0;
+  sheet.focus({ preventScroll: true });
+}
+
+function closeSheets() {
+  for (const s of document.querySelectorAll(".sheet")) s.hidden = true;
+  scrim.hidden = true;
+  if (sheetFrom && sheetFrom.focus && document.contains(sheetFrom)) sheetFrom.focus({ preventScroll: true });
+  sheetFrom = null;
+}
+scrim.addEventListener("click", closeSheets);
+
+function openCard(id) {
+  const item = BY_ID[id];
+  cardId = id;
+  $("card-art").innerHTML = ingredient(id);
+  $("card-greek").textContent = item.greek;
+  $("card-title").textContent = item.name;
+  $("card-info").textContent = item.info;
+
+  const contains = $("card-contains");
+  const c = item.contains || [];
+  contains.hidden = !c.length;
+  if (c.length) {
+    const hit = clashes(item);
+    contains.textContent = hit.length
+      ? `Contains ${listOf(c)} — not for a ${listOf(hit)}-free plate.`
+      : `Contains ${listOf(c)}.`;
+    contains.classList.toggle("clash", !!hit.length);
+  }
+
+  const dishes = $("card-dishes");
+  dishes.replaceChildren();
+  const into = dishesWith(id);
+  if (!into.length) dishes.append(el("p", "hint small", "Served alongside rather than cooked in — see the recipes' table notes."));
+  for (const r of into) {
+    const b = el("button", "dish-chip");
+    b.type = "button";
+    b.append(art("chip-art", dish(r)), el("span", null, r.name));
+    b.addEventListener("click", () => {
+      closeSheets();
+      openRecipe(r.id);
+    });
+    dishes.append(b);
+  }
+  paintPut();
+  openSheet($("card"));
+}
+
+function paintPut() {
+  const on = counter.has(cardId);
+  const put = $("card-put");
+  put.setAttribute("aria-pressed", String(on));
+  put.textContent = on ? "On the counter ✓ — put it back" : "Put on the counter";
+}
+
+$("card-put").addEventListener("click", () => {
+  if (counter.has(cardId)) counter.delete(cardId);
+  else counter.add(cardId);
+  changed();
+  paintPut();
+});
+$("card-close").addEventListener("click", closeSheets);
+
+/* ------------------------------------------------------------ the recipe */
+
+function openRecipe(id) {
+  const r = RECIPE_BY_ID[id];
+  $("recipe-art").innerHTML = dish(r);
+  $("recipe-greek").textContent = r.greek;
+  $("recipe-title").textContent = r.name;
+  $("recipe-line").textContent = r.line;
+  $("recipe-meta").textContent = `Serves ${r.serves} · ${r.time}`;
+  $("recipe-story").textContent = r.story;
+
+  // What this dish means for this table, said plainly.
+  const t = $("recipe-table");
+  t.replaceChildren();
+  const needs = activeNeeds();
+  if (r.fasting) {
+    const d = el("details", "note fasting");
+    d.append(el("summary", null, "A fasting dish — dairy-free and egg-free by tradition"), el("p", null, FASTING_NOTE));
+    t.append(d);
+  }
+  if (needs.length) {
+    const box = el("div", "note table-note");
+    box.append(el("p", "kicker", "For your table"));
+    for (const need of needs) {
+      const p = el("p");
+      p.append(el("b", null, `No ${NEED_WORD[need]}. `), r.table[need] || `${cap(NEED_WORD[need])}-free as written.`);
+      box.append(p);
+    }
+    t.append(box);
+  }
+
+  // The ingredients, as pictures. What is on the counter is ticked.
+  const tiles = $("recipe-ingredients");
+  tiles.replaceChildren();
+  for (const ing of r.ingredients) {
+    const item = BY_ID[ing.id];
+    const b = el("button", `tile${counter.has(ing.id) ? " have" : ""}`);
+    b.type = "button";
+    b.append(art("tile-art", ingredient(ing.id)));
+    const words = el("span", "tile-words");
+    words.append(el("b", null, item.name), el("span", null, ing.amount));
+    b.append(words);
+    if (counter.has(ing.id)) b.append(el("span", "sr", ", on your counter"));
+    b.addEventListener("click", () => openCard(ing.id));
+    tiles.append(b);
+  }
+
+  // The method: the step, and the reason behind it one tap away.
+  const ol = $("recipe-method");
+  ol.replaceChildren();
+  for (const step of r.method) {
+    const li = el("li");
+    li.append(el("p", null, step.text));
+    if (step.why) {
+      const d = el("details", "why");
+      d.append(el("summary", null, "Why?"), el("p", null, step.why));
+      li.append(d);
+    }
+    ol.append(li);
+  }
+  $("recipe-serve").textContent = `To serve: ${r.serve}`;
+  show("recipe");
+}
+
+$("recipe-back").addEventListener("click", () => {
+  paintPantry();
+  show("pantry");
+});
 
 function cap(s) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/* ------------------------------------------------------------ the recipe */
-
-function openRecipe(from) {
-  const r = STIFADO_RECIPE;
-  $("recipe-meta").textContent = `Serves ${r.serves} · ${r.time}`;
-  const ul = $("recipe-ingredients");
-  ul.replaceChildren();
-  for (const item of r.ingredients) {
-    const li = el("li", null, item.text);
-    for (const need of activeNeeds()) {
-      if (item.note && item.note[need]) li.append(el("span", "note", item.note[need]));
-    }
-    ul.append(li);
-  }
-  $("recipe-method").replaceChildren(...r.method.map((m) => el("li", null, m)));
-  $("recipe-serve").textContent = r.serve;
-  show("recipe", from);
-}
-
-/* ---------------------------------------------------------- the notebook */
-
-function paintNotebook() {
-  const all = Object.keys(LESSONS);
-  const have = all.filter((id) => notebook.has(id));
-  $("notebook-count").textContent = `${have.length} of ${all.length} learned`;
-  const list = $("notebook-list");
-  list.replaceChildren();
-  if (!have.length) list.append(el("p", "hint", "Nothing yet. Cook something."));
-  for (const id of have) {
-    const d = el("details", "lesson");
-    d.append(el("summary", null, LESSONS[id].title), el("p", null, LESSONS[id].body));
-    list.append(d);
-  }
-  if (have.length < all.length) {
-    list.append(el("p", "hint small", `${all.length - have.length} still to find.`));
-  }
-}
-
-function learn(id) {
-  if (notebook.has(id)) return false;
-  notebook.add(id);
-  saveNotebook(notebook);
-  return true;
-}
-
-/* -------------------------------------------------------------- the cook */
-
-const stove = new Stove($("stove"));
-const cook = new Cook({
-  stove,
-  diet: () => diet,
-  learn,
-  onFinish: (pot, learned) => showResult(pot, learned),
-});
-
-function startCook() {
-  show("kitchen");
-  cook.start(STIFADO);
-}
-
-function showResult(pot, learned) {
-  const v = $("verdict");
-  v.replaceChildren();
-  for (const row of verdict(pot)) {
-    const r = el("div", `verdict-row ${row.good ? "good" : "off"}`);
-    r.append(el("b", null, row.label), el("span", null, row.text));
-    v.append(r);
-  }
-
-  // The table check: every need this table has, said plainly.
-  const t = $("table-check");
-  t.replaceChildren();
-  const needs = activeNeeds();
-  if (needs.length) {
-    t.append(el("p", "kicker", "For this table"));
-    for (const need of needs) {
-      const hits = pot.conflicts.filter((c) => c.need === need);
-      const p = el("p", `say ${hits.length ? "bad" : "good"}`);
-      p.textContent = hits.length
-        ? `Not ${NEED_LABEL[need]}-free: ${listOf([...new Set(hits.map((h) => h.why))])}.`
-        : `${cap(NEED_LABEL[need])}-free, all of it.`;
-      t.append(p);
-    }
-    if (needs.includes("gluten") && !pot.conflicts.some((c) => c.need === "gluten")) {
-      t.append(el("p", "hint small", "Still read the label on the tomato paste and the wine vinegar — this game can vouch for the dish, not for a brand."));
-    }
-  }
-
-  const l = $("result-lessons");
-  l.replaceChildren(el("p", "kicker", `In your notebook from this cook: ${learned.length}`));
-  for (const id of learned) l.append(el("p", "lesson-line", LESSONS[id].title));
-
-  show("result");
-}
-
-$("again").addEventListener("click", () => startCook());
-$("result-recipe").addEventListener("click", () => openRecipe("result"));
-$("result-board").addEventListener("click", () => {
-  paintBoard();
-  show("dishes");
-});
-
 /* -------------------------------------------------------------- the doors */
 
 $("enter").addEventListener("click", () => {
-  paintBoard();
-  show("dishes", "home");
+  paintPantry();
+  show("pantry", "home");
 });
+$("pantry-home").addEventListener("click", () => show("home"));
 $("open-table").addEventListener("click", () => {
   paintTable();
   show("table", "home");
 });
-$("open-notebook").addEventListener("click", () => {
-  paintNotebook();
-  show("notebook", "home");
+$("table-chip").addEventListener("click", () => {
+  paintTable();
+  show("table", "pantry");
 });
+
+// A handful of things off the shelves, on the front door.
+$("home-art").replaceChildren(
+  ...["lemon", "oil", "oregano", "tomato", "chickpeas", "garlic", "aubergine"].map((id) => art("home-item", ingredient(id))),
+);
 
 /*
  * The way back to the arcade. exit.js decides what quitting does; these
- * buttons only appear when it has turned up AND there is somewhere to go —
+ * buttons appear only when it has turned up AND there is somewhere to go —
  * a launcher framing us, or an installed window that can really close.
  */
 function wireExits() {
@@ -269,43 +444,17 @@ wireExits();
 
 /* ------------------------------------------------------- menu and corner */
 
-const menu = $("menu");
-const scrim = $("menu-scrim");
-let menuFrom = null;
-
-function openMenu() {
-  const cooking = current === "kitchen";
-  cook.paused = true;
-  $("menu-kicker").textContent = cooking ? "The pot will wait" : "Kitchens";
-  $("menu-close").textContent = cooking ? "Back to the stove" : "Back";
-  $("menu-leave").hidden = !cooking;
-  menuFrom = document.activeElement;
-  menu.hidden = false;
-  scrim.hidden = false;
-  menu.focus();
-}
-
-function closeMenu() {
-  menu.hidden = true;
-  scrim.hidden = true;
-  cook.paused = false;
-  if (menuFrom && menuFrom.focus) menuFrom.focus({ preventScroll: true });
-}
-
-$("menu-open").addEventListener("click", () => (menu.hidden ? openMenu() : closeMenu()));
-$("menu-close").addEventListener("click", closeMenu);
-scrim.addEventListener("click", closeMenu);
-$("menu-leave").addEventListener("click", () => {
-  closeMenu();
-  cook.stop();
-  paintBoard();
-  show("dishes");
-});
+/* Nothing in a pantry moves on its own, so the menu has nothing to pause. */
+$("menu-open").addEventListener("click", () => ($("menu").hidden ? openSheet($("menu")) : closeSheets()));
+$("menu-close").addEventListener("click", closeSheets);
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") menu.hidden ? openMenu() : closeMenu();
+  if (e.key !== "Escape") return;
+  const open = [...document.querySelectorAll(".sheet")].some((s) => !s.hidden);
+  if (open) closeSheets();
+  else openSheet($("menu"));
 });
 
-/* Mute: a toggle and nothing else — no panel, no pause, no focus moved. */
+/* Mute: a toggle and nothing else — no panel, no focus moved. */
 const mute = $("mute-toggle");
 function paintMute() {
   mute.setAttribute("aria-pressed", String(sound.muted));
@@ -319,7 +468,7 @@ mute.addEventListener("click", () => {
   paintMute();
 });
 
-/* The two levels. Real and persisted, waiting for the kitchen to have sound. */
+/* The two levels: real and persisted, waiting for the kitchen to have sound. */
 for (const [key, id] of [["music", "music-vol"], ["sfx", "sfx-vol"]]) {
   const input = $(id);
   const out = $(`${id}-out`);
@@ -327,8 +476,7 @@ for (const [key, id] of [["music", "music-vol"], ["sfx", "sfx-vol"]]) {
   out.textContent = input.value;
   input.addEventListener("input", () => {
     sound[key] = Number(input.value) / 100;
-    // Moving a level lifts the mute: a fader silently cancelled by a switch
-    // elsewhere is worse than no fader (hub §2).
+    // Moving a level lifts the mute (hub §2).
     if (sound.muted) {
       sound.muted = false;
       paintMute();

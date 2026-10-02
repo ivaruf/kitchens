@@ -6,7 +6,7 @@
     <title>Kitchens</title>
     <meta
       name="description"
-      content="An immersive cookbook. Real dishes from traditional kitchens, cooked one step at a time: what each choice does to the pot, why, and how to cook it for a table with different needs."
+      content="An immersive cookbook. Browse a painted Greek pantry, put what tempts you on the counter, and see which traditional dishes it could become — with recipes that explain why, and notes for a table with different needs."
     />
     <meta name="theme-color" content="#1f5f8b" />
     <meta name="color-scheme" content="light" />
@@ -34,35 +34,28 @@
   </head>
   <body>
     <!-- ============================== HOME ==============================
-         Not hidden at parse time, because the UPDATE READY button lives here
-         and js/update.js must be able to offer a fix even if main.js never
-         boots. -->
+         Not hidden at parse time: the UPDATE READY button lives here, and
+         js/update.js must be able to offer a fix even if main.js never boots. -->
     <section id="home" class="screen" aria-labelledby="logo">
-      <div class="paper">
+      <div class="paper home">
         <div class="key" aria-hidden="true"></div>
-        <header class="home-head">
-          <p class="kicker">An immersive cookbook</p>
-          <h1 id="logo">Kitchens</h1>
-          <p class="tagline">Real dishes, cooked one step at a time — and why each step matters.</p>
-        </header>
+        <p class="kicker">An immersive cookbook</p>
+        <h1 id="logo">Kitchens</h1>
+        <p class="tagline">Browse a pantry. Put what tempts you on the counter. See what it could become.</p>
+        <!-- A few things off the shelves, drawn by js/main.js from js/art.js. -->
+        <div class="home-art" id="home-art" aria-hidden="true"></div>
         <div class="home-doors">
-          <button type="button" id="enter" class="primary">Step into the Greek kitchen</button>
-          <div class="pair">
-            <button type="button" id="open-table" class="ghost">Who is eating?</button>
-            <button type="button" id="open-notebook" class="ghost">Your notebook</button>
-          </div>
+          <button type="button" id="enter" class="primary">Open the Greek pantry</button>
+          <button type="button" id="open-table" class="ghost">Who is eating?</button>
           <p id="table-summary" class="hint"></p>
-          <div class="home-foot">
-            <!-- Hidden until a new worker is waiting; the only thing that posts
-                 SKIP_WAITING, and it only exists on this screen, so a deploy
-                 can never reload a cook in progress (hub §1, §3). -->
-            <button type="button" id="update" hidden>
-              <span class="update-title">A new edition is ready</span>
-              <span class="update-sub">Tap to take it</span>
-            </button>
-            <button type="button" class="ghost exit-btn" hidden>Back to arcade</button>
-            <p id="build" hidden></p>
-          </div>
+          <!-- Hidden until a new worker is waiting; the only thing that posts
+               SKIP_WAITING, and it only exists on this screen (hub §1, §3). -->
+          <button type="button" id="update" hidden>
+            <span class="update-title">A new edition is ready</span>
+            <span class="update-sub">Tap to take it</span>
+          </button>
+          <button type="button" class="ghost exit-btn" hidden>Back to arcade</button>
+          <p id="build" hidden></p>
         </div>
       </div>
     </section>
@@ -74,8 +67,8 @@
         <p class="kicker">Before anything is cooked</p>
         <h2 id="table-title">Who is eating?</h2>
         <p class="hint">
-          Mark what the table cooks without. Every dish and every step then says
-          what it means for that plate. This stays on this device and nowhere else.
+          Mark what the table cooks without. Every ingredient and every recipe then
+          says what it means for that plate. This stays on this device and nowhere else.
         </p>
         <div class="needs" role="group" aria-label="Cook without">
           <button type="button" class="need" data-need="dairy" aria-pressed="false">
@@ -89,104 +82,98 @@
           </button>
         </div>
         <p class="hint small">
-          Cooking for coeliac disease? Ingredients are only half of it: crumbs
-          on a shared board, a floured counter, a toaster or a ladle that touched
-          the orzo are enough. Clean surfaces and separate utensils first.
+          Cooking for coeliac disease? Ingredients are only half of it: crumbs on a
+          shared board, a floured counter, a toaster or a ladle that touched the
+          orzo are enough. Clean surfaces and separate utensils first.
         </p>
         <button type="button" class="primary back-btn">Back</button>
       </div>
     </section>
 
-    <!-- ============================ THE BOARD ============================ -->
-    <section id="dishes" class="screen" hidden aria-labelledby="dishes-title">
-      <div class="paper wide">
-        <div class="key" aria-hidden="true"></div>
-        <p class="kicker">Η κουζίνα · Kouzina</p>
-        <h2 id="dishes-title">The Greek kitchen</h2>
-        <p class="hint">
-          Olive oil by the cupful, lemon at the end, oregano dried and dill fresh,
-          and cinnamon in the meat. Choose what to cook.
-        </p>
-        <details class="lesson intro" id="fasting"></details>
-        <div id="board" class="board"></div>
-        <button type="button" class="ghost back-btn">Back</button>
+    <!-- ============================ THE PANTRY ============================
+         The shelves on the left, the counter on the right — or, upright, the
+         counter as a tray along the bottom that opens into a sheet. -->
+    <section id="pantry" class="screen" hidden aria-labelledby="pantry-title">
+      <div class="shelves">
+        <header class="pantry-head">
+          <p class="kicker">The Greek kitchen <span class="greek-inline" lang="el">· η κουζίνα</span></p>
+          <h2 id="pantry-title">The pantry</h2>
+          <p class="hint">
+            Olive oil by the glassful, lemon at the end, oregano dried and cinnamon in
+            the meat. Tap anything to read about it.
+          </p>
+          <div class="head-tools">
+            <button type="button" id="table-chip" class="chip"></button>
+            <button type="button" id="pantry-home" class="chip">Back</button>
+          </div>
+        </header>
+        <div id="shelf-list"></div>
       </div>
+
+      <aside id="counter" aria-labelledby="counter-title">
+        <button type="button" id="counter-toggle" class="counter-head" aria-expanded="false">
+          <span class="counter-title" id="counter-title">On the counter</span>
+          <span id="counter-peek" class="counter-peek" aria-hidden="true"></span>
+          <span id="counter-count" class="counter-count"></span>
+        </button>
+        <div class="counter-body">
+          <div class="board-top">
+            <div id="counter-items" class="counter-items"></div>
+            <button type="button" id="counter-clear" class="chip" hidden>Clear the counter</button>
+          </div>
+          <h3 class="aside-head">It could become</h3>
+          <div id="ideas" class="ideas"></div>
+          <h3 class="aside-head">Every dish in this kitchen</h3>
+          <div id="all-dishes" class="ideas compact"></div>
+        </div>
+      </aside>
     </section>
 
-    <!-- ============================ THE STOVE ============================
-         Two halves: the pot on the left (or on top, upright), the recipe card
-         beside it. js/cook.js owns everything inside #card. -->
-    <section id="kitchen" class="screen" hidden aria-labelledby="step-title">
-      <div class="stove-wrap">
-        <canvas id="stove" aria-label="The pot on the stove"></canvas>
-        <p id="pot-line" aria-live="polite"></p>
-      </div>
-      <article id="card" class="paper">
+    <!-- ============================ THE RECIPE ============================ -->
+    <section id="recipe" class="screen" hidden aria-labelledby="recipe-title">
+      <article class="paper recipe">
         <div class="key" aria-hidden="true"></div>
-        <p class="kicker" id="step-count"></p>
-        <h2 id="step-title"></h2>
-        <blockquote id="step-note" class="yiayia"></blockquote>
-        <div id="step-body"></div>
-        <div id="step-after" hidden></div>
-        <div class="card-actions">
-          <button type="button" id="step-go" class="primary">Next</button>
+        <div class="recipe-hero">
+          <div id="recipe-art" class="recipe-art" aria-hidden="true"></div>
+          <div>
+            <p class="greek-name" id="recipe-greek" lang="el"></p>
+            <h2 id="recipe-title"></h2>
+            <p id="recipe-line" class="lead"></p>
+            <p id="recipe-meta" class="meta"></p>
+          </div>
         </div>
+        <p id="recipe-story" class="story"></p>
+        <div id="recipe-table" class="for-table"></div>
+        <h3>What goes in</h3>
+        <div id="recipe-ingredients" class="tiles"></div>
+        <h3>How</h3>
+        <ol id="recipe-method" class="method"></ol>
+        <p id="recipe-serve" class="serve"></p>
+        <button type="button" id="recipe-back" class="primary">Back to the pantry</button>
       </article>
     </section>
 
-    <!-- ============================ THE MEAL ============================ -->
-    <section id="result" class="screen" hidden aria-labelledby="result-title">
-      <div class="paper">
-        <div class="key" aria-hidden="true"></div>
-        <p class="kicker">At the table</p>
-        <h2 id="result-title">How it came out</h2>
-        <div id="verdict" class="verdict"></div>
-        <div id="table-check" class="table-check"></div>
-        <div id="result-lessons" class="lessons"></div>
-        <div class="pair">
-          <button type="button" id="again" class="primary">Cook it again</button>
-          <button type="button" id="result-recipe" class="ghost">The real recipe</button>
-        </div>
-        <button type="button" id="result-board" class="ghost">Back to the kitchen</button>
+    <!-- ========================= INGREDIENT CARD =========================
+         What a jar or a vegetable is, how this kitchen uses it, and what it
+         goes into. A dialog over whatever screen opened it. -->
+    <div id="scrim" hidden></div>
+    <section id="card" class="sheet" hidden tabindex="-1" aria-labelledby="card-title">
+      <div class="card-art" id="card-art" aria-hidden="true"></div>
+      <p class="greek-name" id="card-greek" lang="el"></p>
+      <h2 id="card-title"></h2>
+      <p id="card-info"></p>
+      <p id="card-contains" class="contains" hidden></p>
+      <p class="kicker">Goes into</p>
+      <div id="card-dishes" class="dish-chips"></div>
+      <div class="pair">
+        <button type="button" id="card-put" class="primary" aria-pressed="false">Put on the counter</button>
+        <button type="button" id="card-close" class="ghost">Back</button>
       </div>
     </section>
 
-    <!-- ============================ THE RECIPE ============================
-         The bridge to the real kitchen: the same dish as quantities and a
-         method, with each dietary note beside the line it is about. -->
-    <section id="recipe" class="screen" hidden aria-labelledby="recipe-title">
-      <div class="paper">
-        <div class="key" aria-hidden="true"></div>
-        <p class="kicker" id="recipe-meta"></p>
-        <h2 id="recipe-title">Stifado</h2>
-        <h3>You need</h3>
-        <ul id="recipe-ingredients" class="ingredients"></ul>
-        <h3>Method</h3>
-        <ol id="recipe-method" class="method"></ol>
-        <p id="recipe-serve" class="hint"></p>
-        <button type="button" class="primary back-btn">Back</button>
-      </div>
-    </section>
-
-    <!-- =========================== THE NOTEBOOK =========================== -->
-    <section id="notebook" class="screen" hidden aria-labelledby="notebook-title">
-      <div class="paper">
-        <div class="key" aria-hidden="true"></div>
-        <p class="kicker" id="notebook-count"></p>
-        <h2 id="notebook-title">Your notebook</h2>
-        <p class="hint">What you have learned at the stove. It carries from one dish to the next.</p>
-        <div id="notebook-list" class="lessons"></div>
-        <button type="button" class="primary back-btn">Back</button>
-      </div>
-    </section>
-
-    <!-- ============================= THE MENU =============================
-         Opened by the three bars in the corner. While a dish is on the stove
-         it stops the meters (cook.paused) — nothing else in a cook moves on
-         its own, so nothing else needs stopping. -->
-    <div id="menu-scrim" hidden></div>
-    <section id="menu" class="panel" hidden tabindex="-1" aria-labelledby="menu-title">
-      <p class="kicker" id="menu-kicker">The pot will wait</p>
+    <!-- ============================= THE MENU ============================= -->
+    <section id="menu" class="sheet" hidden tabindex="-1" aria-labelledby="menu-title">
+      <p class="kicker">Kitchens</p>
       <h2 id="menu-title">Menu</h2>
       <div class="row">
         <label class="label" for="music-vol">Music</label>
@@ -203,15 +190,14 @@
         </div>
       </div>
       <p class="hint small">The kitchen is silent for now. These levels are kept for the day it is not.</p>
-      <button type="button" id="menu-close" class="primary">Back to the stove</button>
       <div class="pair">
-        <button type="button" id="menu-leave" class="ghost">Leave this dish</button>
+        <button type="button" id="menu-close" class="primary">Back</button>
         <button type="button" class="ghost exit-btn" hidden>Back to arcade</button>
       </div>
     </section>
 
-    <!-- THE CORNER: menu, mute, fullscreen, on every screen. A cook has no
-         HUD competing for the corner, so it never has to yield it — the
+    <!-- THE CORNER: menu, mute, fullscreen, on every screen. Nothing in a
+         pantry competes for the corner, so it never has to yield it — the
          first sanctioned placement in hub §2. The glyphs are the hub's own
          paths, and CSS picks each toggle's state off aria-pressed. -->
     <div id="corner">

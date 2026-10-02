@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.1.0'; // first slice: the Greek kitchen, stifado start to finish
+const VERSION = 'v0.2.0'; // the pantry: browse, put on the counter, see what it could become
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -29,11 +29,9 @@ const ASSETS = [
   './js/screen.js',
   './js/touch-guard.js',
   './js/store.js',
-  './js/dishes.js',
-  './js/stifado.js',
-  './js/pot.js',
-  './js/cook.js',
-  './js/draw.js',
+  './js/pantry.js',
+  './js/recipes.js',
+  './js/art.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-180.png',

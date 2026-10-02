@@ -1,23 +1,23 @@
 /*
- * style.css — a whitewashed Greek kitchen, in paper and paint.
+ * style.css — a whitewashed Greek pantry, in paper, paint and wood.
  *
- * THE MATERIALS: lime-washed walls, shutter blue, terracotta, olive wood, a
- * lemon on the sill. Panels are sheets of recipe paper with a painted Greek
- * key along the top; the yiayia's notes are set in an italic serif like a
- * hand-copied card. When the next kitchen arrives it brings its own palette
- * through these custom properties and the structure stays put.
+ * THE MATERIALS: lime-washed walls, shutter blue, terracotta, olive wood,
+ * lemon. The shelves are planks the pictures stand on; every label is a paper
+ * tag; the recipe is a sheet of cookbook paper with a painted Greek key along
+ * its top edge. A later kitchen brings its own palette through the custom
+ * properties below and keeps the structure.
  *
- * NO WEB FONTS (hub §1): an old-style serif stack that every platform has
- * something close to, and the system sans for controls.
+ * NO WEB FONTS (hub §1): an old-style serif stack every platform has something
+ * close to, and the system sans for small print and controls.
  *
- * Two layout rules from hub §2 are load-bearing: labels share one gutter so
- * controls line up down the card, and equal choices are `flex: 1 1 0` so the
- * equal options look equal. The landscape-phone block at the bottom is the
- * third.
+ * Two layout rules from hub §2 are load-bearing: peers in a row share one size
+ * (`flex: 1 1 0` or equal grid columns), and a set that belongs together
+ * shares an edge. The narrow and landscape-phone blocks are at the bottom.
  */
 
 :root {
   --wash: #f4efe4;
+  --wall: #f7f2e8;
   --paper: #fbf8f1;
   --ink: #2b2622;
   --muted: #6f655b;
@@ -27,6 +27,8 @@
   --terra: #b35a36;
   --olive: #5e6b32;
   --lemon: #e8c547;
+  --wood: #9c7a4f;
+  --wood-dark: #7d5f3a;
   --good: #4f6b2a;
   --warn: #9a6a1f;
   --bad: #a8322a;
@@ -34,7 +36,6 @@
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --tap: 44px;
-  --gutter: 8.5rem;
 
   color-scheme: light;
 }
@@ -49,9 +50,9 @@ body {
   min-height: 100%;
   background: var(--wash);
   color: var(--ink);
-  font-family: var(--sans);
-  font-size: 15px;
-  line-height: 1.45;
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -59,9 +60,9 @@ body {
   display: none !important;
 }
 
-/* A game, not a document (hub §2). A floury thumb resting on the card is a
-   long press; nothing selects and nothing opens a callout except a real
-   field. js/touch-guard.js is the other half. */
+/* A game, not a document (hub §2): a floury thumb resting on a jar is a long
+   press; nothing selects and nothing opens a callout except a real field.
+   js/touch-guard.js is the other half. */
 html,
 body {
   -webkit-user-select: none;
@@ -78,6 +79,22 @@ textarea,
   -webkit-touch-callout: default;
 }
 
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* ===================== type ===================== */
 
 h1,
@@ -86,18 +103,17 @@ h3 {
   font-family: var(--serif);
   font-weight: 600;
   line-height: 1.15;
-  margin: 0.2em 0 0.4em;
+  margin: 0.15em 0 0.35em;
 }
 h1 {
-  font-size: clamp(2.6rem, 9vw, 4.2rem);
+  font-size: clamp(2.8rem, 9vw, 4.4rem);
   color: var(--blue-deep);
-  letter-spacing: 0.01em;
 }
 h2 {
-  font-size: clamp(1.5rem, 4.5vw, 2rem);
+  font-size: clamp(1.7rem, 4.5vw, 2.3rem);
 }
 h3 {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
 }
 h1:focus,
 h2:focus {
@@ -105,19 +121,42 @@ h2:focus {
 }
 .kicker {
   margin: 0;
-  font-size: 0.78rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--terra);
   font-weight: 600;
+}
+/* Greek is never set in the uppercase label style: Greek capitals drop their
+   accents, and the shouting would lose the word's shape besides. */
+.greek-name,
+.greek-inline {
+  font-family: var(--serif);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--terra);
+}
+.greek-name {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.greek-inline {
+  font-size: 0.95rem;
+  font-weight: 400;
 }
 .tagline,
 .hint {
   color: var(--muted);
   margin: 0.4em 0 1em;
 }
+.hint {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
 .small {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 /* ===================== screens and paper ===================== */
@@ -125,26 +164,26 @@ h2:focus {
 .screen {
   min-height: 100vh;
   min-height: 100dvh;
-  padding: calc(env(safe-area-inset-top, 0px) + 64px) max(16px, env(safe-area-inset-right, 0px))
+  padding: calc(env(safe-area-inset-top, 0px) + 66px) max(16px, env(safe-area-inset-right, 0px))
     calc(env(safe-area-inset-bottom, 0px) + 24px) max(16px, env(safe-area-inset-left, 0px));
+}
+#home,
+#table,
+#recipe {
   display: grid;
   justify-items: center;
   align-content: start;
 }
 
-/* A sheet of recipe paper. */
 .paper {
   position: relative;
   width: 100%;
-  max-width: 640px;
+  max-width: 620px;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 6px;
-  padding: 28px clamp(16px, 4vw, 32px) 24px;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 10px 30px rgba(60, 40, 20, 0.08);
-}
-.paper.wide {
-  max-width: 980px;
+  padding: 30px clamp(16px, 4vw, 36px) 26px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 12px 32px rgba(60, 40, 20, 0.09);
 }
 
 /* The Greek key, painted along the top edge of every sheet. */
@@ -167,22 +206,17 @@ button {
   cursor: pointer;
 }
 button:focus-visible,
-.option:focus-visible,
 summary:focus-visible,
 input:focus-visible {
   outline: 3px solid var(--lemon);
   outline-offset: 2px;
 }
-button:disabled {
-  cursor: default;
-  opacity: 0.45;
-}
-
 .primary,
 .ghost {
   min-height: var(--tap);
   padding: 10px 20px;
   border-radius: 999px;
+  font-family: var(--sans);
   font-weight: 600;
 }
 .primary {
@@ -190,36 +224,60 @@ button:disabled {
   color: #fff;
   border: 1px solid var(--blue-deep);
 }
-.primary:not(:disabled):hover {
+.primary:hover {
   background: var(--blue-deep);
 }
 .ghost {
   background: transparent;
   border: 1px solid var(--line);
-  color: var(--ink);
 }
-.ghost:not(:disabled):hover {
+.ghost:hover {
   border-color: var(--blue);
   color: var(--blue-deep);
 }
-
-/* Peers in one row get one size (hub §2): flex 1 1 0, never auto. */
-.pair {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
+.chip {
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--blue-deep);
 }
-.pair > * {
-  flex: 1 1 0;
-  min-width: 10rem;
+.chip:hover {
+  border-color: var(--blue);
+}
+
+/* Peers in a row get one size (hub §2). */
+.pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 10px;
+  margin-top: 16px;
 }
 
 /* ===================== home ===================== */
 
-.home-head {
+.home {
   text-align: center;
-  padding-top: 8px;
+}
+.home-art {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin: 4px 0 18px;
+}
+.home-item {
+  width: 54px;
+  height: 54px;
+}
+.home-item:nth-child(odd) {
+  transform: translateY(4px) rotate(-4deg);
+}
+.home-item:nth-child(even) {
+  transform: rotate(5deg);
 }
 .home-doors {
   display: grid;
@@ -227,16 +285,10 @@ button:disabled {
 }
 .home-doors > .primary {
   font-size: 1.1rem;
-  min-height: 52px;
+  min-height: 54px;
 }
 #table-summary {
-  text-align: center;
-  margin: 4px 0 0;
-}
-.home-foot {
-  display: grid;
-  gap: 8px;
-  margin-top: 8px;
+  margin: 0;
 }
 #update {
   display: grid;
@@ -245,7 +297,7 @@ button:disabled {
   border: 1px dashed var(--terra);
   background: #fff6ea;
   padding: 8px 14px;
-  text-align: center;
+  font-family: var(--sans);
 }
 #update[hidden] {
   display: none;
@@ -259,7 +311,7 @@ button:disabled {
   color: var(--muted);
 }
 #build {
-  text-align: center;
+  font-family: var(--sans);
   font-size: 0.75rem;
   color: var(--muted);
   margin: 0;
@@ -272,31 +324,27 @@ button:disabled {
   gap: 10px;
   margin: 12px 0;
 }
-.need,
-.option {
+.need {
   display: grid;
   gap: 2px;
   text-align: left;
   min-height: var(--tap);
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 10px;
   border: 1px solid var(--line);
   background: #fff;
+  font-family: var(--sans);
 }
-.need small,
-.option small {
+.need small {
   color: var(--muted);
-  font-size: 0.82rem;
 }
-.need[aria-pressed="true"],
-.option[aria-pressed="true"] {
+.need[aria-pressed="true"] {
   background: var(--blue);
   border-color: var(--blue-deep);
   color: #fff;
 }
-.need[aria-pressed="true"] small,
-.option[aria-pressed="true"] small {
-  color: rgba(255, 255, 255, 0.82);
+.need[aria-pressed="true"] small {
+  color: rgba(255, 255, 255, 0.85);
 }
 .need b::before {
   content: "";
@@ -313,443 +361,633 @@ button:disabled {
   border-color: var(--lemon);
 }
 
-/* ===================== the board ===================== */
+/* ===================== the pantry ===================== */
 
-.board {
+#pantry {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-  gap: 14px;
-  margin: 14px 0 18px;
-}
-.dish {
-  display: grid;
-  grid-template-rows: auto 1fr auto auto auto;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
-  background: #fff;
-  border-top: 4px solid var(--terra);
-}
-.dish.later {
-  border-top-color: var(--line);
-}
-.dish header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
-.dish h3 {
-  margin: 0;
-}
-.greek {
-  font-family: var(--serif);
-  color: var(--muted);
-  font-style: italic;
-}
-.dish p {
-  margin: 8px 0 0;
-}
-.teaches {
-  color: var(--olive);
-  font-size: 0.88rem;
-}
-.fit {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0;
-  font-size: 0.86rem;
-  display: grid;
-  gap: 6px;
-}
-.fit li {
-  padding-left: 12px;
-  border-left: 3px solid var(--good);
-}
-.fit li.care {
-  border-left-color: var(--warn);
-}
-.fit b {
-  color: var(--ink);
-}
-.dish .pair {
-  margin-top: 14px;
-}
-
-/* ===================== lessons ===================== */
-
-.lesson {
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--olive);
-  border-radius: 6px;
-  background: #fff;
-  padding: 0 14px;
-  margin: 8px 0;
-}
-.lesson summary {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.02rem;
-  min-height: var(--tap);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.lesson p {
-  margin: 0 0 12px;
-}
-.lesson.intro {
-  border-left-color: var(--blue);
-}
-.new {
-  font-family: var(--sans);
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  background: var(--lemon);
-  color: var(--ink);
-  border-radius: 999px;
-  padding: 1px 8px;
-}
-.lessons {
-  margin-top: 14px;
-}
-.lesson-line {
-  margin: 4px 0;
-  font-family: var(--serif);
-}
-
-/* ===================== the kitchen ===================== */
-
-#kitchen {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  gap: 24px;
   align-items: start;
-  justify-items: stretch;
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
 }
-#kitchen[hidden] {
+#pantry[hidden] {
   display: none;
 }
-.stove-wrap {
-  position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + 64px);
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background: var(--wash);
+.pantry-head {
+  max-width: 720px;
 }
-#stove {
-  display: block;
-  width: 100%;
-  height: min(70vh, 560px);
-  touch-action: none;
-}
-#pot-line {
-  position: absolute;
-  left: 12px;
-  bottom: 10px;
-  margin: 0;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(251, 248, 241, 0.88);
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-#pot-line:empty {
-  display: none;
-}
-#card {
-  max-width: none;
-}
-
-/* Yiayia's voice: a hand-copied card. */
-.yiayia {
-  margin: 4px 0 16px;
-  padding: 2px 0 2px 14px;
-  border-left: 3px solid var(--terra);
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.06rem;
-  color: #3e352e;
-}
-
-/* A row: one shared gutter for every label (hub §2). */
-.row {
+.head-tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
-  align-items: center;
-  margin: 10px 0;
-}
-.label {
-  flex: 0 0 var(--gutter);
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-/*
- * On the recipe card a choice's caption sits above its options rather than
- * in a side gutter: the card is narrow, and three alternatives must stay one
- * row of three equal boxes rather than wrapping two-and-one, which reads as
- * the lone third option being different in kind (hub §2). Every caption
- * still starts at the same x. Up to three options are always one row; more
- * than that fall into equal columns.
- */
-#card .row {
-  display: grid;
-  gap: 6px;
-}
-.options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: 8px;
 }
-.options[data-count="2"] {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+/* A shelf: its painted name, then the things on it, standing on planks.
+   Each row of items gets its own plank — the gradient repeats at exactly the
+   grid's row pitch (row height + gap), so a shelf that wraps to three rows is
+   three planks and not one plank under a pile. */
+.shelf {
+  --row: 128px;
+  --gap: 16px;
+  --plank: var(--wood);
+  margin: 28px 0 8px;
 }
-.options[data-count="3"] {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.shelf-spices {
+  --plank: #2c6a96;
 }
-.options.compact {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.shelf-market {
+  --plank: #b8925c;
 }
-.options.compact .option {
-  padding: 8px 10px;
-  text-align: center;
-  justify-items: center;
+.shelf-cold {
+  --plank: #8a8f94;
 }
-.tag {
-  justify-self: start;
-  margin-top: 4px;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 1px 7px;
-  border-radius: 999px;
-  border: 1px solid currentColor;
+.shelf-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin-bottom: 8px;
+}
+.shelf-head h3 {
+  margin: 0;
+}
+.shelf-head p {
+  margin: 0;
   color: var(--muted);
+  font-style: italic;
 }
-.tag.clash {
-  background: var(--bad);
-  border-color: var(--bad);
-  color: #fff;
-}
-.option[aria-pressed="true"] .tag:not(.clash) {
-  color: #fff;
+.items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-auto-rows: var(--row);
+  row-gap: var(--gap);
+  column-gap: 4px;
+  padding: 0 8px;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--row) - 14px),
+    var(--plank) calc(var(--row) - 14px),
+    var(--plank) calc(var(--row) - 4px),
+    rgba(60, 40, 20, 0.16) calc(var(--row) - 4px),
+    rgba(60, 40, 20, 0.16) var(--row),
+    transparent var(--row),
+    transparent calc(var(--row) + var(--gap))
+  );
+  border-radius: 4px;
 }
 
-.card-actions {
+/* One thing on the shelf: its picture standing on the plank, a paper tag
+   pinned to the plank's edge. */
+.item {
+  position: relative;
   display: grid;
-  margin-top: 18px;
+  justify-items: center;
+  align-items: end;
+  /* The picture stands on the plank's top edge; the tag hangs on its face. */
+  padding: 0 2px 14px;
+  border: 0;
+  background: none;
+  border-radius: 8px;
 }
-#step-go {
+.item-art {
+  width: 84px;
+  height: 84px;
+  transition: transform 0.15s ease, opacity 0.2s;
+  filter: drop-shadow(0 3px 1px rgba(60, 40, 20, 0.18));
+}
+.item:hover .item-art {
+  transform: translateY(-4px) rotate(-2deg);
+}
+.tag {
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%);
+  max-width: calc(100% - 4px);
+  padding: 1px 8px;
+  margin-bottom: 1px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.tag.clash::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 5px;
+  border-radius: 50%;
+  background: var(--bad);
+  vertical-align: 1px;
+}
+/* On the counter: it has left the shelf, so only its outline stays behind. */
+.item.on .item-art {
+  opacity: 0.22;
+  transform: none;
+}
+.item.on .tag::before {
+  content: "✓ ";
+  color: var(--good);
+  font-weight: 700;
+}
+/* What the counter's best idea still wants: a warm glow, never a nag. */
+.item.wanted .item-art {
+  filter: drop-shadow(0 0 6px rgba(232, 197, 71, 0.95)) drop-shadow(0 3px 1px rgba(60, 40, 20, 0.18));
+}
+
+/* ===================== the counter ===================== */
+
+#counter {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 66px);
+  max-height: calc(100vh - 90px);
+  overflow: auto;
+  border-radius: 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(60, 40, 20, 0.1);
+}
+.counter-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
   min-height: 52px;
+  padding: 10px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  text-align: left;
+  cursor: default;
+}
+.counter-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.2rem;
+  flex: 1;
+}
+.counter-peek {
+  display: none;
+}
+.counter-count {
+  min-width: 1.8em;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-align: center;
+}
+.counter-count:empty {
+  display: none;
+}
+.counter-body {
+  padding: 0 16px 16px;
+}
+
+/* The olive-wood board everything chosen sits on. */
+.board-top {
+  margin: 14px 0 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(176deg, rgba(60, 40, 20, 0.07) 0 2px, transparent 2px 13px),
+    #c9a777;
+  border: 1px solid #a8865a;
+  box-shadow: inset 0 -3px 0 rgba(60, 40, 20, 0.15);
+}
+.board-top .hint {
+  color: #4e3d2a;
+  margin: 4px;
+}
+.counter-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.counter-item {
+  width: 54px;
+  height: 54px;
+  padding: 2px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+}
+.counter-item:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+/* On the counter but not for this table: a red ring, and the ideas say why. */
+.counter-item.clash {
+  box-shadow: inset 0 0 0 2px var(--bad);
+  background: rgba(255, 255, 255, 0.35);
+}
+.mini {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 1px rgba(60, 40, 20, 0.25));
+}
+#counter-clear {
+  margin-top: 8px;
+  background: rgba(251, 248, 241, 0.8);
+}
+.aside-head {
+  margin: 18px 0 8px;
   font-size: 1.05rem;
 }
 
-/* The meter: zones painted along the bar, the sweet spot outlined. */
-.run-label {
-  margin: 4px 0 8px;
+/* A dish the counter could become. */
+.ideas {
+  display: grid;
+  gap: 10px;
+}
+.idea {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+}
+.idea:hover {
+  border-color: var(--blue);
+}
+.idea.ready {
+  border-color: var(--olive);
+  box-shadow: 0 0 0 2px rgba(94, 107, 50, 0.25);
+}
+.idea-art {
+  display: block;
+  width: 96px;
+  height: 72px;
+}
+.idea-text {
+  display: grid;
+  gap: 2px;
+}
+.idea-text b {
+  font-size: 1.08rem;
+}
+.idea-score {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.idea.ready .idea-score {
+  color: var(--good);
   font-weight: 600;
 }
-.meter {
-  position: relative;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+.idea-missing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
 }
-.meter .sweet {
-  position: absolute;
-  top: -5px;
-  bottom: -5px;
-  border: 2px solid var(--lemon);
-  border-radius: 8px;
+.missing {
+  width: 30px;
+  height: 30px;
+  opacity: 0.7;
 }
-.meter .mark {
-  position: absolute;
-  top: -8px;
-  bottom: -8px;
-  width: 4px;
-  margin-left: -2px;
-  background: var(--ink);
-  border-radius: 2px;
-  box-shadow: 0 0 0 2px var(--paper);
+.ideas.compact .idea {
+  grid-template-columns: 64px 1fr;
 }
-.zone {
-  font-family: var(--serif);
-  font-size: 1.2rem;
-  font-style: italic;
-  margin: 10px 0 0;
-  min-height: 1.6em;
+.ideas.compact .idea-art {
+  width: 64px;
+  height: 48px;
 }
 
-/* What yiayia says. */
-.say {
-  margin: 6px 0;
-  padding: 8px 12px;
+/* ===================== the sheets ===================== */
+
+#scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(43, 38, 34, 0.38);
+}
+.sheet {
+  position: fixed;
+  z-index: 41;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100vw - 32px), 480px);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 22px 24px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 12px solid var(--blue);
+  border-radius: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+.sheet:focus {
+  outline: none;
+}
+.card-art {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 6px;
+  filter: drop-shadow(0 4px 2px rgba(60, 40, 20, 0.2));
+}
+#card {
+  text-align: center;
+}
+#card-info {
+  text-align: left;
+  font-size: 1.04rem;
+}
+.contains {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  padding: 6px 12px;
   border-radius: 6px;
   background: #f3eee3;
-  border-left: 3px solid var(--line);
 }
-.say.good {
-  border-left-color: var(--good);
+.contains.clash {
+  background: #f8e4df;
+  color: var(--bad);
+  font-weight: 600;
 }
-.say.warn {
-  border-left-color: var(--warn);
-}
-.say.bad {
-  border-left-color: var(--bad);
-}
-
-/* The simmer and the spoon. */
-.clock {
-  font-family: var(--serif);
-  font-size: 1.25rem;
-  margin: 0 0 8px;
-}
-.gauges,
-.taste {
+.dish-chips {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 8px;
-  margin: 8px 0 12px;
+  margin-top: 8px;
 }
-.gauge {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.track {
-  position: relative;
-  flex: 1;
-  height: 12px;
-  border-radius: 999px;
-  background: #ebe4d6;
-  overflow: visible;
-}
-.track > i {
-  position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: 999px;
-  background: var(--olive);
-}
-.track.band > b {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  background: rgba(94, 107, 50, 0.3);
-  border-radius: 999px;
-}
-.track.band > .dot {
-  inset: -4px auto -4px auto;
-  width: 20px;
-  margin-left: -10px;
-  background: var(--good);
-  border: 2px solid var(--paper);
-}
-.gauge.off .dot {
-  background: var(--bad);
-}
-.tools {
+.dish-chip {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
-  gap: 8px;
-  margin: 8px 0;
-}
-.tools .option {
-  text-align: center;
   justify-items: center;
-  align-content: center;
+  gap: 2px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.95rem;
 }
-.log {
-  min-height: 3em;
+.dish-chip:hover {
+  border-color: var(--blue);
 }
-
-/* ===================== the meal ===================== */
-
-.verdict {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 10px 16px;
-  margin: 10px 0 16px;
+.chip-art {
+  display: block;
+  width: 88px;
+  height: 66px;
 }
-.verdict-row {
-  display: contents;
+#menu .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 10px 0;
 }
-.verdict-row b {
-  font-family: var(--serif);
-}
-.verdict-row span {
-  padding-left: 12px;
-  border-left: 3px solid var(--good);
-}
-.verdict-row.off span {
-  border-left-color: var(--warn);
-}
-.table-check {
-  margin-bottom: 8px;
-}
-#result-board {
-  width: 100%;
-  margin-top: 10px;
+#menu .label {
+  flex: 0 0 5.5rem;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--muted);
 }
 
 /* ===================== the recipe ===================== */
 
-.ingredients,
-.method {
-  padding-left: 1.3em;
+.recipe {
+  max-width: 880px;
 }
-.ingredients li,
-.method li {
-  margin: 6px 0;
-}
-.ingredients .note {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--warn);
-}
-
-/* ===================== menu, corner, crash ===================== */
-
-#menu-scrim {
-  position: fixed;
-  inset: 0;
-  background: rgba(43, 38, 34, 0.35);
-  z-index: 20;
-}
-#menu {
-  position: fixed;
-  z-index: 21;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(92vw, 440px);
-  max-height: 92vh;
-  overflow: auto;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-top: 12px solid var(--blue);
-  border-radius: 8px;
-  padding: 20px 22px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+.recipe-hero {
   display: grid;
-  gap: 6px;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
 }
-#menu:focus {
-  outline: none;
+.recipe-art {
+  width: 100%;
+  aspect-ratio: 4 / 3;
 }
-#menu .label {
-  flex-basis: 5.5rem;
+.lead {
+  font-size: 1.15rem;
+  margin: 0.2em 0;
 }
+.meta {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0.4em 0 0;
+}
+.story {
+  font-style: italic;
+  font-size: 1.08rem;
+  color: #3e352e;
+  border-left: 3px solid var(--terra);
+  padding-left: 14px;
+}
+.note {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #f3eee3;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+}
+.note p {
+  margin: 4px 0;
+}
+.note summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--olive);
+}
+.table-note {
+  border-left: 4px solid var(--blue);
+}
+.table-note b {
+  color: var(--blue-deep);
+}
+.counter-warn {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--bad);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
+  gap: 8px;
+}
+.tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px 6px 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+}
+.tile:hover {
+  border-color: var(--blue);
+}
+.tile-art {
+  display: block;
+  width: 52px;
+  height: 52px;
+}
+.tile-words {
+  display: grid;
+  line-height: 1.25;
+}
+.tile-words span {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.tile.have::after {
+  content: "✓";
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  color: var(--good);
+  font-weight: 700;
+  font-family: var(--sans);
+}
+
+.method {
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.method li {
+  position: relative;
+  counter-increment: step;
+  padding: 4px 0 10px 52px;
+  margin: 6px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.method li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--terra);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.method p {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.why {
+  margin-top: 4px;
+}
+.why summary {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--blue);
+  cursor: pointer;
+  min-height: 32px;
+  line-height: 32px;
+}
+.why p {
+  font-size: 0.98rem;
+  color: #4a3f36;
+  background: #f6f1e6;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.serve {
+  font-style: italic;
+  color: var(--muted);
+}
+#recipe-back {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* ===================== corner and crash ===================== */
+
+#corner {
+  position: fixed;
+  z-index: 50;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  right: max(10px, env(safe-area-inset-right, 0px));
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(251, 248, 241, 0.94);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(60, 40, 20, 0.1);
+}
+.icon-button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--blue-deep);
+}
+/* [hidden] loses to display:grid without this — written every time (hub §2). */
+.icon-button[hidden] {
+  display: none;
+}
+.icon-button:hover {
+  background: rgba(31, 95, 139, 0.1);
+}
+.icon-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: hidden;
+}
+.icon-button .icon-on,
+.icon-button .icon-slash {
+  display: none;
+}
+.icon-button[aria-pressed="true"] .icon-off,
+#mute-toggle[aria-pressed="true"] .icon-waves {
+  display: none;
+}
+.icon-button[aria-pressed="true"] .icon-on,
+#mute-toggle[aria-pressed="true"] .icon-slash {
+  display: inline;
+}
+#mute-toggle[aria-pressed="true"] {
+  color: var(--terra);
+}
+
 .slider {
   flex: 1 1 10rem;
   display: flex;
   align-items: center;
   gap: 10px;
+  font-family: var(--sans);
 }
 .slider output {
   min-width: 2.5em;
@@ -791,134 +1029,155 @@ input[type="range"]::-moz-range-thumb {
   border: 3px solid var(--paper);
 }
 
-#corner {
-  position: fixed;
-  z-index: 30;
-  top: calc(env(safe-area-inset-top, 0px) + 10px);
-  right: max(10px, env(safe-area-inset-right, 0px));
-  display: flex;
-  gap: 2px;
-  padding: 4px;
-  border-radius: 999px;
-  background: rgba(251, 248, 241, 0.92);
-  border: 1px solid var(--line);
-  box-shadow: 0 2px 8px rgba(60, 40, 20, 0.1);
-}
-.icon-button {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--blue-deep);
-}
-/* [hidden] loses to display:grid without this — written every time (hub §2). */
-.icon-button[hidden] {
-  display: none;
-}
-.icon-button:hover {
-  background: rgba(31, 95, 139, 0.1);
-}
-.icon-button svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.icon-button .icon-on,
-.icon-button .icon-slash {
-  display: none;
-}
-.icon-button[aria-pressed="true"] .icon-off,
-#mute-toggle[aria-pressed="true"] .icon-waves {
-  display: none;
-}
-.icon-button[aria-pressed="true"] .icon-on,
-#mute-toggle[aria-pressed="true"] .icon-slash {
-  display: inline;
-}
-#mute-toggle[aria-pressed="true"] {
-  color: var(--terra);
-}
-
 #crash {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  z-index: 60;
   padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 10px);
   background: var(--bad);
   color: #fff;
+  font-family: var(--sans);
   font-size: 0.9rem;
 }
 
-/* ===================== narrow and upright ===================== */
+/* ===================== narrow: the counter becomes a tray ===================== */
 
-/* Upright: the pot on top, the card beneath it. The pot stays in view as you
-   scroll the card, so a choice and its picture are never apart. */
-@media (max-width: 760px) {
-  #kitchen {
+/*
+ * Upright on a phone or a small tablet there is no room for a side column, so
+ * the counter becomes a tray along the bottom edge: closed, it shows its name,
+ * the last few things put on it and a count; tapped, it opens into a sheet
+ * over the shelves. The shelves keep room at the bottom so the tray never
+ * hides the last plank. A landscape phone (short, wide) takes the same tray.
+ */
+@media (max-width: 900px), (max-height: 500px) {
+  #pantry {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+  }
+  #counter {
+    position: fixed;
+    z-index: 30;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 72px;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    border-bottom: 0;
+    transition: max-height 0.25s ease;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  #counter.open {
+    max-height: 82vh;
+    overflow: auto;
+  }
+  .counter-head {
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    min-height: 70px;
+  }
+  .counter-head::after {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-right: 2.5px solid var(--muted);
+    border-top: 2.5px solid var(--muted);
+    transform: rotate(-45deg);
+    margin: 6px 4px 0;
+    transition: transform 0.2s;
+  }
+  #counter.open .counter-head::after {
+    transform: rotate(135deg);
+    margin-top: -6px;
+  }
+  .counter-peek {
+    display: flex;
+  }
+  .peek {
+    width: 38px;
+    height: 38px;
+  }
+  .recipe-hero {
     grid-template-columns: minmax(0, 1fr);
   }
-  .stove-wrap {
-    z-index: 5;
+  .recipe-art {
+    max-width: 320px;
+    margin: 0 auto;
   }
-  #stove {
-    height: 34vh;
+}
+
+@media (max-width: 480px) {
+  .shelf {
+    --row: 112px;
   }
-  :root {
-    --gutter: 100%;
+  .items {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
-  .label {
-    flex-basis: 100%;
+  .item-art {
+    width: 70px;
+    height: 70px;
+  }
+  .tag {
+    font-size: 0.74rem;
+    padding: 1px 5px;
+  }
+  .counter-peek .peek:nth-child(n + 4) {
+    display: none;
   }
 }
 
 /*
- * A phone on its side (hub §2): 300–430px tall, width to spare. The home
- * screen becomes two columns — the wordmark one side, the doors the other —
- * laid over the same markup, and the kitchen keeps its side-by-side layout
- * with a shorter pot. Tablets are taller than 500px either way up and keep
- * the layouts above.
+ * A phone on its side (hub §2): 300–430px tall, width to spare. The front
+ * door becomes two columns over the same markup — the wordmark and its art one
+ * side, the doors the other — and the sheets take the full height.
  */
 @media (orientation: landscape) and (max-height: 500px) {
   .screen {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
   }
-  #home .paper {
+  .home {
     max-width: 860px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-areas:
+      "kick doors"
+      "logo doors"
+      "tag doors"
+      "art doors";
+    column-gap: 24px;
     align-items: center;
   }
-  h1 {
+  .home > .kicker {
+    grid-area: kick;
+  }
+  .home > h1 {
+    grid-area: logo;
     font-size: 2.6rem;
   }
-  .home-doors > .primary {
-    min-height: 44px;
+  .home > .tagline {
+    grid-area: tag;
+    margin: 0;
   }
-  #kitchen {
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 1.1fr);
-    padding-top: calc(env(safe-area-inset-top, 0px) + 60px);
+  .home > .home-art {
+    grid-area: art;
+    margin: 8px 0 0;
   }
-  .stove-wrap {
-    top: calc(env(safe-area-inset-top, 0px) + 60px);
+  .home > .home-doors {
+    grid-area: doors;
   }
-  #stove {
-    height: calc(100vh - 90px);
+  .home-item {
+    width: 40px;
+    height: 40px;
   }
-  :root {
-    --gutter: 6.5rem;
+  .pantry-head {
+    padding-right: 150px;
   }
-  .label {
-    flex-basis: var(--gutter);
+  .sheet {
+    max-height: calc(100vh - 16px);
   }
 }

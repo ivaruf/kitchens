@@ -9,9 +9,8 @@
  *                          true meaning "cook without it". This is health
  *                          information about somebody's family, which is the
  *                          strongest possible reason it never leaves the device.
- *   kitchens.notebook.v1   the lessons learned so far, as an array of ids. The
- *                          text lives in the dish files; only the ids are kept,
- *                          so rewording a lesson never strands a saved one.
+ *   kitchens.counter.v1    what is on the counter, as pantry ids, so a browse
+ *                          can be picked up where it was left.
  *   kitchens.vol.*.v1      the two sound levels and the mute (hub §2). The
  *                          kitchen is silent for now; the levels are real so the
  *                          day it is not, it arrives at the level already chosen.
@@ -21,7 +20,7 @@
  */
 
 const DIET_KEY = "kitchens.diet.v1";
-const NOTEBOOK_KEY = "kitchens.notebook.v1";
+const COUNTER_KEY = "kitchens.counter.v1";
 const MUSIC_KEY = "kitchens.vol.music.v1";
 const SFX_KEY = "kitchens.vol.sfx.v1";
 const MUTED_KEY = "kitchens.muted.v1";
@@ -59,13 +58,14 @@ export function saveDiet(diet) {
   write(DIET_KEY, { dairy: !!diet.dairy, egg: !!diet.egg, gluten: !!diet.gluten });
 }
 
-export function loadNotebook() {
-  const saved = read(NOTEBOOK_KEY);
-  return new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : []);
+/** The counter, filtered to ids the pantry still has. */
+export function loadCounter(known) {
+  const saved = read(COUNTER_KEY);
+  return new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string" && known.has(id)) : []);
 }
 
-export function saveNotebook(set) {
-  write(NOTEBOOK_KEY, [...set]);
+export function saveCounter(set) {
+  write(COUNTER_KEY, [...set]);
 }
 
 /** A level 0..1, rejecting anything non-finite somebody else may have left. */
