@@ -62,6 +62,7 @@ function show(id, from) {
   if (from) cameFrom[id] = from;
   for (const s of SCREENS) $(s).hidden = s !== id;
   current = id;
+  $("home-btn").hidden = id === "home";
   window.scrollTo(0, 0);
   const heading = $(id).querySelector("h1, h2");
   if (heading) {
@@ -749,11 +750,15 @@ function paintDoors() {
   }));
 }
 paintDoors();
-$("pantry-home").addEventListener("click", () => {
+/* Home, from the pantry's Back or from the house top left, anywhere. */
+function goHome() {
+  closeSheets();
   // The front door belongs to no kitchen, so it takes back the house colours.
   delete document.documentElement.dataset.kitchen;
   show("home");
-});
+}
+$("pantry-home").addEventListener("click", goHome);
+$("home-btn").addEventListener("click", goHome);
 $("open-table").addEventListener("click", () => {
   paintTable();
   show("table", "home");

@@ -1518,6 +1518,23 @@ input:focus-visible {
 
 /* ===================== corner and crash ===================== */
 
+#home-corner {
+  position: fixed;
+  z-index: 50;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: max(10px, env(safe-area-inset-left, 0px));
+}
+#home-btn {
+  padding: 4px;
+  width: 50px;
+  height: 50px;
+  background: rgba(251, 248, 241, 0.94);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(60, 40, 20, 0.1);
+}
+#home-btn[hidden] {
+  display: none;
+}
 #corner {
   position: fixed;
   z-index: 50;

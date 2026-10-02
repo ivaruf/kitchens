@@ -255,6 +255,14 @@
          two-button group with aria-pressed on the chosen one; their art is
          inline SVG so they look the same on every platform, which a flag
          emoji does not. -->
+    <!-- THE WAY HOME, top left on every screen but the front door itself:
+         the mirror of the corner pill, so it is always in the same place.
+         js/main.js shows and hides it from show(). -->
+    <div id="home-corner">
+      <button type="button" id="home-btn" class="icon-button" data-i18n-label="home.go" aria-label="Home" title="Home" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5" /></svg>
+      </button>
+    </div>
     <div id="corner">
       <div class="flags" role="group" aria-label="Language / Språk">
         <button type="button" class="icon-button flag" data-lang="nb" aria-pressed="false" aria-label="Norsk" title="Norsk" lang="nb">
