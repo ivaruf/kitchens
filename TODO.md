@@ -11,6 +11,9 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     Being scoped one question at a time.
   - *Scope:* **one list for the whole house**, by ingredient id (garlic is
     garlic in every kitchen), seen by every pantry and by the planner.
+  - *Marking:* **on the shelf** — a small "I have this" tick on each jar and
+    vegetable; tapping the picture still opens its card. (The card's own
+    "put on the counter" button goes.)
 
 - **Plan meals without choosing a kitchen first.** Asked for 2026-10-02.
   Dive into suggestions and a meal plan straight from the front door, across
