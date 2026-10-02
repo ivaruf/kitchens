@@ -47,3 +47,5 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     ordinary unless a child has one), and the number of people scales the
     amounts in recipes and shopping lists. Note: amounts are free text today,
     so scaling needs them as number + unit — a real content job.
+  - *Which allergies:* **the three we have** — milk, egg and gluten — now per
+    person instead of for the whole table.
