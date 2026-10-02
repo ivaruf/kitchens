@@ -9,3 +9,5 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   ingredients": suggestions driven by how ingredients work together. Being
   scoped with the owner, one question at a time; the answers go here before
   anything is built.
+- **Alternative ingredient suggestions.** Asked for 2026-10-02. To be scoped
+  with the owner after the synergy item, one question at a time.
