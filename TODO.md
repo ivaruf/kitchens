@@ -25,3 +25,8 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   - *Who the planner knows:* **keep it simple**: no people, no "children"
     switch. Every planned meal gets a plain side and a veg from the everyday
     kitchen, whatever the main is.
+  - *How the planner starts:* **pick a kitchen mood**: "Greek week",
+    "Vietnamese week" or "mix it up", then it proposes the week.
+
+- **A way home, top left.** Asked for 2026-10-02: a back-to-home button in the
+  top-left corner of every screen.
