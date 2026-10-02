@@ -162,18 +162,32 @@ function paintCounter() {
   if (!ids.length) {
     items.append(el("p", "hint", t("counter.empty")));
   }
+  /*
+   * Each thing on the counter is two controls side by side, never one inside
+   * the other: the picture opens its card exactly as the shelf does (its name
+   * as the tooltip), and a small ✕ in its corner puts it back. The ✕ shows on
+   * hover or focus with a mouse, and always on a touch screen, which has no
+   * hover to reveal it.
+   */
   for (const id of ids) {
-    const hit = clashes(K.byId[id]);
-    const b = el("button", `counter-item${hit.length ? " clash" : ""}`);
+    const item = K.byId[id];
+    const slot = el("span", `counter-slot${clashes(item).length ? " clash" : ""}`);
+    const b = el("button", "counter-item");
     b.type = "button";
-    b.title = t("putBackTitle", K.byId[id].name);
-    b.setAttribute("aria-label", t("putBackLabel", K.byId[id].name));
+    b.title = item.name;
+    b.setAttribute("aria-label", item.name);
     b.append(art("mini", ingredient(id)));
-    b.addEventListener("click", () => {
+    b.addEventListener("click", () => openCard(id));
+    const x = el("button", "counter-x", "×");
+    x.type = "button";
+    x.title = t("putBackLabel", item.name);
+    x.setAttribute("aria-label", t("putBackLabel", item.name));
+    x.addEventListener("click", () => {
       counter.delete(id);
       changed();
     });
-    items.append(b);
+    slot.append(b, x);
+    items.append(slot);
   }
   // Anything here this table cannot eat is said once, plainly, under the board.
   const board = $("counter-items").parentElement;

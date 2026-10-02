@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.7.0'; // dish sets: a meal or a week from one shop, with a shopping list
+const VERSION = 'v0.7.1'; // counter items open their card; a small x puts them back
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;

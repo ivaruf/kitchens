@@ -615,9 +615,49 @@ input:focus-visible {
   background: rgba(255, 255, 255, 0.25);
 }
 /* On the counter but not for this table: a red ring, and the ideas say why. */
-.counter-item.clash {
+.counter-slot.clash .counter-item {
   box-shadow: inset 0 0 0 2px var(--bad);
   background: rgba(255, 255, 255, 0.35);
+}
+.counter-slot {
+  position: relative;
+  display: inline-block;
+}
+/* The ✕ that puts it back: hidden until hovered or focused, with a mouse. */
+.counter-x {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.counter-x:hover {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: #fff;
+}
+.counter-slot:hover .counter-x,
+.counter-slot:focus-within .counter-x {
+  opacity: 1;
+}
+/* A touch screen has no hover to reveal it, so there it is always shown. */
+@media (hover: none) {
+  .counter-x {
+    opacity: 1;
+  }
 }
 .mini {
   display: block;
