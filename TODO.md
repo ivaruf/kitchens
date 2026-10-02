@@ -24,6 +24,11 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     spoil (celery, herbs, spinach, the rest of a bunch of dill) get used up
     across dishes; dried goods, oil and spices are assumed to keep. Each
     ingredient will need a "keeps / spoils" mark.
+  - *What a set lets you do:* **all of it**: see the dishes side by side with
+    shared ingredients marked and how much of each perishable gets used up;
+    one combined shopping list (shared items counted once) that can be copied
+    out; and light up the pantry / put the whole set on the counter in one
+    tap, as a single dish does now.
 
 - **Alternative ingredient suggestions.** Asked for 2026-10-02. To be scoped
   with the owner after the synergy item, one question at a time.
