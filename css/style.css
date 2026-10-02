@@ -472,13 +472,54 @@ input:focus-visible {
 .item {
   position: relative;
   display: grid;
+}
+/* The picture stands on the plank's top edge; the tag hangs on its face. */
+.item-open {
+  position: relative;
+  display: grid;
   justify-items: center;
   align-items: end;
-  /* The picture stands on the plank's top edge; the tag hangs on its face. */
   padding: 0 2px 14px;
   border: 0;
   background: none;
   border-radius: 8px;
+}
+/* "I have this at home": a small round tick in the picture's corner. */
+.item-have {
+  position: absolute;
+  top: 10px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  background: rgba(251, 248, 241, 0.92);
+  color: var(--muted);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.item-have svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.35;
+}
+.item-have:hover svg {
+  opacity: 0.8;
+}
+.item-have[aria-pressed="true"] {
+  background: var(--good);
+  border-color: var(--good);
+  color: #fff;
+}
+.item-have[aria-pressed="true"] svg {
+  opacity: 1;
 }
 .item-art {
   width: 84px;
@@ -486,7 +527,7 @@ input:focus-visible {
   transition: transform 0.15s ease, opacity 0.2s;
   filter: drop-shadow(0 3px 1px rgba(60, 40, 20, 0.18));
 }
-.item:hover .item-art {
+.item-open:hover .item-art {
   transform: translateY(-4px) rotate(-2deg);
 }
 .tag {
@@ -517,15 +558,9 @@ input:focus-visible {
   background: var(--bad);
   vertical-align: 1px;
 }
-/* On the counter: it has left the shelf, so only its outline stays behind. */
-.item.on .item-art {
-  opacity: 0.22;
-  transform: none;
-}
-.item.on .tag::before {
-  content: "✓ ";
-  color: var(--good);
-  font-weight: 700;
+/* At home: the tag says so too, in the same green as the tick. */
+.item.on .tag {
+  border-color: var(--good);
 }
 /* What the counter's best idea still wants: a warm glow, never a nag. */
 .item.wanted .item-art {
@@ -728,6 +763,23 @@ input:focus-visible {
   width: 30px;
   height: 30px;
   opacity: 0.7;
+}
+/* The dishes, under the shelves: a gallery rather than a list. */
+.dish-gallery {
+  margin: 30px 0 10px;
+}
+.ideas.gallery {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+.shop-group.at-home {
+  opacity: 0.7;
+}
+.shop-group.at-home b {
+  text-decoration: line-through;
+  text-decoration-color: var(--good);
+}
+#plan-from-home {
+  margin-top: 12px;
 }
 .ideas.compact .idea {
   grid-template-columns: 64px 1fr;
@@ -1081,7 +1133,6 @@ input:focus-visible {
   animation: lift 1.6s ease-in-out infinite;
 }
 .item.lit.on .item-art {
-  opacity: 0.6;
   animation: none;
 }
 .item.lit .tag {

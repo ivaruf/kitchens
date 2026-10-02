@@ -1,7 +1,7 @@
 # Kitchens
 
-An immersive cookbook. Choose a kitchen, Greek or Vietnamese, browse its painted pantry, put what tempts you on
-the counter, and see which traditional dishes it could become, with recipes
+An immersive cookbook. Choose a kitchen, browse its painted pantry, tick what
+you already have at home, and see which traditional dishes it could become, with recipes
 that explain why each step matters, and notes for a table with different
 needs.
 
@@ -13,11 +13,12 @@ Working name; the slug is `kitchens` until it is not.
   the market, beans and lentils, oil, wine and vinegar, and the butcher and
   cheese counter. Tap anything to read what it is, how a Greek kitchen uses
   it, what it contains, and which dishes it goes into.
-- **The counter** holds whatever you pick. It answers with the dishes those
-  things could become, best match first, showing what is still missing as
-  pictures, and the shelf items the best idea still wants glow softly.
+- **At home.** Tick what you already have, right on the shelf: one list for
+  the whole house. The panel beside the shelves offers what you could cook
+  with it, and a week planned from it; every shopping list sets it apart
+  as "already at home".
 - **A recipe** is an illustrated page: the dish, its story, its ingredients
-  as pictures (ticked if on your counter), and a method where every step
+  as pictures (ticked if at home), and a method where every step
   has a *Why?* behind it.
 - **Don't have it?** Every ingredient's card offers stand-ins from any
   shop, each saying what to use, how much, and honestly what it changes —
@@ -31,21 +32,19 @@ Working name; the slug is `kitchens` until it is not.
   Shelf tags, the counter and every recipe then say what that means.
   Stored on this device only.
 
-- **Light it up.** From any recipe, everything it uses glows on the shelves,
-  and one button carries it all to the counter (anything the table cannot
-  eat stays on the shelf, and says so).
+- **Light it up.** From any recipe or set, everything it uses glows on the
+  shelves.
 - **Cook it step by step.** Each step puts its ingredients on a board. Tap
   one to prepare it (the onion becomes a chopped pile, the tomatoes a bowl
   of pulp), and watch them go into a pot that fills, changes colour and sits
   on a flame until it looks like the dish. *Do it* finishes any step for
   you, so nothing is ever a test.
 
-- **Make more of one shop.** Every recipe, and the counter, offers a set of
+- **Make more of one shop.** Every recipe offers a set of
   dishes that share their shopping: *a meal* (a main, a side and a starter,
   course by course) or *this week* (three dishes that use up what spoils,
   saying honestly what was bought for one dish only). A set shows what the
-  dishes share, gives one shopping list with each dish's amount, and can be
-  lit up in the pantry or put on the counter in one tap.
+  dishes share and gives one shopping list with each dish's amount.
 
 Seventeen dishes from a pantry of 44 ingredients: soups (fasolada, fakes,
 avgolemono and its Lenten twin tahinosoupa), ladera (revithada, fasolakia,

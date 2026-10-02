@@ -1,26 +1,28 @@
 /*
- * main.js — the house: the pantry shelves, the counter, the ingredient card,
+ * main.js — the house: the pantry shelves, what is at home, the ingredient card,
  * the recipe page, the table settings and the corner's language flags.
  *
  * THE IDEA IN ONE LINE: browsing, not filling in. Nothing here asks the player
  * a question. They look along painted shelves, tap what catches their eye to
- * read about it, put what tempts them on the counter, and the counter answers
- * with the dishes those things could become — what they already have, and the
- * little that is missing. A recipe is a page to read, with the reason behind
+ * read about it, and tick what they already have at home — and the panel
+ * beside the shelves answers with the dishes that could use it, and the
+ * little each still needs. A recipe is a page to read, with the reason behind
  * every step one tap away.
  *
  * Content lives in js/pantry.js and js/recipes.js; every picture comes from
- * js/art.js. This file only arranges them and keeps the counter.
+ * js/art.js. This file only arranges them and keeps the list of what is at
+ * home — one list for the whole house, which the planner and every shopping
+ * list read too.
  *
  * A DISH CAN LIGHT UP THE PANTRY: from its recipe page, every jar and
  * vegetable it uses glows on the shelves, and one button carries them all to
- * the counter. And any recipe can be cooked along with, one illustrated step
+ * nothing else. And any recipe can be cooked along with, one illustrated step
  * at a time (js/cookalong.js).
  *
- * AND DISHES COME IN SETS (js/sets.js): a recipe page and the counter both
- * offer two or three dishes that share their shopping — a meal for one
+ * AND DISHES COME IN SETS (js/sets.js): a recipe page offers two or three
+ * dishes that share their shopping — a meal for one
  * evening, or a week built around what spoils — with one shopping list and
- * the whole set lit up or put on the counter in a tap.
+ * the whole set lit up in the pantry in a tap.
  *
  * AND A WEEK CAN BE PLANNED WITHOUT CHOOSING A KITCHEN (js/planner.js): from
  * the front door, a kitchen mood and a number of dinners give a week, each
@@ -30,7 +32,7 @@
  * card is a sheet over whatever screen is showing.
  */
 
-import { loadDiet, saveDiet, loadCounter, saveCounter, NEEDS } from "./store.js";
+import { loadDiet, saveDiet, loadHome, saveHome, NEEDS } from "./store.js";
 import { dishesWith, suggest, containsOf } from "./recipes.js";
 import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
@@ -53,9 +55,9 @@ const art = (cls, markup) => {
 };
 
 let diet = loadDiet();
-/* The kitchen being browsed, and its counter. Every kitchen keeps its own. */
+/* The kitchen being browsed, and what is at home — one list for the house. */
 let K = localize(KITCHENS[0]);
-let counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
+const home = loadHome();
 
 /* ---------------------------------------------------------------- screens */
 
@@ -118,10 +120,15 @@ function paintShelves() {
     const head = el("header", "shelf-head");
     head.append(el("h3", null, shelf.name), el("p", null, shelf.note));
     const row = el("div", "items");
+    /*
+     * Each thing on the shelf is two controls side by side: the picture opens
+     * its card, and the small tick in its corner says "I have this at home".
+     */
     for (const item of K.ingredients.filter((i) => i.shelf === shelf.id)) {
-      const b = el("button", "item");
+      const slot = el("div", "item");
+      slot.dataset.id = item.id;
+      const b = el("button", "item-open");
       b.type = "button";
-      b.dataset.id = item.id;
       b.append(art("item-art", ingredient(item.id)));
       const tag = el("span", "tag", item.name);
       if (clashes(item).length) {
@@ -130,7 +137,16 @@ function paintShelves() {
       }
       b.append(tag);
       b.addEventListener("click", () => openCard(item.id));
-      row.append(b);
+      const tick = el("button", "item-have");
+      tick.type = "button";
+      tick.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>';
+      tick.addEventListener("click", () => {
+        if (home.has(item.id)) home.delete(item.id);
+        else home.add(item.id);
+        changed();
+      });
+      slot.append(b, tick);
+      row.append(slot);
     }
     sec.append(head, row);
     list.append(sec);
@@ -139,7 +155,7 @@ function paintShelves() {
 }
 
 /*
- * Which jars are on the counter, which the counter's best idea still wants,
+ * Which jars are at home, which the best idea for tonight still wants,
  * and — when a dish or a set has lit up the pantry — which ones it uses.
  * `lit` is { ids: [recipe ids], set: the set it came from, or null }.
  */
@@ -147,30 +163,37 @@ let lit = null;
 const litRecipes = () => (lit ? lit.ids.map((id) => K.recipeById[id]) : []);
 
 function markShelves() {
-  const ideas = suggest(K.recipes, counter);
+  const ideas = suggest(K.recipes, home);
   const wanted = new Set(ideas.length ? ideas[0].missing : []);
   const uses = lit ? new Set(litRecipes().flatMap((r) => r.ingredients.map((i) => i.id))) : null;
   $("pantry").classList.toggle("lighting", !!uses);
   for (const b of document.querySelectorAll("#shelf-list .item")) {
-    const on = counter.has(b.dataset.id);
+    const item = K.byId[b.dataset.id];
+    const on = home.has(item.id);
     b.classList.toggle("on", on);
-    b.classList.toggle("lit", !!uses && uses.has(b.dataset.id));
-    b.classList.toggle("wanted", !uses && !on && wanted.has(b.dataset.id));
-    b.setAttribute("aria-label", `${K.byId[b.dataset.id].name}${on ? t("onCounter") : ""}`);
+    b.classList.toggle("lit", !!uses && uses.has(item.id));
+    b.classList.toggle("wanted", !uses && !on && wanted.has(item.id));
+    b.querySelector(".item-open").setAttribute("aria-label", `${item.name}${on ? t("onCounter") : ""}`);
+    const tick = b.querySelector(".item-have");
+    tick.setAttribute("aria-pressed", String(on));
+    tick.setAttribute("aria-label", t("haveLabel", item.name));
+    tick.title = t("haveLabel", item.name);
   }
 }
 
-/* ------------------------------------------------------------ the counter */
+/* ----------------------------------------------------------- at home */
 
 function paintCounter() {
   const items = $("counter-items");
   items.replaceChildren();
-  const ids = [...counter];
+  // What is at home that this kitchen's shelves hold; the rest of the house's
+  // list (another kitchen's jars) is kept, just not drawn here.
+  const ids = [...home].filter((id) => K.byId[id]);
   if (!ids.length) {
     items.append(el("p", "hint", t("counter.empty")));
   }
   /*
-   * Each thing on the counter is two controls side by side, never one inside
+   * Each thing at home is two controls side by side, never one inside
    * the other: the picture opens its card exactly as the shelf does (its name
    * as the tooltip), and a small ✕ in its corner puts it back. The ✕ shows on
    * hover or focus with a mouse, and always on a touch screen, which has no
@@ -190,20 +213,11 @@ function paintCounter() {
     x.title = t("putBackLabel", item.name);
     x.setAttribute("aria-label", t("putBackLabel", item.name));
     x.addEventListener("click", () => {
-      counter.delete(id);
+      home.delete(id);
       changed();
     });
     slot.append(b, x);
     items.append(slot);
-  }
-  // Anything here this table cannot eat is said once, plainly, under the board.
-  const board = $("counter-items").parentElement;
-  board.querySelector(".counter-warn")?.remove();
-  const off = ids.filter((id) => clashes(K.byId[id]).length);
-  if (off.length) {
-    const names = listOf(off.map((id) => K.byId[id].name.toLowerCase()));
-    const needs = [...new Set(off.flatMap((id) => clashes(K.byId[id])))];
-    board.append(el("p", "counter-warn", t("counterWarn", needs, names)));
   }
   $("counter-clear").hidden = !ids.length;
   $("counter-count").textContent = ids.length ? `${ids.length}` : "";
@@ -212,27 +226,23 @@ function paintCounter() {
   const peek = $("counter-peek");
   peek.replaceChildren(...ids.slice(-5).map((id) => art("peek", ingredient(id))));
 
-  // The ideas: what the counter could become.
+  // You could cook: the dishes that use the most of what is at home.
   const ideas = $("ideas");
   ideas.replaceChildren();
-  const found = suggest(K.recipes, counter);
+  const found = suggest(K.recipes, home);
   if (!ids.length) {
     ideas.append(el("p", "hint", t("ideas.empty")));
   } else if (!found.length) {
     ideas.append(el("p", "hint", t("ideas.none")));
   }
-  for (const s of found.slice(0, 4)) ideas.append(ideaCard(s));
-
-  // A set from the counter, once there is anything on it to build around.
-  $("counter-sets").hidden = !ids.length;
-  if (ids.length) paintSetPeek("counter");
+  for (const s of found.slice(0, 3)) ideas.append(ideaCard(s));
 
   const all = $("all-dishes");
   all.replaceChildren(...K.recipes.map((r) => dishLink(r)));
   markShelves();
 }
 
-/* A dish the counter could become: what is there, and what is still missing. */
+/* A dish you could cook: what is at home, and what it still needs. */
 function ideaCard({ recipe, have, missing }) {
   const b = el("button", `idea${missing.length ? "" : " ready"}`);
   b.type = "button";
@@ -283,16 +293,18 @@ function dishLink(recipe) {
 }
 
 function changed() {
-  saveCounter(K.id, counter);
+  saveHome(home);
   paintCounter();
+  // A new list of what is at home is a new best week; make it next time.
+  plan.week = null;
 }
 
 $("counter-clear").addEventListener("click", () => {
-  counter.clear();
+  for (const id of [...home]) if (K.byId[id]) home.delete(id);
   changed();
 });
 
-/* Upright, the counter is a tray along the bottom that opens into a sheet. */
+/* Upright, the panel is a tray along the bottom that opens into a sheet. */
 const counterEl = $("counter");
 $("counter-toggle").addEventListener("click", () => {
   const open = !counterEl.classList.contains("open");
@@ -309,24 +321,9 @@ function paintLitBar(note = "") {
   $("lit-art").innerHTML = dish(rs[0]);
   $("lit-title").textContent = t("litTitle", listOf(rs.map((r) => r.name)));
   const ids = new Set(rs.flatMap((r) => r.ingredients.map((i) => i.id)));
-  const have = [...ids].filter((id) => counter.has(id)).length;
+  const have = [...ids].filter((id) => home.has(id)).length;
   $("lit-note").textContent = note || t("litNote", ids.size, have);
   $("lit-recipe").textContent = lit.set ? t("lit.set") : t("lit.recipe");
-}
-
-/*
- * Everything a dish uses, onto the counter — except what this table cannot
- * eat, which stays on the shelf and is named, so nothing is quietly dropped.
- */
-function putAll(...recipes) {
-  const left = [];
-  const ids = [...new Set(recipes.flatMap((r) => r.ingredients.map((i) => i.id)))];
-  for (const id of ids) {
-    if (clashes(K.byId[id]).length) left.push(K.byId[id].name.toLowerCase());
-    else counter.add(id);
-  }
-  changed();
-  return left.length ? t("putLeft", listOf(left)) : t("putOk");
 }
 
 function lightUp(ids, set = null) {
@@ -338,7 +335,6 @@ function lightUp(ids, set = null) {
   if (first) first.scrollIntoView({ block: "center", behavior: "smooth" });
 }
 
-$("lit-all").addEventListener("click", () => paintLitBar(putAll(...litRecipes())));
 $("lit-recipe").addEventListener("click", () => (lit.set ? openSet(lit.set) : openRecipe(lit.ids[0])));
 $("lit-off").addEventListener("click", () => {
   lit = null;
@@ -430,33 +426,9 @@ function openCard(id) {
     });
     dishes.append(b);
   }
-  paintPut();
   openSheet($("card"));
 }
 
-function paintPut() {
-  const on = counter.has(cardId);
-  const put = $("card-put");
-  put.setAttribute("aria-pressed", String(on));
-  put.textContent = on ? t("card.on") : t("card.put");
-}
-
-/*
- * Putting something on the counter closes the card at once: the player has
- * decided, and what they want to see now is the counter answering. Putting
- * it back leaves the card open, since they are still reading about it.
- */
-$("card-put").addEventListener("click", () => {
-  if (counter.has(cardId)) {
-    counter.delete(cardId);
-    changed();
-    paintPut();
-    return;
-  }
-  counter.add(cardId);
-  changed();
-  closeSheets();
-});
 $("card-close").addEventListener("click", closeSheets);
 
 /* ------------------------------------------------------------ the recipe */
@@ -499,20 +471,19 @@ function openRecipe(id, inPlace = false) {
   }
 
   recipeId = id;
-  if (!inPlace) $("recipe-all-note").textContent = "";
 
-  // The ingredients, as pictures. What is on the counter is ticked.
+  // The ingredients, as pictures. What is at home is ticked.
   const tiles = $("recipe-ingredients");
   tiles.replaceChildren();
   for (const ing of r.ingredients) {
     const item = K.byId[ing.id];
-    const b = el("button", `tile${counter.has(ing.id) ? " have" : ""}${clashes(item).length ? " clash" : ""}`);
+    const b = el("button", `tile${home.has(ing.id) ? " have" : ""}${clashes(item).length ? " clash" : ""}`);
     b.type = "button";
     b.append(art("tile-art", ingredient(ing.id)));
     const words = el("span", "tile-words");
     words.append(el("b", null, item.name), el("span", null, ing.amount));
     b.append(words);
-    if (counter.has(ing.id)) b.append(el("span", "sr", t("tile.on")));
+    if (home.has(ing.id)) b.append(el("span", "sr", t("tile.on")));
     b.addEventListener("click", () => openCard(ing.id));
     tiles.append(b);
   }
@@ -551,10 +522,6 @@ $("recipe-cook").addEventListener("click", () => {
   cookAlong.start(K.recipeById[recipeId]);
 });
 $("recipe-light").addEventListener("click", () => lightUp([recipeId]));
-$("recipe-all").addEventListener("click", () => {
-  $("recipe-all-note").textContent = putAll(K.recipeById[recipeId]);
-  openRecipe(recipeId, true);
-});
 
 /* ------------------------------------------------------------- the week */
 
@@ -569,21 +536,27 @@ const kitchenNow = (id) => everyKitchen().find((k) => k.id === id);
 
 function openPlan() {
   delete document.documentElement.dataset.kitchen;
-  if (!plan.week) plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet });
+  if (!plan.week) plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet, home });
   paintPlan();
   show("plan");
 }
 
 function remake() {
-  plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet });
+  plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet, home });
   paintPlan();
 }
+
+/* From the pantry: a week in this kitchen, built around what is at home. */
+$("plan-from-home").addEventListener("click", () => {
+  plan.mood = K.id === "everyday" ? "mix" : K.id;
+  plan.week = null;
+  openPlan();
+});
 
 /* Open a dish from the plan in its own kitchen; its Back comes home to the plan. */
 function openFromPlan(part) {
   if (K.id !== part.kitchen) {
     K = localize(KITCHEN_BY_ID[part.kitchen]);
-    counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
     lit = null;
   }
   document.documentElement.dataset.kitchen = K.id;
@@ -658,7 +631,7 @@ function paintPlan() {
     mainBtn.append(art("plan-art", dish(r)), mWords);
     mainBtn.addEventListener("click", () => openFromPlan(d.main));
     const swapM = swapBtn(t("plan.swapMain"), () => {
-      plan.week = swapMain(everyKitchen(), plan.week, i, diet);
+      plan.week = swapMain(everyKitchen(), plan.week, i, diet, home);
       paintPlan();
     });
 
@@ -712,9 +685,9 @@ function paintPlanList() {
   const { fresh, keeps } = weekList(everyKitchen(), plan.week);
   const list = $("plan-list");
   list.replaceChildren();
-  for (const [key, lines] of [["set.listFresh", fresh], ["set.listKeeps", keeps]]) {
+  for (const [key, lines] of listGroups(fresh, keeps)) {
     if (!lines.length) continue;
-    const group = el("div", "shop-group");
+    const group = el("div", `shop-group${key === "set.listHome" ? " at-home" : ""}`);
     group.append(el("p", "kicker", t(key)));
     const ul = el("ul");
     for (const line of lines) {
@@ -739,7 +712,7 @@ function planText() {
     out.push(`${t("weekday")[i]}: ${name(d.main)} + ${name(d.side)} + ${name(d.veg)}`);
   });
   out.push("", t("set.list"));
-  for (const [key, lines] of [["set.listFresh", fresh], ["set.listKeeps", keeps]]) {
+  for (const [key, lines] of listGroups(fresh, keeps).slice(0, 2)) {
     if (!lines.length) continue;
     out.push("", t(key));
     for (const l of lines) out.push(`- ${l.item.name} — ${l.amounts.map((a) => `${a.dish}: ${a.amount}`).join("; ")}`);
@@ -762,17 +735,14 @@ $("plan-door-art").replaceChildren(...["rice", "potato", "carrot", "lemon", "sta
 /* ------------------------------------------------------------- the sets */
 
 /*
- * A set is always rebuilt from where it started — a dish, or the counter,
- * and a mode — never stored as dishes. That keeps it honest when the counter
- * changes, and lets a language switch redraw it in the new words.
+ * A set is always rebuilt from where it started — a dish and a mode — never
+ * stored as dishes, which lets a language switch redraw it in the new words.
  */
-const setMode = { recipe: "meal", counter: "meal" };
-let openSetFrom = null; // { from: "recipe" | "counter", mode, anchor? }
+const setMode = { recipe: "meal" };
+let openSetFrom = null; // { from: "recipe", mode, anchor }
 
 function setFor(from, mode = setMode[from]) {
-  return from === "recipe"
-    ? bestSet(K, { mode, anchor: K.recipeById[recipeId] })
-    : bestSet(K, { mode, counter });
+  return bestSet(K, { mode, anchor: K.recipeById[recipeId] });
 }
 
 /* The two tabs, a meal or this week, and under them the set they make. */
@@ -790,7 +760,7 @@ function paintSetPeek(from) {
       return b;
     }),
   );
-  const box = $(from === "recipe" ? "recipe-set" : "counter-set");
+  const box = $("recipe-set");
   box.replaceChildren();
   const set = setFor(from);
   if (!set) {
@@ -857,9 +827,9 @@ function openSet(set) {
   // The shopping list: fresh first, then the cupboard; every dish's amount.
   const list = $("set-list");
   list.replaceChildren();
-  for (const [key, lines] of [["set.listFresh", set.fresh], ["set.listKeeps", set.keeps]]) {
+  for (const [key, lines] of listGroups(set.fresh, set.keeps)) {
     if (!lines.length) continue;
-    const group = el("div", "shop-group");
+    const group = el("div", `shop-group${key === "set.listHome" ? " at-home" : ""}`);
     group.append(el("p", "kicker", t(key)));
     const ul = el("ul");
     for (const line of lines) {
@@ -883,10 +853,23 @@ function openSet(set) {
 
 let currentSet = null;
 
+/*
+ * Every shopping list in three groups: fresh, from the cupboard — and what
+ * is already at home, set apart at the end so it is not bought twice.
+ */
+function listGroups(fresh, keeps) {
+  const need = (l) => !home.has(l.id);
+  return [
+    ["set.listFresh", fresh.filter(need)],
+    ["set.listKeeps", keeps.filter(need)],
+    ["set.listHome", [...fresh, ...keeps].filter((l) => !need(l))],
+  ];
+}
+
 /* The list as plain text, for the clipboard and anyone pasting it into a note. */
 function listText(set) {
   const out = [t("set.list"), ""];
-  for (const [key, lines] of [["set.listFresh", set.fresh], ["set.listKeeps", set.keeps]]) {
+  for (const [key, lines] of listGroups(set.fresh, set.keeps).slice(0, 2)) {
     if (!lines.length) continue;
     out.push(t(key));
     for (const line of lines) {
@@ -910,15 +893,8 @@ $("set-copy").addEventListener("click", () => {
   }
 });
 $("set-light").addEventListener("click", () => lightUp(currentSet.dishes.map((r) => r.id), currentSet));
-$("set-all").addEventListener("click", () => {
-  $("set-note").textContent = putAll(...currentSet.dishes);
-});
 $("set-back").addEventListener("click", () => {
-  if (openSetFrom && openSetFrom.from === "recipe") openRecipe(openSetFrom.anchor);
-  else {
-    paintPantry();
-    show("pantry");
-  }
+  openRecipe(openSetFrom.anchor);
 });
 
 const cookAlong = new CookAlong({
@@ -929,11 +905,10 @@ const cookAlong = new CookAlong({
 
 /* -------------------------------------------------------------- the doors */
 
-/* Walk into a kitchen: its pantry, its counter, its colours. */
+/* Walk into a kitchen: its pantry and its colours. */
 function enterKitchen(id) {
   if (K.id !== id) {
     K = localize(KITCHEN_BY_ID[id]);
-    counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
     lit = null;
   }
   document.documentElement.dataset.kitchen = K.id;
@@ -1009,7 +984,7 @@ window.addEventListener("keydown", (e) => {
 /*
  * English or Norsk, from the two flags in the corner. Switching repaints
  * whatever is on screen in place — the recipe stays open at the same step,
- * the counter keeps what is on it — because the content is only re-read,
+ * what is at home stays ticked — because the content is only re-read,
  * never reloaded.
  */
 function paintFlags() {

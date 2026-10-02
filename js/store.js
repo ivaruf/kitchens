@@ -9,16 +9,17 @@
  *                          true meaning "cook without it". This is health
  *                          information about somebody's family, which is the
  *                          strongest possible reason it never leaves the device.
- *   kitchens.counter.v1    what is on each kitchen's counter, as
- *                          { kitchenId: [pantry ids] }, so a browse can be
- *                          picked up where it was left.
+ *   kitchens.home.v1       what is already at home, as one list of ingredient
+ *                          ids for the whole house: garlic is garlic in every
+ *                          kitchen. The planner prefers dinners that use it up
+ *                          and every shopping list leaves it off.
  *
  * Every access is wrapped: private windows throw, quotas run out, and a
  * missing store must leave the game fully playable with defaults.
  */
 
 const DIET_KEY = "kitchens.diet.v1";
-const COUNTER_KEY = "kitchens.counter.v1";
+const HOME_KEY = "kitchens.home.v1";
 
 function read(key) {
   try {
@@ -53,21 +54,12 @@ export function saveDiet(diet) {
   write(DIET_KEY, { dairy: !!diet.dairy, egg: !!diet.egg, gluten: !!diet.gluten });
 }
 
-/**
- * One kitchen's counter, filtered to ids its pantry still has. Before there
- * were two kitchens this key held a bare array; that was the Greek counter.
- */
-export function loadCounter(kitchen, known) {
-  let saved = read(COUNTER_KEY);
-  if (Array.isArray(saved)) saved = { greek: saved };
-  const ids = saved && typeof saved === "object" && Array.isArray(saved[kitchen]) ? saved[kitchen] : [];
-  return new Set(ids.filter((id) => typeof id === "string" && known.has(id)));
+/** What is at home: any string ids, since a stray one simply matches nothing. */
+export function loadHome() {
+  const saved = read(HOME_KEY);
+  return new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : []);
 }
 
-export function saveCounter(kitchen, set) {
-  let saved = read(COUNTER_KEY);
-  if (Array.isArray(saved)) saved = { greek: saved };
-  if (!saved || typeof saved !== "object") saved = {};
-  saved[kitchen] = [...set];
-  write(COUNTER_KEY, saved);
+export function saveHome(set) {
+  write(HOME_KEY, [...set]);
 }

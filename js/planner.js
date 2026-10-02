@@ -15,6 +15,10 @@
  * chance in it so "another week" gives another week. "Mix it up" also leans
  * away from two nights running in the same kitchen.
  *
+ * What is at home counts too: a dinner that uses up something already in the
+ * fridge scores higher, fresh things most of all, so "what I have" turns into
+ * a week rather than sitting there.
+ *
  * A plan holds ids only ({ kitchen, recipe }), never dish objects, so it can
  * be redrawn in whichever language is current. Pure functions; the page is
  * drawn by js/main.js.
@@ -40,7 +44,7 @@ function tellingOf(k, r) {
 }
 
 /* How well one more main fits the week so far. */
-function fit(byKitchen, week, cand, mood) {
+function fit(byKitchen, week, cand, mood, home) {
   const k = byKitchen[cand.kitchen];
   const r = k.recipeById[cand.recipe];
   const bought = new Map();
@@ -49,7 +53,8 @@ function fit(byKitchen, week, cand, mood) {
     for (const id of freshOf(dk, dk.recipeById[d.recipe])) bought.set(id, (bought.get(id) || 0) + 1);
   }
   let s = 0;
-  for (const id of freshOf(k, r)) s += bought.has(id) ? 3 : -1;
+  for (const id of freshOf(k, r)) s += bought.has(id) || (home && home.has(id)) ? 3 : -1;
+  if (home) for (const ing of r.ingredients) if (home.has(ing.id)) s += k.byId[ing.id].spoils ? 3 : 1;
   // Never a near-copy of a dish already in the week.
   const mine = tellingOf(k, r);
   for (const d of week) {
@@ -78,7 +83,7 @@ function mainsFor(kitchens, mood, diet) {
 }
 
 /** A fresh week: `n` dinners for `mood` ("greek" | "vietnam" | "mix"). */
-export function planWeek(kitchens, { mood, n, diet }) {
+export function planWeek(kitchens, { mood, n, diet, home = null }) {
   const byKitchen = Object.fromEntries(kitchens.map((k) => [k.id, k]));
   const { own, others } = mainsFor(kitchens, mood, diet);
   const week = [];
@@ -94,7 +99,7 @@ export function planWeek(kitchens, { mood, n, diet }) {
     let best = pool[0];
     let bestScore = -Infinity;
     for (const c of pool) {
-      const s = week.length ? fit(byKitchen, week, c, mood) : Math.random();
+      const s = fit(byKitchen, week, c, mood, home);
       if (s > bestScore) [best, bestScore] = [c, s];
     }
     week.push(best);
@@ -116,7 +121,7 @@ function sideFor(main, i, prev) {
 }
 
 /** Another main for day `i`: the best fit not already in the week. */
-export function swapMain(kitchens, plan, i, diet) {
+export function swapMain(kitchens, plan, i, diet, home = null) {
   const byKitchen = Object.fromEntries(kitchens.map((k) => [k.id, k]));
   const { own, others } = mainsFor(kitchens, plan.mood, diet);
   const used = new Set(plan.days.map((d) => d.main.kitchen + "/" + d.main.recipe));
@@ -126,7 +131,7 @@ export function swapMain(kitchens, plan, i, diet) {
   let best = pool[0];
   let bestScore = -Infinity;
   for (const c of pool) {
-    const s = fit(byKitchen, rest, c, plan.mood) + (own.includes(c) ? 3 : 0);
+    const s = fit(byKitchen, rest, c, plan.mood, home) + (own.includes(c) ? 3 : 0);
     if (s > bestScore) [best, bestScore] = [c, s];
   }
   const days = plan.days.slice();

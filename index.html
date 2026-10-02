@@ -118,12 +118,16 @@
             <span id="lit-note"></span>
           </span>
           <span class="lit-tools">
-            <button type="button" id="lit-all" class="primary" data-i18n="lit.all">Put it all on the counter</button>
             <button type="button" id="lit-recipe" class="chip" data-i18n="lit.recipe">The recipe</button>
             <button type="button" id="lit-off" class="chip" data-i18n="lit.done">Done</button>
           </span>
         </div>
         <div id="shelf-list"></div>
+        <!-- Every dish in this kitchen, browsable without the panel. -->
+        <section class="dish-gallery" aria-labelledby="gallery-title">
+          <h3 id="gallery-title" data-i18n="aside.all">The dishes</h3>
+          <div id="all-dishes" class="ideas gallery"></div>
+        </section>
       </div>
 
       <aside id="counter" aria-labelledby="counter-title">
@@ -139,13 +143,9 @@
           </div>
           <h3 class="aside-head" data-i18n="aside.ideas">It could become</h3>
           <div id="ideas" class="ideas"></div>
-          <section id="counter-sets" class="sets" hidden>
-            <h3 class="aside-head" data-i18n="sets.counterTitle">Make a set of it</h3>
-            <div class="set-tabs" role="group" data-for="counter"></div>
-            <div id="counter-set" class="set-peek"></div>
-          </section>
-          <h3 class="aside-head" data-i18n="aside.all">Every dish in this kitchen</h3>
-          <div id="all-dishes" class="ideas compact"></div>
+          <!-- What is at home, as a week: the planner in this kitchen's mood,
+               preferring dinners that use it up. -->
+          <button type="button" id="plan-from-home" class="primary wide-btn" data-i18n="plan.fromHome">Plan a week from what I have</button>
         </div>
       </aside>
     </section>
@@ -166,9 +166,7 @@
         <div class="recipe-tools">
           <button type="button" id="recipe-cook" class="primary" data-i18n="recipe.cook">Cook it step by step</button>
           <button type="button" id="recipe-light" class="ghost" data-i18n="recipe.light">Light it up in the pantry</button>
-          <button type="button" id="recipe-all" class="ghost" data-i18n="lit.all">Put it all on the counter</button>
         </div>
-        <p id="recipe-all-note" class="hint" aria-live="polite"></p>
         <p id="recipe-story" class="story"></p>
         <div id="recipe-table" class="for-table"></div>
         <h3 data-i18n="recipe.in">What goes in</h3>
@@ -233,7 +231,6 @@
         <div class="recipe-tools">
           <button type="button" id="set-copy" class="ghost" data-i18n="set.copy">Copy the list</button>
           <button type="button" id="set-light" class="ghost" data-i18n="set.light">Light it all up in the pantry</button>
-          <button type="button" id="set-all" class="primary" data-i18n="lit.all">Put it all on the counter</button>
         </div>
         <button type="button" id="set-back" class="ghost wide-btn" data-i18n="back">Back</button>
       </article>
@@ -277,7 +274,6 @@
       <p class="kicker" data-i18n="card.into">Goes into</p>
       <div id="card-dishes" class="dish-chips"></div>
       <div class="pair">
-        <button type="button" id="card-put" class="primary" aria-pressed="false">Put on the counter</button>
         <button type="button" id="card-close" class="ghost" data-i18n="card.close">Back</button>
       </div>
     </section>
