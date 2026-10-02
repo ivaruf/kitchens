@@ -12,6 +12,7 @@ export const NB_EVERYDAY = {
   shelves: {
     cupboard: { name: "Skapet", note: "Tørrvarer og flasker som holder seg" },
     veg: { name: "Friske grønnsaker", note: "Fra nederste skuff i kjøleskapet" },
+    fridge: { name: "Kjøleskapet", note: "Smør, melk og egg" },
     freezer: { name: "Fryseren", note: "Plukket og frosset, klart på minutter" },
   },
 
@@ -21,9 +22,13 @@ export const NB_EVERYDAY = {
       name: "Ris",
       info: "Langkornet hvit ris, det enkleste i skapet og det de fleste barn aldri sier nei til. Naturlig glutenfri.",
     },
+    pasta: {
+      name: "Pasta",
+      info: "Vanlig tørket pasta av durumhvete. Den enkle middagen de fleste barn ville valgt — og ikke glutenfri.",
+    },
     gfpasta: {
       name: "Glutenfri pasta",
-      info: "Laget av mais, ris eller begge deler i stedet for hvete. Noen merker tilsetter egg for å holde den sammen, så sjekk pakken hvis egg betyr noe ved ditt bord.",
+      info: "Laget av mais, ris eller begge deler i stedet for hvete: den frie utgaven av pastaen. Noen merker tilsetter egg for å holde den sammen, så sjekk pakken hvis egg betyr noe ved ditt bord.",
     },
     ricenoodles: {
       name: "Risnudler",
@@ -31,7 +36,7 @@ export const NB_EVERYDAY = {
     },
     oil: {
       name: "Olivenolje",
-      info: "Gjør jobben smøret vanligvis gjør her: i mosen, over pastaen, på potetene. En nøytral olje går fint til å steke risen.",
+      info: "Den melkefrie erstatningen for smør: i mosen, over pastaen, på potetene. En nøytral olje går fint til å steke risen.",
     },
     salt: {
       name: "Salt",
@@ -70,6 +75,20 @@ export const NB_EVERYDAY = {
     springonion: {
       name: "Vårløk",
       info: "Mild nok til å gå rå i stekt ris helt til slutt. Sett en skål med den på bordet til den som vil ha.",
+    },
+
+    /* ---------------------------------------------------------- fridge */
+    butter: {
+      name: "Smør",
+      info: "En klatt på varme poteter, pasta eller mais er det som får enkel mat til å smake hjemme. Olivenolje gjør samme jobben på en melkefri tallerken.",
+    },
+    milk: {
+      name: "Melk",
+      info: "Varmet og rørt inn i potetmos for å gjøre den myk. Litt av kokevannet fra potetene gjør det samme uten melk.",
+    },
+    eggs: {
+      name: "Egg",
+      info: "Rørt inn i stekt ris i små, gylne biter. Lett å droppe, eller å røre for seg til en tallerken uten egg.",
     },
 
     /* --------------------------------------------------------- freezer */
@@ -118,9 +137,9 @@ export const NB_EVERYDAY = {
     },
 
     friedrice: {
-      name: "Stekt ris",
-      line: "Gårsdagens ris stekt med erter, gulrot og vårløk — uten egg.",
-      story: "Den beste bruken av rester av ris, og raskt nok til en hverdag. Det meste av stekt ris har egg rørt inn; denne lar det være, så alle rundt bordet kan spise den.",
+      name: "Stekt ris med egg",
+      line: "Gårsdagens ris stekt med egg, erter, gulrot og vårløk.",
+      story: "Den beste bruken av rester av ris, og raskt nok til en hverdag. De små gylne eggbitene er det barna plukker ut først.",
       serves: "4",
       time: "15 minutter",
       serve: "Varm, med flasken med tamari på bordet.",
@@ -128,6 +147,7 @@ export const NB_EVERYDAY = {
         rice: "600 g kokt, kald (av 250 g rå)",
         oil: "2 ss",
         carrot: "2, i terninger",
+        eggs: "2, sammenvispet",
         peas: "150 g frosne",
         springonion: "3, i skiver",
         tamari: "2 ss",
@@ -140,33 +160,40 @@ export const NB_EVERYDAY = {
           wait: "3 min",
         },
         {
+          text: "Skyv gulroten til side, hell egget i det tomme feltet og rør til det så vidt har stivnet i myke biter.",
+          why: "Stekt for seg først holder egget seg i biter i stedet for å legge seg rundt hvert riskorn.",
+          prep: { eggs: "sammenvispet" },
+          wait: "1 min",
+        },
+        {
           text: "Ha i den kalde risen, del opp eventuelle klumper, og stek under omrøring til den er varm helt gjennom. Ha i ertene de siste to minuttene.",
-          why: "Kald ris fra i går har tørket litt, så den stekes i stedet for å dampe seg til grøt. Fersk ris går også, hvis du brer den utover og lar den kjølne først.",
+          why: "Kald ris fra i går har tørket litt, så den stekes i stedet for å dampe seg til grøt.",
           prep: { rice: "kokt og kald" },
           wait: "5 min",
         },
         {
           text: "Rør inn tamari og vårløk og server med en gang.",
-          why: "Tamari i stedet for soyasaus, som er brygget med hvete. Litt holder til en barnetallerken; mer kan tas ved bordet.",
+          why: "Tamari i stedet for soyasaus, som er brygget med hvete. Litt holder til en barnetallerken.",
           prep: { springonion: "i skiver" },
         },
       ],
       table: {
+        egg: "Dropp egget for en eggfri wok — eller rør det sammen i en egen panne og bland det bare inn i de andre tallerkenene.",
         gluten: "Glutenfri så lenge tamarien er det — sjekk etiketten. Vanlig soyasaus inneholder hvete.",
-        egg: "Eggfri slik den står. Det meste av stekt ris, også fra takeaway, har egg i seg.",
       },
     },
 
     boiledpotatoes: {
       name: "Kokte poteter",
-      line: "Poteter kokt i saltet vann til de akkurat er møre.",
+      line: "Poteter kokt i saltet vann til de akkurat er møre, med en klatt smør.",
       story: "Det enkleste på et norsk middagsbord, og det som oftest passer til alt. Små poteter kan kokes hele med skallet på.",
       serves: "4",
       time: "30 minutter",
-      serve: "Varme, til hovedretten — eller med litt olivenolje og salt til den som vil ha dem enkle.",
+      serve: "Varme, til hovedretten.",
       ingredients: {
         potato: "1 kg",
         salt: "1 ts",
+        butter: "en klatt",
       },
       method: [
         {
@@ -176,28 +203,29 @@ export const NB_EVERYDAY = {
         },
         {
           text: "Dekk dem med kaldt vann, ha i saltet og kok opp, og la dem så småkoke til en kniv glir lett inn.",
-          why: "Med kaldt vann i starten koker de jevnt utenfra og inn; slippes de i kokende vann, er utsiden mos før midten er ferdig.",
+          why: "Med kaldt vann i starten koker de jevnt utenfra og inn.",
           wait: "20 min",
         },
         {
-          text: "Hell godt av og la dem dampe seg tørre i kjelen i et minutt.",
+          text: "Hell godt av, la dem dampe seg tørre i et minutt, og vend dem i smøret.",
         },
       ],
       table: {
-        dairy: "Melkefri slik den står. Hvis noen tallerkener liker smør på potetene, sett det ved siden av.",
+        dairy: "Vend de melkefrie potetene i olivenolje i stedet for smør — eller ta dem ut før smøret kommer i.",
       },
     },
 
     mash: {
       name: "Potetmos",
-      line: "Myk potetmos laget med olivenolje og litt av kokevannet — uten smør eller melk.",
-      story: "Potetmos er som regel smør og melk med litt potet i; denne er potet med god olivenolje, og den er like myk. Den kan spises med skje, og det er derfor den minste liker den.",
+      line: "Myk potetmos med varm melk og smør.",
+      story: "Den kan spises med skje og er myk, og det er derfor den minste liker den. Den ene regelen er å røre den for hånd, aldri med stavmikser.",
       serves: "4",
       time: "30 minutter",
-      serve: "I en varm bolle, med litt mer olivenolje på toppen.",
+      serve: "I en varm bolle, med litt mer smør på toppen.",
       ingredients: {
         potato: "1 kg melne",
-        oil: "4–5 ss",
+        milk: "150–200 ml",
+        butter: "50 g",
         salt: "etter smak",
       },
       method: [
@@ -208,16 +236,16 @@ export const NB_EVERYDAY = {
           wait: "20 min",
         },
         {
-          text: "Ta vare på en kopp av kokevannet før du heller av. Hell av potetene og mos dem i kjelen.",
-          why: "Det stivelsesrike vannet gjør det melk vanligvis gjør: det løser opp mosen uten å gjøre den seig.",
+          text: "Hell av potetene og mos dem i kjelen med smøret.",
+          why: "Smøret går i først, mens de er varmest, så det smelter inn i alt.",
         },
         {
-          text: "Rør inn olivenoljen og nok av kokevannet til at den blir myk, og smak til med salt.",
-          why: "Rør med en sleiv, ikke en stavmikser: mikseren bearbeider stivelsen til mosen blir lim.",
+          text: "Varm melken og rør den inn litt om gangen til mosen er myk, og smak til med salt.",
+          why: "Varm melk holder mosen varm; kald melk gjør den seig. Rør med en sleiv, ikke stavmikser.",
         },
       ],
       table: {
-        dairy: "Melkefri slik den står. Hvis noen tallerkener vil ha det vanlige smøret, rør det bare inn i deres porsjon.",
+        dairy: "Til en melkefri bolle: ta vare på en kopp av kokevannet og mos med olivenolje og det vannet i stedet for smør og melk — ta porsjonen ut før smøret kommer i.",
       },
     },
 
@@ -258,16 +286,16 @@ export const NB_EVERYDAY = {
     },
 
     pasta: {
-      name: "Pasta med olivenolje",
-      line: "Glutenfri pasta vendt i olivenolje og en klype salt.",
-      story: "Middagen noen barn ville valgt hver dag hvis de fikk spørsmålet. Enkel pasta og god olje, og ingenting på som noen må plukke av.",
+      name: "Pasta med smør",
+      line: "Enkel pasta vendt i smør og en klype salt.",
+      story: "Middagen noen barn ville valgt hver dag hvis de fikk spørsmålet. Enkel pasta og smør, og ingenting på som noen må plukke av.",
       serves: "4",
       time: "15 minutter",
-      serve: "Varm, i boller, med mer olivenolje og salt på bordet.",
+      serve: "Varm, i boller.",
       ingredients: {
-        gfpasta: "400 g",
+        pasta: "400 g",
         salt: "1 ss, til vannet",
-        oil: "3 ss",
+        butter: "30–40 g",
       },
       method: [
         {
@@ -276,19 +304,17 @@ export const NB_EVERYDAY = {
           wait: "10 min",
         },
         {
-          text: "Ha i pastaen, rør med en gang og kok den så lenge pakken sier, med en røring nå og da. Smak på en bit et minutt før.",
-          why: "Glutenfri pasta setter seg fast det første minuttet og blir fort myk til slutt, så rør tidlig og smak tidlig.",
+          text: "Ha i pastaen, rør med en gang og kok den så lenge pakken sier, med en røring nå og da.",
+          why: "Røring det første minuttet hindrer at den kleber seg sammen.",
           wait: "8–10 min",
         },
         {
-          text: "Hell av og vend den med en gang i olivenoljen.",
-          why: "Glutenfri pasta stivner og klumper seg når den kjølner; oljen holder den løs.",
+          text: "Hell av og vend den med en gang i smøret til det smelter.",
         },
       ],
       table: {
-        gluten: "Vanlig pasta er hvete; bruk glutenfri pasta, og kok den i sin egen kjele med vann.",
-        egg: "Noe glutenfri pasta lages med egg — velg en av mais eller ris uten.",
-        dairy: "Melkefri slik den står. Revet ost legges på ved bordet, bare på tallerkener som tåler det.",
+        gluten: "Kok glutenfri pasta til den glutenfrie tallerkenen, i sin egen kjele med vann — og sjekk at den er eggfri, for noe lages med egg. Den kleber tidlig og blir fort myk, så rør tidlig og smak tidlig.",
+        dairy: "Vend den melkefrie porsjonen i olivenolje i stedet for smør.",
       },
     },
 
@@ -349,7 +375,7 @@ export const NB_EVERYDAY = {
 
     peascorn: {
       name: "Erter og mais",
-      line: "Frosne erter og mais, kokt i noen få minutter.",
+      line: "Frosne erter og mais, kokt i noen få minutter og vendt i smør.",
       story: "To farger i en bolle, søte nok til at barn spiser dem med skje. Fra fryseren til bordet på fem minutter.",
       serves: "4",
       time: "5 minutter",
@@ -358,6 +384,7 @@ export const NB_EVERYDAY = {
         peas: "200 g frosne",
         sweetcorn: "200 g frosne",
         salt: "en klype",
+        butter: "en liten klatt",
       },
       method: [
         {
@@ -365,27 +392,30 @@ export const NB_EVERYDAY = {
           wait: "5 min",
         },
         {
-          text: "Ha i ertene og maisen rett fra fryseren, kok i tre minutter, og hell av.",
+          text: "Ha i ertene og maisen rett fra fryseren og kok i tre minutter.",
           why: "Bare så vidt kokt holder de seg søte og klare i fargen; lenger, og ertene blir grå og rynkete.",
           wait: "3 min",
         },
+        {
+          text: "Hell av og vend dem i smøret.",
+        },
       ],
       table: {
-        dairy: "Melkefri slik den står. Noen frosne grønnsaksblandinger kommer i smørsaus — bruk rene poser. En klatt smør går bare på tallerkenene som tåler det.",
+        dairy: "Dropp smøret, eller bruk litt olivenolje i stedet — rene erter og mais trenger ingenting. Noen frosne blandinger kommer i smørsaus; rene poser er bare grønnsaker.",
       },
     },
 
     corncobs: {
       name: "Maiskolber",
-      line: "Hele kolber kokt til de er søte og møre, spist med hendene.",
+      line: "Hele kolber kokt til de er søte og møre, smurt med smør og spist med hendene.",
       story: "En grønnsak du har lov til å holde i, og derfor prøver selv en motvillig spiser den. Delt i to passer kolbene til små hender.",
       serves: "4",
       time: "15 minutter",
       serve: "Varme, på et fat, til å spise med hendene.",
       ingredients: {
         corncob: "4, delt i to",
+        butter: "til servering",
         salt: "til servering",
-        oil: "litt, til servering",
       },
       method: [
         {
@@ -400,11 +430,11 @@ export const NB_EVERYDAY = {
           wait: "5–10 min",
         },
         {
-          text: "Løft dem opp, pensle dem med litt olivenolje og dryss over salt.",
+          text: "Løft dem opp, smør dem med smør og dryss over salt.",
         },
       ],
       table: {
-        dairy: "Melkefri med olivenolje. Mais får som regel smør — sett smøret ved siden av til tallerkenene som tåler det.",
+        dairy: "Pensle de melkefrie kolbene med litt olivenolje i stedet, eller server dem med bare salt.",
       },
     },
   },

@@ -671,6 +671,11 @@ function paintPlan() {
       b.type = "button";
       const words = el("span", "plan-words");
       words.append(el("small", null, label), el("b", null, er.name));
+      // The plain sides are written the ordinary way, for the children; say
+      // when one carries what this table cooks without (its recipe has the
+      // free version).
+      const hit = containsOf(er, ek.byId).filter((n) => diet[n]);
+      if (hit.length) words.append(el("span", "dish-clash", t("dishClash", hit)));
       b.append(art("plan-extra-art", dish(er)), words);
       b.addEventListener("click", () => openFromPlan(d[which]));
       box.append(

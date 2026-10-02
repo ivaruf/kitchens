@@ -15,12 +15,19 @@
  * field). `native` is Norwegian, because this kitchen's own language is the
  * family's; the bokmål overlay (js/nb/everyday.js) gives the same names.
  *
- * THE LESSON THIS KITCHEN BRINGS is that plain is not the same as safe.
- * Every dish here is free of dairy, egg and gluten as written, but each of
- * the usual versions has one of the three hidden in it: fried rice is
- * normally made with egg (this one is not), soy sauce is brewed with wheat
- * (so tamari), mash wants butter and milk (so olive oil), gluten-free pasta
- * is sometimes made with egg, and a bottle of ketchup is worth reading.
+ * WHY IT IS WRITTEN THE ORDINARY WAY. Every other kitchen here writes its
+ * dishes free of dairy, egg and gluten. This one does not, on purpose: these
+ * sides are for the children, who eat all three (owner, 2026-10-02), so the
+ * pasta is buttered, the fried rice has egg in it and the mash has milk —
+ * the way a child expects them. Each dish is still *cookable* free, and the
+ * free version is its table note: olive oil for butter, gluten-free pasta
+ * (gfpasta stays in the pantry for that), the egg left out of the rice.
+ * Written this way round, the plain plate is plain and the careful plate is
+ * one note away, instead of every child eating the careful version.
+ *
+ * What to watch even on the free plate: soy sauce is brewed with wheat (so
+ * tamari), gluten-free pasta is sometimes made with egg, and a bottle of
+ * ketchup is worth reading.
  */
 
 export const ED_KITCHEN_INTRO =
@@ -29,6 +36,7 @@ export const ED_KITCHEN_INTRO =
 export const ED_SHELVES = [
   { id: "cupboard", name: "The cupboard", note: "Dry goods and bottles that keep" },
   { id: "veg", name: "Fresh vegetables", note: "From the bottom drawer of the fridge" },
+  { id: "fridge", name: "The fridge", note: "Butter, milk and eggs" },
   { id: "freezer", name: "The freezer", note: "Picked and frozen, ready in minutes" },
 ];
 
@@ -42,11 +50,19 @@ export const ED_INGREDIENTS = [
     info: "Long-grain white rice, the plainest thing in the cupboard and the one most children never refuse. Naturally gluten-free.",
   },
   {
+    id: "pasta",
+    name: "Pasta",
+    native: "pasta",
+    shelf: "cupboard",
+    contains: ["gluten"],
+    info: "Ordinary dried pasta, made from durum wheat. The plain dinner most children would choose — and not gluten-free.",
+  },
+  {
     id: "gfpasta",
     name: "Gluten-free pasta",
     native: "glutenfri pasta",
     shelf: "cupboard",
-    info: "Made from corn, rice or both instead of wheat. Some brands add egg to hold it together, so check the packet if egg matters at your table.",
+    info: "Made from corn, rice or both instead of wheat: the free version of the pasta. Some brands add egg to hold it together, so check the packet if egg matters at your table.",
   },
   {
     id: "ricenoodles",
@@ -60,7 +76,7 @@ export const ED_INGREDIENTS = [
     name: "Olive oil",
     native: "olivenolje",
     shelf: "cupboard",
-    info: "What does the work butter usually does here: in the mash, over the pasta, on the potatoes. A neutral oil is fine for frying the rice.",
+    info: "The dairy-free stand-in for butter: in the mash, over the pasta, on the potatoes. A neutral oil is fine for frying the rice.",
   },
   {
     id: "salt",
@@ -128,6 +144,32 @@ export const ED_INGREDIENTS = [
     info: "Mild enough to go in fried rice raw at the end. Leave the bowl of them on the table for whoever wants them.",
   },
 
+  /* ------------------------------------------------------------ fridge */
+  {
+    id: "butter",
+    name: "Butter",
+    native: "smør",
+    shelf: "fridge",
+    contains: ["dairy"],
+    info: "A knob on hot potatoes, pasta or corn is what makes plain food taste like home. Olive oil does the same job on a dairy-free plate.",
+  },
+  {
+    id: "milk",
+    name: "Milk",
+    native: "melk",
+    shelf: "fridge",
+    contains: ["dairy"],
+    info: "Warmed and beaten into mash to make it soft. Some of the potato cooking water does it without dairy.",
+  },
+  {
+    id: "eggs",
+    name: "Eggs",
+    native: "egg",
+    shelf: "fridge",
+    contains: ["egg"],
+    info: "Scrambled through fried rice in little golden pieces. Easy to leave out, or to scramble on the side for a plate without egg.",
+  },
+
   /* ----------------------------------------------------------- freezer */
   {
     id: "peas",
@@ -191,18 +233,19 @@ export const ED_RECIPES = [
   },
   {
     id: "friedrice",
-    name: "Fried rice",
-    native: "Stekt ris",
-    line: "Yesterday's rice fried with peas, carrot and spring onion — no egg.",
-    story: "The best use of leftover rice, and quick enough for a weekday. Most fried rice has egg scrambled through it; this one leaves it out, so everyone at the table can have it.",
+    name: "Egg fried rice",
+    native: "Stekt ris med egg",
+    line: "Yesterday's rice fried with egg, peas, carrot and spring onion.",
+    story: "The best use of leftover rice, and quick enough for a weekday. The little golden pieces of egg are the part children pick out first.",
     serves: "4",
     time: "15 minutes",
     vessel: "wok",
-    key: ["rice", "peas", "carrot", "tamari"],
+    key: ["rice", "eggs", "peas", "tamari"],
     ingredients: [
       { id: "rice", amount: "600 g cooked, cold (from 250 g raw)" },
       { id: "oil", amount: "2 tbsp" },
       { id: "carrot", amount: "2, diced" },
+      { id: "eggs", amount: "2, beaten" },
       { id: "peas", amount: "150 g frozen" },
       { id: "springonion", amount: "3, sliced" },
       { id: "tamari", amount: "2 tbsp" },
@@ -218,8 +261,17 @@ export const ED_RECIPES = [
         sauce: "#e8a050",
       },
       {
-        text: "Add the cold rice, breaking up any lumps, and fry it, tossing, until it is hot right through. Add the peas for the last two minutes.",
-        why: "Cold, day-old rice has dried out a little, so it fries instead of steaming into mush. Fresh rice works if you spread it out to cool first.",
+        text: "Push the carrot to one side, pour the egg into the space and stir it until just set in soft pieces.",
+        why: "Cooked on its own first, the egg stays in pieces instead of coating every grain.",
+        prep: { eggs: "beaten" },
+        add: ["eggs"],
+        heat: 3,
+        wait: "1 min",
+        sauce: "#f0d070",
+      },
+      {
+        text: "Add the cold rice, breaking up any lumps, and fry it, tossing, until hot right through. Add the peas for the last two minutes.",
+        why: "Cold, day-old rice has dried out a little, so it fries instead of steaming into mush.",
         prep: { rice: "cooked and cold" },
         add: ["rice", "peas"],
         heat: 3,
@@ -228,7 +280,7 @@ export const ED_RECIPES = [
       },
       {
         text: "Stir in the tamari and spring onion and serve at once.",
-        why: "Tamari rather than soy sauce, which is brewed with wheat. A little is enough for a child's plate; more can go on at the table.",
+        why: "Tamari rather than soy sauce, which is brewed with wheat. A little is enough for a child's plate.",
         prep: { springonion: "sliced" },
         add: ["tamari", "springonion"],
         heat: 0,
@@ -237,23 +289,24 @@ export const ED_RECIPES = [
     ],
     serve: "Hot, with the bottle of tamari on the table.",
     table: {
+      egg: "Leave the egg out for an egg-free wok — or scramble it in a separate pan and stir it into the other plates only.",
       gluten: "Gluten-free as long as the tamari is — check the label. Ordinary soy sauce contains wheat.",
-      egg: "Egg-free as written. Most fried rice, and most takeaway fried rice, has egg in it.",
     },
   },
   {
     id: "boiledpotatoes",
     name: "Boiled potatoes",
     native: "Kokte poteter",
-    line: "Potatoes boiled in salted water until just tender.",
+    line: "Potatoes boiled in salted water until just tender, with a knob of butter.",
     story: "The plainest thing on a Norwegian dinner table, and the one most likely to go with anything. Small ones can be boiled whole in their skins.",
     serves: "4",
     time: "30 minutes",
     vessel: "pot",
-    key: ["potato", "salt"],
+    key: ["potato", "butter"],
     ingredients: [
       { id: "potato", amount: "1 kg" },
       { id: "salt", amount: "1 tsp" },
+      { id: "butter", amount: "a knob" },
     ],
     method: [
       {
@@ -263,36 +316,38 @@ export const ED_RECIPES = [
       },
       {
         text: "Cover them with cold water, add the salt and bring to the boil, then simmer until a knife slides in easily.",
-        why: "Starting in cold water cooks them evenly from the outside in; dropped into boiling water, the outside is mush before the middle is done.",
+        why: "Starting in cold water cooks them evenly from the outside in.",
         add: ["potato", "salt"],
         heat: 2,
         wait: "20 min",
         sauce: "#e6e8de",
       },
       {
-        text: "Drain them well and let them steam dry in the pot for a minute.",
+        text: "Drain them well, let them steam dry for a minute, and toss with the butter.",
+        add: ["butter"],
         heat: 0,
         sauce: "#efe2b8",
       },
     ],
-    serve: "Hot, with the main — or with a little olive oil and salt for whoever wants them plain.",
+    serve: "Hot, with the main.",
     table: {
-      dairy: "Dairy-free as written. If some plates like butter on their potatoes, put it on the side.",
+      dairy: "Toss the dairy-free potatoes in olive oil instead of butter — or take them out before the butter goes in.",
     },
   },
   {
     id: "mash",
     name: "Mashed potatoes",
     native: "Potetmos",
-    line: "Soft mashed potatoes made with olive oil and some of the cooking water — no butter or milk.",
-    story: "Mash is usually butter and milk with some potato in it; this one is potato with good olive oil, and it is just as soft. Spoonable, which is why the youngest likes it.",
+    line: "Soft mashed potatoes with warm milk and butter.",
+    story: "Spoonable and soft, which is why the youngest likes it. The one rule is to beat it by hand, never in a blender.",
     serves: "4",
     time: "30 minutes",
     vessel: "pot",
-    key: ["potato", "oil"],
+    key: ["potato", "milk", "butter"],
     ingredients: [
       { id: "potato", amount: "1 kg floury" },
-      { id: "oil", amount: "4–5 tbsp" },
+      { id: "milk", amount: "150–200 ml" },
+      { id: "butter", amount: "50 g" },
       { id: "salt", amount: "to taste" },
     ],
     method: [
@@ -306,22 +361,23 @@ export const ED_RECIPES = [
         sauce: "#e6e8de",
       },
       {
-        text: "Before draining, keep back a cupful of the cooking water. Drain the potatoes and mash them in the pot.",
-        why: "The starchy water does what milk usually does, loosening the mash without making it gluey.",
+        text: "Drain the potatoes and mash them in the pot with the butter.",
+        why: "Butter goes in first, while they are hottest, so it melts into every bit.",
+        add: ["butter"],
         heat: 0,
         sauce: "#f2e6b8",
       },
       {
-        text: "Beat in the olive oil and enough of the cooking water to make it soft, and taste for salt.",
-        why: "Beat with a spoon, not a blender: a blender works the starch until mash turns to glue.",
-        add: ["oil"],
+        text: "Warm the milk and beat it in a little at a time until the mash is soft, and taste for salt.",
+        why: "Warm milk keeps the mash hot; cold milk makes it gluey. Beat with a spoon, not a blender.",
+        add: ["milk"],
         heat: 1,
-        sauce: "#f0dfa0",
+        sauce: "#f6ecc8",
       },
     ],
-    serve: "In a warm bowl, with a little more olive oil on top.",
+    serve: "In a warm bowl, with a little more butter on top.",
     table: {
-      dairy: "Dairy-free as written. If some plates want the usual butter, stir it into their portion only.",
+      dairy: "For a dairy-free bowl, keep back a cupful of the cooking water and mash with olive oil and that water instead of butter and milk — take it out before the butter goes in.",
     },
   },
   {
@@ -372,18 +428,18 @@ export const ED_RECIPES = [
   },
   {
     id: "pasta",
-    name: "Pasta with olive oil",
-    native: "Pasta med olivenolje",
-    line: "Gluten-free pasta tossed with olive oil and a pinch of salt.",
-    story: "The dinner some children would choose every day if asked. Plain pasta and good oil, and nothing on it that anyone has to pick off.",
+    name: "Buttered pasta",
+    native: "Pasta med smør",
+    line: "Plain pasta tossed with butter and a pinch of salt.",
+    story: "The dinner some children would choose every day if asked. Plain pasta and butter, and nothing on it that anyone has to pick off.",
     serves: "4",
     time: "15 minutes",
     vessel: "pot",
-    key: ["gfpasta", "oil"],
+    key: ["pasta", "butter"],
     ingredients: [
-      { id: "gfpasta", amount: "400 g" },
+      { id: "pasta", amount: "400 g" },
       { id: "salt", amount: "1 tbsp, for the water" },
-      { id: "oil", amount: "3 tbsp" },
+      { id: "butter", amount: "30–40 g" },
     ],
     method: [
       {
@@ -395,26 +451,24 @@ export const ED_RECIPES = [
         sauce: "#dfe9ec",
       },
       {
-        text: "Add the pasta, stir straight away and boil for the time on the packet, stirring now and then. Taste a piece a minute before.",
-        why: "Gluten-free pasta sticks in the first minute and goes soft quickly at the end, so stir early and taste early.",
-        add: ["gfpasta"],
+        text: "Add the pasta, stir straight away and boil for the time on the packet, stirring now and then.",
+        why: "Stirring in the first minute stops it sticking together.",
+        add: ["pasta"],
         heat: 3,
         wait: "8–10 min",
         sauce: "#e8e6d4",
       },
       {
-        text: "Drain it and toss at once with the olive oil.",
-        why: "Gluten-free pasta firms up and clumps as it cools; the oil keeps it loose.",
-        add: ["oil"],
+        text: "Drain it and toss at once with the butter until it melts.",
+        add: ["butter"],
         heat: 0,
         sauce: "#ecd890",
       },
     ],
-    serve: "Hot, in bowls, with more olive oil and salt on the table.",
+    serve: "Hot, in bowls.",
     table: {
-      gluten: "Ordinary pasta is wheat; use gluten-free pasta, and cook it in its own pot of water.",
-      egg: "Some gluten-free pasta is made with egg — choose a corn or rice one without it.",
-      dairy: "Dairy-free as written. Grated cheese goes on at the table, only for plates that can have it.",
+      gluten: "Cook gluten-free pasta for the gluten-free plate, in its own pot of water — and check it is egg-free, as some is made with egg. It sticks early and softens fast, so stir early and taste early.",
+      dairy: "Toss the dairy-free portion in olive oil instead of butter.",
     },
   },
   {
@@ -491,7 +545,7 @@ export const ED_RECIPES = [
     id: "peascorn",
     name: "Peas and sweetcorn",
     native: "Erter og mais",
-    line: "Frozen peas and sweetcorn, boiled for a few minutes.",
+    line: "Frozen peas and sweetcorn, boiled for a few minutes and tossed with butter.",
     story: "Two colours in a bowl, sweet enough that children eat them by the spoonful. From the freezer to the table in five minutes.",
     serves: "4",
     time: "5 minutes",
@@ -501,6 +555,7 @@ export const ED_RECIPES = [
       { id: "peas", amount: "200 g frozen" },
       { id: "sweetcorn", amount: "200 g frozen" },
       { id: "salt", amount: "a pinch" },
+      { id: "butter", amount: "a small knob" },
     ],
     method: [
       {
@@ -511,33 +566,39 @@ export const ED_RECIPES = [
         sauce: "#dfe9ec",
       },
       {
-        text: "Add the peas and sweetcorn straight from the freezer and boil for three minutes, then drain.",
+        text: "Add the peas and sweetcorn straight from the freezer and boil for three minutes.",
         why: "Only just boiled, they stay sweet and bright; longer and the peas turn grey and wrinkled.",
         add: ["peas", "sweetcorn"],
         heat: 3,
         wait: "3 min",
         sauce: "#c8d870",
       },
+      {
+        text: "Drain and toss with the butter.",
+        add: ["butter"],
+        heat: 0,
+        sauce: "#d0d878",
+      },
     ],
     serve: "Hot, in a bowl, with a spoon in it.",
     table: {
-      dairy: "Dairy-free as written. Some frozen vegetable mixes come in butter sauce — use plain bags. A knob of butter goes only on the plates that can have it.",
+      dairy: "Leave the butter off, or use a little olive oil instead — plain peas and corn need nothing. Some frozen mixes come in butter sauce; plain bags are just vegetables.",
     },
   },
   {
     id: "corncobs",
     name: "Corn on the cob",
     native: "Maiskolber",
-    line: "Whole cobs boiled until sweet and tender, eaten in the hand.",
+    line: "Whole cobs boiled until sweet and tender, buttered and eaten in the hand.",
     story: "A vegetable you are allowed to hold, which is why even a reluctant eater will try it. Cut in halves, the cobs fit small hands.",
     serves: "4",
     time: "15 minutes",
     vessel: "pot",
-    key: ["corncob"],
+    key: ["corncob", "butter"],
     ingredients: [
       { id: "corncob", amount: "4, halved" },
+      { id: "butter", amount: "to serve" },
       { id: "salt", amount: "to serve" },
-      { id: "oil", amount: "a little, to serve" },
     ],
     method: [
       {
@@ -556,15 +617,15 @@ export const ED_RECIPES = [
         sauce: "#e8d870",
       },
       {
-        text: "Lift them out, brush them with a little olive oil and sprinkle with salt.",
-        add: ["oil", "salt"],
+        text: "Lift them out, rub them with butter and sprinkle with salt.",
+        add: ["butter", "salt"],
         heat: 0,
         sauce: "#e8d870",
       },
     ],
     serve: "Hot, on a plate, to eat with your hands.",
     table: {
-      dairy: "Dairy-free with olive oil. Corn is usually buttered — put the butter on the side for plates that can have it.",
+      dairy: "Brush the dairy-free cobs with a little olive oil instead, or serve them with just salt.",
     },
   },
 ];

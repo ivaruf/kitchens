@@ -20,6 +20,16 @@ export const SWAPS_EVERYDAY = {
       nb: { use: "Ris i kokepose", amount: "Samme mengde", changes: "Raskere og sikrere, litt blassere. Kok etter pakken." },
     },
   ],
+  pasta: [
+    {
+      en: { use: "Gluten-free pasta", amount: "The same amount", changes: "Softer and quicker to overcook; stir early and taste early. Check it is egg-free if that matters." },
+      nb: { use: "Glutenfri pasta", amount: "Samme mengde", changes: "Mykere og fortere overkokt; rør tidlig og smak tidlig. Sjekk at den er eggfri hvis det betyr noe." },
+    },
+    {
+      en: { use: "Rice noodles", amount: "Three-quarters of the amount", changes: "Softer and slippier, but just as plain — soak, do not boil." },
+      nb: { use: "Risnudler", amount: "Tre fjerdedeler av mengden", changes: "Mykere og glattere, men like enkle — bløtlegg, ikke kok." },
+    },
+  ],
   gfpasta: [
     {
       en: { use: "Rice noodles", amount: "Three-quarters of the amount", changes: "Softer and slippier, but just as plain — soak, do not boil." },
@@ -134,6 +144,38 @@ export const SWAPS_EVERYDAY = {
     {
       en: { use: "Leave them out", amount: "—", changes: "Many children would rather you did; the rice is still good." },
       nb: { use: "Dropp dem", amount: "—", changes: "Mange barn foretrekker det; risen er god likevel." },
+    },
+  ],
+
+  /* ------------------------------------------------------------ fridge */
+  butter: [
+    {
+      en: { use: "Olive oil", amount: "About the same amount", changes: "Fruitier and less rich, and dairy-free. In mash, add some potato cooking water too." },
+      nb: { use: "Olivenolje", amount: "Omtrent samme mengde", changes: "Mer fruktig og mindre fyldig, og melkefri. I mos, ha i litt av kokevannet også." },
+    },
+    {
+      en: { use: "Dairy-free spread", amount: "The same amount", changes: "Closest to butter in taste and melt; check the tub, as some contain buttermilk." },
+      nb: { use: "Melkefritt margarin", amount: "Samme mengde", changes: "Nærmest smør i smak og smelting; sjekk boksen, for noen inneholder kjernemelk." },
+    },
+  ],
+  milk: [
+    {
+      en: { use: "Potato cooking water", amount: "The same amount", changes: "Dairy-free and already in the pot; the mash is lighter and less creamy." },
+      nb: { use: "Kokevann fra potetene", amount: "Samme mengde", changes: "Melkefritt og allerede i kjelen; mosen blir lettere og mindre kremet." },
+    },
+    {
+      en: { use: "Unsweetened oat drink", amount: "The same amount", changes: "Creamy and mild, and dairy-free; some oat drinks are not gluten-free, so check the carton." },
+      nb: { use: "Usøtet havredrikk", amount: "Samme mengde", changes: "Kremet og mild, og melkefri; noen havredrikker er ikke glutenfrie, så sjekk kartongen." },
+    },
+  ],
+  eggs: [
+    {
+      en: { use: "Leave them out", amount: "—", changes: "The fried rice is still good, just plainer — and egg-free." },
+      nb: { use: "Dropp dem", amount: "—", changes: "Den stekte risen er god likevel, bare enklere — og eggfri." },
+    },
+    {
+      en: { use: "A little extra veg, such as sweetcorn or more peas", amount: "A handful", changes: "Brings back colour and sweetness, not the soft egg pieces." },
+      nb: { use: "Litt ekstra grønnsaker, som mais eller mer erter", amount: "En neve", changes: "Gir tilbake farge og sødme, men ikke de myke eggbitene." },
     },
   ],
 

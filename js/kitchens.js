@@ -119,7 +119,7 @@ export const KITCHENS = [
       plainrice: "side", friedrice: "side", boiledpotatoes: "side", mash: "side", ovenchips: "side",
       pasta: "side", plainnoodles: "side", vegsticks: "veg", peascorn: "veg", corncobs: "veg",
     },
-    spoils: ["cucumber", "pepper", "corncob", "springonion"],
+    spoils: ["cucumber", "pepper", "corncob", "springonion", "milk"],
   }),
 ];
 

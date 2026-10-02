@@ -827,6 +827,35 @@ const DRAW = {
       <path d="M22 54 Q26 40 46 30 Q36 44 30 58 z" fill="#8fb366" ${THIN}/>
       <path d="M12 52 Q8 40 18 26 Q14 42 20 56 z" fill="#7fae5a" ${THIN}/>
     `),
+
+  pasta: () =>
+    svg(`
+      <path d="M14 18 h36 l-3 38 q0 4 -4 4 h-22 q-4 0 -4 -4 z" fill="#f2efe6" opacity="0.8" ${LINE}/>
+      ${[[22, 30, 20], [34, 28, -25], [28, 40, 40], [40, 42, -10], [22, 50, -30], [36, 52, 15]]
+        .map(([x, y, a]) => `<g transform="rotate(${a} ${x} ${y})"><rect x="${x - 6}" y="${y - 2.6}" width="12" height="5.2" rx="1" fill="#e9c25a" ${THIN}/><path d="M${x - 4} ${y - 2.6} v5.2 M${x} ${y - 2.6} v5.2 M${x + 4} ${y - 2.6} v5.2" stroke="#c9a24f" stroke-width="0.8"/></g>`)
+        .join("")}
+      <rect x="12" y="12" width="40" height="8" rx="2" fill="#2c6a96" ${LINE}/>
+      <path d="M24 16 h16" stroke="#f7f4ec" stroke-width="1.6"/>
+    `),
+
+  butter: () =>
+    svg(`
+      <path d="M8 40 L32 30 L56 40 L32 52 z" fill="#f7f4ec" ${LINE}/>
+      <path d="M14 36 L20 26 L44 18 L50 30 L32 40 z" fill="#f6dc7a" ${LINE}/>
+      <path d="M14 36 L32 40 L32 46 L14 42 z" fill="#e8c54a" ${LINE}/>
+      <path d="M32 40 L50 30 L50 36 L32 46 z" fill="#d9b23a" ${LINE}/>
+      <path d="M22 28 l18 -6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+    `),
+
+  milk: () =>
+    svg(`
+      <path d="M20 22 L26 12 H38 L44 22 V56 Q44 60 40 60 H24 Q20 60 20 56 Z" fill="#f7f7f2" ${LINE}/>
+      <path d="M26 12 H38 L36 6 H28 Z" fill="#2c6a96" ${LINE}/>
+      <path d="M20 22 H44" stroke="${INK}" stroke-width="1.2"/>
+      <path d="M20 34 q12 -6 24 0 V48 q-12 6 -24 0 z" fill="#2c6a96" opacity="0.85"/>
+      <circle cx="32" cy="41" r="4" fill="#f7f7f2"/>
+      <path d="M24 26 v6" stroke="#d9dde0" stroke-width="2" stroke-linecap="round"/>
+    `),
 };
 
 /* Ingredients that share another's picture across kitchens. */
@@ -1057,7 +1086,7 @@ const IN_POT = {
   ginger: ["ginger", 4], staranise: ["staranise", 3], cassia: ["cinnamon", 1], shallots: ["shallot", 8], chilli: ["chilliring", 5],
   thaibasil: ["basil", 5], coriander: ["coriander", 8], beansprouts: ["sprout", 10], lettuce: ["lettuce", 6], waterspinach: ["waterspinach", 24],
   ricenoodles: ["noodle", 14], vermicelli: ["vermicelli", 20], prawns: ["prawn", 8], fish: ["fishsteak", 4],
-  gfpasta: ["penne", 22], peas: ["greenpea", 26], sweetcorn: ["corn", 26], corncob: ["cob", 3], ketchup: ["ketchup", 1],
+  gfpasta: ["penne", 22], pasta: ["penne", 22], peas: ["greenpea", 26], sweetcorn: ["corn", 26], corncob: ["cob", 3], ketchup: ["ketchup", 1],
 };
 
 /*
@@ -1092,12 +1121,12 @@ const PREPARED = {
   ginger: ["ginger", 8], shallots: ["shallot", 12], chilli: ["chilliring", 10], thaibasil: ["basil", 12], coriander: ["coriander", 12],
   beansprouts: ["sprout", 16], lettuce: ["lettuce", 8], waterspinach: ["waterspinach", 12], ricenoodles: ["noodle", 10],
   vermicelli: ["vermicelli", 18], prawns: ["prawn", 6], fish: ["fishsteak", 2],
-  gfpasta: ["penne", 14], peas: ["greenpea", 22], sweetcorn: ["corn", 22], corncob: ["cob", 2],
+  gfpasta: ["penne", 14], pasta: ["penne", 14], peas: ["greenpea", 22], sweetcorn: ["corn", 22], corncob: ["cob", 2],
 };
 const PULP = [
   [/grated/, { tomato: "#d8442f", onion: "#efe2c0", redonion: "#c9a0b8" }],
   [/juiced/, { lemon: "#f3dc6a", lime: "#d6e8a0" }],
-  [/beaten/, { eggs: "#f2c84a" }],
+  [/beaten|whisked|scrambled/, { eggs: "#f2c84a" }],
   [/whisked/, { tahini: "#e2cfa6" }],
   [/charred/, { aubergine: "#a8906e" }],
   [/crushed|pounded|minced/, { garlic: "#efe6cc" }],
