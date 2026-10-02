@@ -32,6 +32,13 @@ Working name; the slug is `kitchens` until it is not.
   on a flame until it looks like the dish. *Do it* finishes any step for
   you, so nothing is ever a test.
 
+- **Make more of one shop.** Every recipe, and the counter, offers a set of
+  dishes that share their shopping: *a meal* (a main, a side and a starter,
+  course by course) or *this week* (three dishes that use up what spoils,
+  saying honestly what was bought for one dish only). A set shows what the
+  dishes share, gives one shopping list with each dish's amount, and can be
+  lit up in the pantry or put on the counter in one tap.
+
 Seventeen dishes from a pantry of 44 ingredients: soups (fasolada, fakes,
 avgolemono and its Lenten twin tahinosoupa), ladera (revithada, fasolakia,
 spanakorizo, soufico), oven dishes (gemista, gigantes plaki, briam, lemon
@@ -59,6 +66,7 @@ Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 | `js/art.js` | Every picture, as SVG: the ingredients and the finished bowls |
 | `js/main.js` | Screens, shelves, counter, card, recipe page, language flags |
 | `js/store.js` | localStorage, all under `kitchens.` |
+| `js/sets.js` | Dish sets: the meal and week search over a kitchen's dishes |
 | `js/cookalong.js` | The step-by-step cook-along: prepare on the board, watch the pot fill |
 | `js/i18n.js`, `js/nb.js`, `js/nb/` | English and bokmål: interface words and the Norwegian content overlays |
 | `js/screen.js`, `js/update.js` | Hub floors: fullscreen, opt-in updates |

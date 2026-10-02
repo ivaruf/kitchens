@@ -15,11 +15,32 @@ import { SHELVES, INGREDIENTS } from "./pantry.js";
 import { RECIPES, FASTING_NOTE } from "./recipes.js";
 import { VN_SHELVES, VN_INGREDIENTS, VN_RECIPES } from "./vietnam.js";
 
+/*
+ * Three facts the dish sets (js/sets.js) need, kept here beside each kitchen so
+ * they can be read and argued with in one place:
+ *
+ *   courses   what each dish is at a table: "main", "side", "starter" (a meze,
+ *             a salad, a fresh roll) or "sauce" (served with something else,
+ *             never a course of its own). Greek soups and ladera are mains —
+ *             that is how they are eaten.
+ *   spoils    the ingredients that will not keep a week once bought: fresh
+ *             herbs, leaves, soft vegetables, meat and fish. Everything else —
+ *             onions, garlic, potatoes, citrus, dried goods, bottles, spices —
+ *             is assumed to keep, which is what "use it up this week" is about.
+ *   staples   what nearly every dish uses and every kitchen already has (salt,
+ *             pepper, the cooking oil, fish sauce). Sharing them says nothing
+ *             about two dishes belonging together, so they are not counted.
+ */
 function kitchen(k) {
+  const recipes = k.recipes.map((r) => ({ ...r, course: k.courses[r.id] || "main" }));
+  const spoils = new Set(k.spoils);
+  const ingredients = k.ingredients.map((i) => ({ ...i, spoils: spoils.has(i.id) }));
   return {
     ...k,
-    byId: Object.fromEntries(k.ingredients.map((i) => [i.id, i])),
-    recipeById: Object.fromEntries(k.recipes.map((r) => [r.id, r])),
+    recipes,
+    ingredients,
+    byId: Object.fromEntries(ingredients.map((i) => [i.id, i])),
+    recipeById: Object.fromEntries(recipes.map((r) => [r.id, r])),
   };
 }
 
@@ -35,6 +56,18 @@ export const KITCHENS = [
     ingredients: INGREDIENTS,
     recipes: RECIPES,
     fastingNote: FASTING_NOTE,
+    staples: ["salt", "blackpepper", "oil"],
+    courses: {
+      fasolada: "main", fakes: "main", avgolemono: "main", tahinosoupa: "main",
+      revithada: "main", fasolakia: "main", spanakorizo: "main", soufico: "main",
+      gemista: "main", gigantes: "main", briam: "main", stifado: "main",
+      lemonates: "side",
+      horiatiki: "starter", fava: "starter", melitzanosalata: "starter", skordalia: "starter",
+    },
+    spoils: [
+      "parsley", "dill", "mint", "tomato", "celery", "aubergine", "courgette", "pepper",
+      "cucumber", "spinach", "greenbeans", "springonion", "beef", "chicken", "feta", "bread",
+    ],
   }),
   kitchen({
     id: "vietnam",
@@ -47,6 +80,12 @@ export const KITCHENS = [
     ingredients: VN_INGREDIENTS,
     recipes: VN_RECIPES,
     fastingNote: "",
+    staples: ["fishsauce", "neutraloil", "sugar", "blackpepper"],
+    courses: { pho: "main", cakho: "main", raumuong: "side", goicuon: "starter", nuoccham: "sauce" },
+    spoils: [
+      "thaibasil", "coriander", "mint", "springonion", "chilli", "beansprouts",
+      "lettuce", "waterspinach", "beef", "prawns", "fish",
+    ],
   }),
 ];
 

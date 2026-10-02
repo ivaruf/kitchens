@@ -163,7 +163,8 @@ h2:focus {
 }
 #home,
 #table,
-#recipe {
+#recipe,
+#set {
   display: grid;
   justify-items: center;
   align-content: start;
@@ -1197,6 +1198,196 @@ input:focus-visible {
     var(--wall);
 }
 
+
+
+/* ===================== dish sets ===================== */
+
+.sets {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+#counter-sets {
+  margin-top: 10px;
+  padding-top: 4px;
+  border-top: 0;
+}
+/* A meal / this week: two equal tabs, the chosen one filled. */
+.set-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 9rem));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.set-tabs .chip[aria-pressed="true"] {
+  background: var(--blue);
+  border-color: var(--blue-deep);
+  color: #fff;
+}
+.set-peek .primary {
+  width: 100%;
+  margin-top: 8px;
+}
+/* The dishes in a set, side by side and the same size: they are peers. */
+.peek-dishes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 8px;
+}
+.peek-dish {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--line);
+  line-height: 1.2;
+}
+.peek-dish.this {
+  border-color: var(--terra);
+  box-shadow: 0 0 0 2px rgba(179, 90, 54, 0.2);
+}
+.peek-dish small,
+.set-dish small {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.peek-art {
+  display: block;
+  width: 72px;
+  height: 54px;
+}
+
+.set-page {
+  max-width: 880px;
+}
+.set-dishes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 10px;
+  margin: 10px 0 6px;
+}
+.set-dish {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 1.05rem;
+}
+.set-dish:hover {
+  border-color: var(--blue);
+}
+.set-dish-art {
+  display: block;
+  width: 140px;
+  height: 105px;
+}
+.set-shared {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
+  gap: 8px;
+}
+.share {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px 6px 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+}
+.share.fresh {
+  border-color: var(--olive);
+}
+.share-art {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+.share-words {
+  display: grid;
+  line-height: 1.25;
+}
+.share-words small {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.fresh-tag {
+  justify-self: start;
+  margin-top: 2px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--olive);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+#set-fresh-note {
+  border-left: 4px solid var(--warn);
+}
+#set-fresh-note.good {
+  border-left-color: var(--good);
+}
+.shop-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 6px 24px;
+}
+.shop-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+}
+.shop-group li {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 8px;
+  align-items: start;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.shop-group li.clash b {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.shop-group li.clash em {
+  color: var(--bad);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-style: normal;
+  font-weight: 600;
+}
+.shop-art {
+  display: block;
+  width: 34px;
+  height: 34px;
+}
+.shop-words {
+  display: grid;
+  line-height: 1.3;
+}
+.shop-words small {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.wide-btn {
+  width: 100%;
+  margin-top: 10px;
+}
 
 /* ===================== the Vietnamese kitchen ===================== */
 

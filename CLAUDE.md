@@ -44,3 +44,6 @@ choices and timing bars was built first and rejected for exactly that reason.
   English and is named once in the console. Native names (Greek, Vietnamese)
   are never translated. Recipe `prep` words stay English in the source:
   `js/art.js` reads them to pick a picture.
+- Each kitchen in `js/kitchens.js` declares every dish's **course** and which
+  ingredients **spoil**; the dish sets depend on both. A new dish needs its
+  course, a new ingredient its keeps-or-spoils call.

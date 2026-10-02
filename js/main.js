@@ -17,6 +17,11 @@
  * the counter. And any recipe can be cooked along with, one illustrated step
  * at a time (js/cookalong.js).
  *
+ * AND DISHES COME IN SETS (js/sets.js): a recipe page and the counter both
+ * offer two or three dishes that share their shopping — a meal for one
+ * evening, or a week built around what spoils — with one shopping list and
+ * the whole set lit up or put on the counter in a tap.
+ *
  * SCREENS are sibling <section>s and exactly one is visible. The ingredient
  * card is a sheet over whatever screen is showing.
  */
@@ -26,6 +31,7 @@ import { dishesWith, suggest, containsOf } from "./recipes.js";
 import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
 import { CookAlong } from "./cookalong.js";
+import { bestSet } from "./sets.js";
 import { t, list as listOf, localize, getLang, setLang, paintStatic } from "./i18n.js";
 
 const $ = (id) => document.getElementById(id);
@@ -48,7 +54,7 @@ let counter = loadCounter(K.id, new Set(Object.keys(K.byId)));
 
 /* ---------------------------------------------------------------- screens */
 
-const SCREENS = ["home", "table", "pantry", "recipe", "cook"];
+const SCREENS = ["home", "table", "pantry", "recipe", "cook", "set"];
 let current = "home";
 const cameFrom = {};
 
@@ -127,14 +133,16 @@ function paintShelves() {
 
 /*
  * Which jars are on the counter, which the counter's best idea still wants,
- * and — when a dish has lit up the pantry — which ones that dish uses.
+ * and — when a dish or a set has lit up the pantry — which ones it uses.
+ * `lit` is { ids: [recipe ids], set: the set it came from, or null }.
  */
 let lit = null;
+const litRecipes = () => (lit ? lit.ids.map((id) => K.recipeById[id]) : []);
 
 function markShelves() {
   const ideas = suggest(K.recipes, counter);
   const wanted = new Set(ideas.length ? ideas[0].missing : []);
-  const uses = lit ? new Set(K.recipeById[lit].ingredients.map((i) => i.id)) : null;
+  const uses = lit ? new Set(litRecipes().flatMap((r) => r.ingredients.map((i) => i.id))) : null;
   $("pantry").classList.toggle("lighting", !!uses);
   for (const b of document.querySelectorAll("#shelf-list .item")) {
     const on = counter.has(b.dataset.id);
@@ -193,6 +201,10 @@ function paintCounter() {
     ideas.append(el("p", "hint", t("ideas.none")));
   }
   for (const s of found.slice(0, 4)) ideas.append(ideaCard(s));
+
+  // A set from the counter, once there is anything on it to build around.
+  $("counter-sets").hidden = !ids.length;
+  if (ids.length) paintSetPeek("counter");
 
   const all = $("all-dishes");
   all.replaceChildren(...K.recipes.map((r) => dishLink(r)));
@@ -272,29 +284,32 @@ function paintLitBar(note = "") {
   const bar = $("lit-bar");
   bar.hidden = !lit;
   if (!lit) return;
-  const r = K.recipeById[lit];
-  $("lit-art").innerHTML = dish(r);
-  $("lit-title").textContent = t("litTitle", r.name);
-  const have = r.ingredients.filter((i) => counter.has(i.id)).length;
-  $("lit-note").textContent = note || t("litNote", r.ingredients.length, have);
+  const rs = litRecipes();
+  $("lit-art").innerHTML = dish(rs[0]);
+  $("lit-title").textContent = t("litTitle", listOf(rs.map((r) => r.name)));
+  const ids = new Set(rs.flatMap((r) => r.ingredients.map((i) => i.id)));
+  const have = [...ids].filter((id) => counter.has(id)).length;
+  $("lit-note").textContent = note || t("litNote", ids.size, have);
+  $("lit-recipe").textContent = lit.set ? t("lit.set") : t("lit.recipe");
 }
 
 /*
  * Everything a dish uses, onto the counter — except what this table cannot
  * eat, which stays on the shelf and is named, so nothing is quietly dropped.
  */
-function putAll(recipe) {
+function putAll(...recipes) {
   const left = [];
-  for (const ing of recipe.ingredients) {
-    if (clashes(K.byId[ing.id]).length) left.push(K.byId[ing.id].name.toLowerCase());
-    else counter.add(ing.id);
+  const ids = [...new Set(recipes.flatMap((r) => r.ingredients.map((i) => i.id)))];
+  for (const id of ids) {
+    if (clashes(K.byId[id]).length) left.push(K.byId[id].name.toLowerCase());
+    else counter.add(id);
   }
   changed();
   return left.length ? t("putLeft", listOf(left)) : t("putOk");
 }
 
-function lightUp(id) {
-  lit = id;
+function lightUp(ids, set = null) {
+  lit = { ids, set };
   paintPantry();
   show("pantry");
   // The first lit jar, brought into view so the glow is seen and not missed.
@@ -302,8 +317,8 @@ function lightUp(id) {
   if (first) first.scrollIntoView({ block: "center", behavior: "smooth" });
 }
 
-$("lit-all").addEventListener("click", () => paintLitBar(putAll(K.recipeById[lit])));
-$("lit-recipe").addEventListener("click", () => openRecipe(lit));
+$("lit-all").addEventListener("click", () => paintLitBar(putAll(...litRecipes())));
+$("lit-recipe").addEventListener("click", () => (lit.set ? openSet(lit.set) : openRecipe(lit.ids[0])));
 $("lit-off").addEventListener("click", () => {
   lit = null;
   paintLitBar();
@@ -473,6 +488,7 @@ function openRecipe(id, inPlace = false) {
     ol.append(li);
   }
   $("recipe-serve").textContent = t("serve", r.serve);
+  paintSetPeek("recipe");
   if (!inPlace) show("recipe");
 }
 
@@ -486,10 +502,172 @@ $("recipe-cook").addEventListener("click", () => {
   show("cook");
   cookAlong.start(K.recipeById[recipeId]);
 });
-$("recipe-light").addEventListener("click", () => lightUp(recipeId));
+$("recipe-light").addEventListener("click", () => lightUp([recipeId]));
 $("recipe-all").addEventListener("click", () => {
   $("recipe-all-note").textContent = putAll(K.recipeById[recipeId]);
   openRecipe(recipeId, true);
+});
+
+/* ------------------------------------------------------------- the sets */
+
+/*
+ * A set is always rebuilt from where it started — a dish, or the counter,
+ * and a mode — never stored as dishes. That keeps it honest when the counter
+ * changes, and lets a language switch redraw it in the new words.
+ */
+const setMode = { recipe: "meal", counter: "meal" };
+let openSetFrom = null; // { from: "recipe" | "counter", mode, anchor? }
+
+function setFor(from, mode = setMode[from]) {
+  return from === "recipe"
+    ? bestSet(K, { mode, anchor: K.recipeById[recipeId] })
+    : bestSet(K, { mode, counter });
+}
+
+/* The two tabs, a meal or this week, and under them the set they make. */
+function paintSetPeek(from) {
+  const tabs = document.querySelector(`.set-tabs[data-for="${from}"]`);
+  tabs.replaceChildren(
+    ...["meal", "week"].map((mode) => {
+      const b = el("button", "chip", t(mode === "meal" ? "sets.meal" : "sets.week"));
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(setMode[from] === mode));
+      b.addEventListener("click", () => {
+        setMode[from] = mode;
+        paintSetPeek(from);
+      });
+      return b;
+    }),
+  );
+  const box = $(from === "recipe" ? "recipe-set" : "counter-set");
+  box.replaceChildren();
+  const set = setFor(from);
+  if (!set) {
+    box.append(el("p", "hint small", t("sets.none")));
+    return;
+  }
+  box.append(el("p", "hint small", t(setMode[from] === "meal" ? "sets.mealHint" : "sets.weekHint")));
+  const row = el("div", "peek-dishes");
+  for (const r of set.dishes) {
+    const d = el("span", `peek-dish${from === "recipe" && r.id === recipeId ? " this" : ""}`);
+    d.append(art("peek-art", dish(r)), el("b", null, r.name), el("small", null, t("course")[r.course]));
+    row.append(d);
+  }
+  const go = el("button", "primary", t("sets.see"));
+  go.type = "button";
+  go.addEventListener("click", () => {
+    openSetFrom = { from, mode: setMode[from], anchor: recipeId };
+    openSet(set);
+  });
+  box.append(row, go);
+}
+
+/* The set page: the dishes, what they share, and the list to shop with. */
+function openSet(set) {
+  const week = set.mode === "week";
+  $("set-kicker").textContent = t(week ? "set.kickerWeek" : "set.kickerMeal");
+  $("set-title").textContent = t(week ? "set.titleWeek" : "set.titleMeal");
+  $("set-hint").textContent = t(week ? "sets.weekHint" : "sets.mealHint");
+  $("set-note").textContent = "";
+
+  const dishes = $("set-dishes");
+  dishes.replaceChildren(
+    ...set.dishes.map((r) => {
+      const b = el("button", "set-dish");
+      b.type = "button";
+      b.append(art("set-dish-art", dish(r)), el("b", null, r.name), el("small", null, t("course")[r.course]));
+      b.addEventListener("click", () => openRecipe(r.id));
+      return b;
+    }),
+  );
+
+  const shared = $("set-shared");
+  shared.replaceChildren();
+  if (!set.shared.length) shared.append(el("p", "hint", t("set.nothingShared")));
+  for (const s of set.shared) {
+    const b = el("button", `share${s.spoils ? " fresh" : ""}`);
+    b.type = "button";
+    b.append(art("share-art", ingredient(s.id)));
+    const words = el("span", "share-words");
+    words.append(el("b", null, K.byId[s.id].name), el("small", null, t("sharedIn", s.n)));
+    if (s.spoils) words.append(el("span", "fresh-tag", t("set.fresh")));
+    b.append(words);
+    b.addEventListener("click", () => openCard(s.id));
+    shared.append(b);
+  }
+
+  // For a week, the honest line: did everything fresh get used more than once?
+  const freshNote = $("set-fresh-note");
+  const once = set.fresh.filter((l) => l.amounts.length === 1).map((l) => K.byId[l.id].name.toLowerCase());
+  freshNote.hidden = !week;
+  freshNote.textContent = once.length ? t("freshOnce", listOf(once)) : t("set.freshAll");
+  freshNote.classList.toggle("good", !once.length);
+
+  // The shopping list: fresh first, then the cupboard; every dish's amount.
+  const list = $("set-list");
+  list.replaceChildren();
+  for (const [key, lines] of [["set.listFresh", set.fresh], ["set.listKeeps", set.keeps]]) {
+    if (!lines.length) continue;
+    const group = el("div", "shop-group");
+    group.append(el("p", "kicker", t(key)));
+    const ul = el("ul");
+    for (const line of lines) {
+      const item = K.byId[line.id];
+      const li = el("li", clashes(item).length ? "clash" : "");
+      li.append(art("shop-art", ingredient(line.id)));
+      const words = el("span", "shop-words");
+      words.append(el("b", null, item.name));
+      if (clashes(item).length) words.append(el("em", null, ` — ${t("set.notForTable")}`));
+      for (const a of line.amounts) words.append(el("small", null, `${a.dish.name}: ${a.amount}`));
+      li.append(words);
+      ul.append(li);
+    }
+    group.append(ul);
+    list.append(group);
+  }
+
+  currentSet = set;
+  show("set");
+}
+
+let currentSet = null;
+
+/* The list as plain text, for the clipboard and anyone pasting it into a note. */
+function listText(set) {
+  const out = [t("set.list"), ""];
+  for (const [key, lines] of [["set.listFresh", set.fresh], ["set.listKeeps", set.keeps]]) {
+    if (!lines.length) continue;
+    out.push(t(key));
+    for (const line of lines) {
+      const item = K.byId[line.id];
+      const amounts = line.amounts.map((a) => `${a.dish.name}: ${a.amount}`).join("; ");
+      out.push(`- ${item.name}${clashes(item).length ? ` (${t("set.notForTable")})` : ""} — ${amounts}`);
+    }
+    out.push("");
+  }
+  return out.join("\n").trim();
+}
+
+$("set-copy").addEventListener("click", () => {
+  const say = (key) => ($("set-note").textContent = t(key));
+  try {
+    navigator.clipboard.writeText(listText(currentSet)).then(() => say("set.copied"), () => say("set.copyFail"));
+  } catch {
+    // No clipboard here (an iframe without the permission, an old browser).
+    // The list on the page is selectable text, so the reader can still copy it.
+    say("set.copyFail");
+  }
+});
+$("set-light").addEventListener("click", () => lightUp(currentSet.dishes.map((r) => r.id), currentSet));
+$("set-all").addEventListener("click", () => {
+  $("set-note").textContent = putAll(...currentSet.dishes);
+});
+$("set-back").addEventListener("click", () => {
+  if (openSetFrom && openSetFrom.from === "recipe") openRecipe(openSetFrom.anchor);
+  else {
+    paintPantry();
+    show("pantry");
+  }
 });
 
 const cookAlong = new CookAlong({
@@ -603,6 +781,11 @@ function switchLang(id) {
   }
   if (current === "recipe" && recipeId) openRecipe(recipeId, true);
   if (current === "cook") cookAlong.relang(K.recipeById[cookAlong.recipe.id]);
+  if (current === "set" && openSetFrom) {
+    if (openSetFrom.from === "recipe") recipeId = openSetFrom.anchor;
+    const again = setFor(openSetFrom.from, openSetFrom.mode);
+    if (again) openSet(again);
+  }
   if (!$("card").hidden && cardId) openCard(cardId);
 }
 

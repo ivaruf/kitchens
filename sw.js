@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.6.0'; // flags for the language in the corner, and no sound settings
+const VERSION = 'v0.7.0'; // dish sets: a meal or a week from one shop, with a shopping list
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -35,6 +35,7 @@ const ASSETS = [
   './js/kitchens.js',
   './js/vietnam.js',
   './js/i18n.js',
+  './js/sets.js',
   './js/nb.js',
   './js/nb/greek-pantry.js',
   './js/nb/greek-recipes-1.js',

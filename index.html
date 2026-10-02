@@ -131,6 +131,11 @@
           </div>
           <h3 class="aside-head" data-i18n="aside.ideas">It could become</h3>
           <div id="ideas" class="ideas"></div>
+          <section id="counter-sets" class="sets" hidden>
+            <h3 class="aside-head" data-i18n="sets.counterTitle">Make a set of it</h3>
+            <div class="set-tabs" role="group" data-for="counter"></div>
+            <div id="counter-set" class="set-peek"></div>
+          </section>
           <h3 class="aside-head" data-i18n="aside.all">Every dish in this kitchen</h3>
           <div id="all-dishes" class="ideas compact"></div>
         </div>
@@ -163,7 +168,40 @@
         <h3 data-i18n="recipe.how">How</h3>
         <ol id="recipe-method" class="method"></ol>
         <p id="recipe-serve" class="serve"></p>
+        <!-- Dishes that share this one's shopping: a meal, or a week. js/sets.js
+             finds them; js/main.js draws the two tabs and the summary. -->
+        <section class="sets" aria-labelledby="recipe-sets-title">
+          <h3 id="recipe-sets-title" data-i18n="sets.title">Make more of one shop</h3>
+          <div class="set-tabs" role="group" data-for="recipe"></div>
+          <div id="recipe-set" class="set-peek"></div>
+        </section>
         <button type="button" id="recipe-back" class="primary" data-i18n="recipe.back">Back to the pantry</button>
+      </article>
+    </section>
+
+    <!-- ============================= A SET ==============================
+         Two or three dishes that share their shopping: what they are, what
+         they share, the list to shop with, and the whole set onto the
+         counter or lit up in the pantry. -->
+    <section id="set" class="screen" hidden aria-labelledby="set-title">
+      <article class="paper set-page">
+        <div class="key" aria-hidden="true"></div>
+        <p class="kicker" id="set-kicker"></p>
+        <h2 id="set-title"></h2>
+        <p id="set-hint" class="hint"></p>
+        <div id="set-dishes" class="set-dishes"></div>
+        <h3 data-i18n="set.shared">What they share</h3>
+        <div id="set-shared" class="set-shared"></div>
+        <p id="set-fresh-note" class="note"></p>
+        <h3 data-i18n="set.list">Shopping list</h3>
+        <div id="set-list" class="shop-list"></div>
+        <p id="set-note" class="hint" aria-live="polite"></p>
+        <div class="recipe-tools">
+          <button type="button" id="set-copy" class="ghost" data-i18n="set.copy">Copy the list</button>
+          <button type="button" id="set-light" class="ghost" data-i18n="set.light">Light it all up in the pantry</button>
+          <button type="button" id="set-all" class="primary" data-i18n="lit.all">Put it all on the counter</button>
+        </div>
+        <button type="button" id="set-back" class="ghost wide-btn" data-i18n="back">Back</button>
       </article>
     </section>
 
