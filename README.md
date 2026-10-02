@@ -29,7 +29,7 @@ Working name; the slug is `kitchens` until it is not.
   potatoes, pasta, carrots — what the children will eat). Swap any part,
   open any dish, copy one shopping list. Rough: nothing is saved yet.
 - **Who is eating?** Mark what the table cooks without (dairy, eggs, gluten).
-  Shelf tags, the counter and every recipe then say what that means.
+  Shelf tags, the planner and every recipe then say what that means.
   Stored on this device only.
 
 - **Light it up.** From any recipe or set, everything it uses glows on the
@@ -69,9 +69,9 @@ Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 | File | What it is |
 |---|---|
 | `js/pantry.js` | Content: every ingredient and what a player reads about it |
-| `js/recipes.js` | Content: the dishes, their method and reasons, table notes, and the counter's matching |
+| `js/recipes.js` | Content: the dishes, their method and reasons, table notes, and the "you could cook" matching |
 | `js/art.js` | Every picture, as SVG: the ingredients and the finished bowls |
-| `js/main.js` | Screens, shelves, counter, card, recipe page, language flags |
+| `js/main.js` | Screens, shelves, what is at home, card, recipe page, planner, language flags |
 | `js/store.js` | localStorage, all under `kitchens.` |
 | `js/swaps/` | Stand-ins per kitchen, English and bokmål side by side |
 | `js/planner.js`, `js/everyday.js` | The week planner, and the everyday kitchen of plain sides |
