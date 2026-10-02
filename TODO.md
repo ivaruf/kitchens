@@ -33,3 +33,9 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     everyday kitchen is written the **ordinary way** — buttered pasta, egg
     fried rice, wheat pasta, mash with milk and butter — with the free
     version as a note for the plate that needs it.
+
+- **"Who is eating?" knows the people.** Asked for 2026-10-02 (in Norwegian):
+  allergies, and how many children and adults, and who has which allergy, so
+  the data is easier to use. This reverses the planner's earlier "keep it
+  simple, no people" answer. Stays on the device only, like the diet today.
+  Being scoped one question at a time.
