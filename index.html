@@ -28,9 +28,6 @@
          EXPECTED to 404 when this directory is served on its own, which
          data-handled tells the crash bar below. -->
     <script src="../arcade/exit.js" defer data-handled="optional"></script>
-    <!-- Classic and self-contained: a tablet on the counter must not select
-         text under a floury thumb. See the file header and hub §2. -->
-    <script src="js/touch-guard.js" defer></script>
   </head>
   <body>
     <!-- ============================== HOME ==============================
@@ -107,6 +104,20 @@
             <button type="button" id="pantry-home" class="chip">Back</button>
           </div>
         </header>
+        <!-- Shown while a dish is lighting up the pantry: what it is, and the
+             one button that carries everything it uses to the counter. -->
+        <div id="lit-bar" class="lit-bar" hidden aria-live="polite">
+          <span id="lit-art" class="lit-art" aria-hidden="true"></span>
+          <span class="lit-words">
+            <b id="lit-title"></b>
+            <span id="lit-note"></span>
+          </span>
+          <span class="lit-tools">
+            <button type="button" id="lit-all" class="primary">Put it all on the counter</button>
+            <button type="button" id="lit-recipe" class="chip">The recipe</button>
+            <button type="button" id="lit-off" class="chip">Done</button>
+          </span>
+        </div>
         <div id="shelf-list"></div>
       </div>
 
@@ -142,6 +153,12 @@
             <p id="recipe-meta" class="meta"></p>
           </div>
         </div>
+        <div class="recipe-tools">
+          <button type="button" id="recipe-cook" class="primary">Cook it step by step</button>
+          <button type="button" id="recipe-light" class="ghost">Light it up in the pantry</button>
+          <button type="button" id="recipe-all" class="ghost">Put it all on the counter</button>
+        </div>
+        <p id="recipe-all-note" class="hint" aria-live="polite"></p>
         <p id="recipe-story" class="story"></p>
         <div id="recipe-table" class="for-table"></div>
         <h3>What goes in</h3>
@@ -150,6 +167,29 @@
         <ol id="recipe-method" class="method"></ol>
         <p id="recipe-serve" class="serve"></p>
         <button type="button" id="recipe-back" class="primary">Back to the pantry</button>
+      </article>
+    </section>
+
+    <!-- =========================== COOK ALONG ===========================
+         One step at a time: the vessel filling up on its flame, and the
+         step's ingredients on the board to tap and prepare. js/cookalong.js
+         owns everything in here. -->
+    <section id="cook" class="screen" hidden aria-labelledby="cook-title">
+      <div id="cook-stage" class="cook-stage">
+        <div id="cook-vessel" class="cook-vessel" aria-hidden="true"></div>
+        <p id="cook-heat" class="cook-heat" aria-live="polite"></p>
+      </div>
+      <article class="paper cook-card">
+        <div class="key" aria-hidden="true"></div>
+        <p class="kicker"><span id="cook-title"></span> · <span id="cook-count"></span></p>
+        <div id="cook-dots" class="cook-dots" aria-hidden="true"></div>
+        <p id="cook-text" class="cook-text" aria-live="polite"></p>
+        <div id="cook-board" class="cook-board"></div>
+        <details id="cook-why" class="why"><summary>Why?</summary><p></p></details>
+        <div class="pair">
+          <button type="button" id="cook-prev" class="ghost">Back to the recipe</button>
+          <button type="button" id="cook-go" class="primary">Do it</button>
+        </div>
       </article>
     </section>
 

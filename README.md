@@ -23,7 +23,21 @@ Working name; the slug is `kitchens` until it is not.
   Shelf tags, the counter and every recipe then say what that means.
   Stored on this device only.
 
-Six dishes: fasolada, revithada, soufico, stifado, fakes and lemon potatoes.
+- **Light it up.** From any recipe, everything it uses glows on the shelves,
+  and one button carries it all to the counter (anything the table cannot
+  eat stays on the shelf, and says so).
+- **Cook it step by step.** Each step puts its ingredients on a board. Tap
+  one to prepare it (the onion becomes a chopped pile, the tomatoes a bowl
+  of pulp), and watch them go into a pot that fills, changes colour and sits
+  on a flame until it looks like the dish. *Do it* finishes any step for
+  you, so nothing is ever a test.
+
+Seventeen dishes from a pantry of 44 ingredients: soups (fasolada, fakes,
+avgolemono and its Lenten twin tahinosoupa), ladera (revithada, fasolakia,
+spanakorizo, soufico), oven dishes (gemista, gigantes plaki, briam, lemon
+potatoes), stifado, and meze (horiatiki, fava, melitzanosalata, skordalia).
+
+Text is selectable on purpose; see `CLAUDE.md`.
 
 ## Files
 
@@ -34,7 +48,8 @@ Six dishes: fasolada, revithada, soufico, stifado, fakes and lemon potatoes.
 | `js/art.js` | Every picture, as SVG: the ingredients and the finished bowls |
 | `js/main.js` | Screens, shelves, counter, card, recipe page, corner and menu |
 | `js/store.js` | localStorage, all under `kitchens.` |
-| `js/screen.js`, `js/update.js`, `js/touch-guard.js` | Hub floors: fullscreen, opt-in updates, no text selection |
+| `js/cookalong.js` | The step-by-step cook-along: prepare on the board, watch the pot fill |
+| `js/screen.js`, `js/update.js` | Hub floors: fullscreen, opt-in updates |
 
 Bump `VERSION` in `sw.js` with every change that deploys. Icons come from
 `python3 tools/make-icons.py`.

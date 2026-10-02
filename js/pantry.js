@@ -15,8 +15,8 @@
 export const SHELVES = [
   { id: "spices", name: "Herbs and spices", note: "Dried on the hillside, warmed in the oil" },
   { id: "market", name: "From the market", note: "Whatever the season brings" },
-  { id: "pulses", name: "Beans and lentils", note: "Cheap, filling, and half the year's fasting food" },
-  { id: "bottles", name: "Oil, wine and vinegar", note: "The olive oil goes in by the glassful" },
+  { id: "pulses", name: "Beans, lentils and rice", note: "Cheap, filling, and half the year's fasting food" },
+  { id: "bottles", name: "Oil, wine and jars", note: "The olive oil goes in by the glassful" },
   { id: "cold", name: "Butcher and cheese counter", note: "For feast days, and for the table" },
 ];
 
@@ -70,6 +70,20 @@ export const INGREDIENTS = [
     greek: "μαϊντανός",
     shelf: "spices",
     info: "Flat-leaf, used by the handful rather than the sprig, chopped and stirred in at the end so it stays green.",
+  },
+  {
+    id: "dill",
+    name: "Dill",
+    greek: "άνηθος",
+    shelf: "spices",
+    info: "Fresh and feathery, used by the handful in spinach rice and with beans. Dried dill keeps little of what makes it worth adding.",
+  },
+  {
+    id: "mint",
+    name: "Mint",
+    greek: "δυόσμος",
+    shelf: "spices",
+    info: "Spearmint, the Greek kitchen's mint: chopped into the rice of stuffed vegetables, where a few leaves go a long way.",
   },
   {
     id: "salt",
@@ -158,6 +172,42 @@ export const INGREDIENTS = [
     info: "The long, thin-skinned Greek pepper is sweeter and gentler than a bell pepper, and goes into almost every summer pot.",
   },
 
+  {
+    id: "redonion",
+    name: "Red onion",
+    greek: "κόκκινο κρεμμύδι",
+    shelf: "market",
+    info: "Milder and sweeter eaten raw — the onion for horiatiki and for the rings on top of fava. Sliced thin and rinsed in cold water, it loses its bite.",
+  },
+  {
+    id: "springonion",
+    name: "Spring onions",
+    greek: "φρέσκα κρεμμυδάκια",
+    shelf: "market",
+    info: "Spring's onion, green tops and all: the soft, sweet base of spanakorizo and many of the Lenten dishes.",
+  },
+  {
+    id: "cucumber",
+    name: "Cucumber",
+    greek: "αγγούρι",
+    shelf: "market",
+    info: "Cut in thick chunks for horiatiki, with some of the skin left on. It brings water and crunch, and is why the salad needs no lettuce.",
+  },
+  {
+    id: "spinach",
+    name: "Spinach",
+    greek: "σπανάκι",
+    shelf: "market",
+    info: "Wilts to a fraction of itself — a kilo becomes a bowlful. Wash it in several changes of water; grit hides in the stems.",
+  },
+  {
+    id: "greenbeans",
+    name: "Green beans",
+    greek: "φασολάκια",
+    shelf: "market",
+    info: "Flat runner beans are the Greek favourite, cooked long in oil and tomato until soft — the opposite of crisp and squeaky, and on purpose.",
+  },
+
   /* ------------------------------------------------------------ pulses */
   {
     id: "beans",
@@ -179,6 +229,28 @@ export const INGREDIENTS = [
     greek: "φακές",
     shelf: "pulses",
     info: "The pulse that needs no soaking: forty minutes in the pot and they are done. Fakes, lentil soup, is finished with a splash of vinegar.",
+  },
+
+  {
+    id: "gigantes",
+    name: "Giant beans",
+    greek: "γίγαντες",
+    shelf: "pulses",
+    info: "Huge, buttery white beans, the best from Kastoria and Prespes in the north. Soak overnight, then simmer gently before the oven so they cook through without splitting.",
+  },
+  {
+    id: "splitpeas",
+    name: "Yellow split peas",
+    greek: "φάβα",
+    shelf: "pulses",
+    info: "Cooked to a golden purée called fava. On Santorini it is made from a local grass pea instead; split peas are the version cooked everywhere else. No soaking needed.",
+  },
+  {
+    id: "rice",
+    name: "Rice",
+    greek: "ρύζι",
+    shelf: "pulses",
+    info: "Medium-grain rice for gemista and spanakorizo, cooked soft and a little loose rather than in separate grains. Naturally gluten-free.",
   },
 
   /* ----------------------------------------------------------- bottles */
@@ -211,6 +283,28 @@ export const INGREDIENTS = [
     info: "Fried in the oil for a minute until it darkens from bright red to brick, it loses its tinny edge. Stirred straight into water, it never does.",
   },
 
+  {
+    id: "olives",
+    name: "Kalamata olives",
+    greek: "ελιές",
+    shelf: "bottles",
+    info: "Almond-shaped, purple-black, cured in brine and vinegar. On every table, and in every horiatiki.",
+  },
+  {
+    id: "capers",
+    name: "Capers",
+    greek: "κάπαρη",
+    shelf: "bottles",
+    info: "The pickled flower buds of a plant that grows out of the island walls; Santorini's are famous. Rinse off the brine before using.",
+  },
+  {
+    id: "tahini",
+    name: "Tahini",
+    greek: "ταχίνι",
+    shelf: "bottles",
+    info: "Sesame paste — and sesame is a common allergen of its own, worth asking about. In Lent, whisked with lemon it stands in for egg: tahinosoupa is avgolemono's fasting twin.",
+  },
+
   /* -------------------------------------------------------------- cold */
   {
     id: "beef",
@@ -218,6 +312,21 @@ export const INGREDIENTS = [
     greek: "μοσχάρι",
     shelf: "cold",
     info: "The cheap, sinewy cut on purpose. Its collagen melts into gelatin over hours, so the meat falls apart and the sauce turns glossy. A lean cut would only dry out.",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+    greek: "κοτόπουλο",
+    shelf: "cold",
+    info: "A whole bird simmered for soup gives both the broth and the meat. Keep raw chicken, and its board and knife, away from anything that will not be cooked.",
+  },
+  {
+    id: "eggs",
+    name: "Eggs",
+    greek: "αυγά",
+    shelf: "cold",
+    contains: ["egg"],
+    info: "Beaten with lemon and slowly warmed with hot broth, they make avgolemono — silky rather than scrambled, as long as the broth goes in a ladle at a time.",
   },
   {
     id: "feta",

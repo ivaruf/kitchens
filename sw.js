@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.2.0'; // the pantry: browse, put on the counter, see what it could become
+const VERSION = 'v0.3.0'; // seventeen dishes, a pantry that lights up, and a step-by-step cook-along
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -27,11 +27,11 @@ const ASSETS = [
   './js/main.js',
   './js/update.js',
   './js/screen.js',
-  './js/touch-guard.js',
   './js/store.js',
   './js/pantry.js',
   './js/recipes.js',
   './js/art.js',
+  './js/cookalong.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-180.png',

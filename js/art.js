@@ -414,6 +414,170 @@ const DRAW = {
         .join("")}
       ${shine(20, 28, 6, 2.5, -20)}
     `),
+
+  /* ------------------------------------------------- herbs, more market */
+  dill: () =>
+    svg(`
+      ${[[24, 58, 14, 10], [32, 58, 34, 6], [40, 58, 50, 12]]
+        .map(([x0, y0, x1, y1]) => `<path d="M${x0} ${y0} Q${(x0 + x1) / 2} ${(y0 + y1) / 2 + 6} ${x1} ${y1}" fill="none" stroke="#5e8a3a" stroke-width="1.6"/>`)
+        .join("")}
+      ${Array.from({ length: 34 }, (_, i) => {
+        const t = (i % 11) / 11;
+        const stem = Math.floor(i / 11.4);
+        const [x0, y0, x1, y1] = [[24, 58, 14, 10], [32, 58, 34, 6], [40, 58, 50, 12]][Math.min(stem, 2)];
+        const x = x0 + (x1 - x0) * (0.25 + t * 0.75);
+        const y = y0 + (y1 - y0) * (0.25 + t * 0.75);
+        const side = i % 2 ? 1 : -1;
+        return `<path d="M${x.toFixed(1)} ${y.toFixed(1)} l${side * 6} -4 M${x.toFixed(1)} ${y.toFixed(1)} l${side * 4} -6" stroke="${i % 3 ? "#6faa4f" : "#4f8a3a"}" stroke-width="1.1" stroke-linecap="round"/>`;
+      }).join("")}
+    `),
+
+  mint: () =>
+    svg(`
+      <path d="M32 60 V8" stroke="#4a6e2c" stroke-width="2" stroke-linecap="round"/>
+      ${[[14, 1], [22, -1], [30, 1], [38, -1], [46, 1]]
+        .map(([y, s], i) => {
+          const w = 13 - i * 1.5;
+          return `<g transform="translate(32 ${60 - y}) scale(${s} 1)">
+          <path d="M0 0 Q${w * 0.6} ${-w * 0.7} ${w * 1.4} ${-w * 0.4} Q${w * 0.9} ${w * 0.3} 0 0 z" fill="${i % 2 ? "#4f9a4a" : "#5aa852"}" ${THIN}/>
+          <path d="M1 -0.5 L${w * 1.1} ${-w * 0.35}" stroke="#3d7a38" stroke-width="0.8"/></g>`;
+        })
+        .join("")}
+    `),
+
+  redonion: () =>
+    svg(`
+      <path d="M32 12 C22 24 12 32 14 44 C16 54 25 58 32 58 C39 58 48 54 50 44 C52 32 42 24 32 12 z" fill="#8e3a5e" ${LINE}/>
+      <path d="M44 28 C52 38 50 52 36 57 C46 50 48 38 40 26 z" fill="#6e2848" opacity="0.8"/>
+      <path d="M32 14 C26 26 22 40 26 56 M32 14 C38 26 42 40 38 56 M32 14 V57" fill="none" stroke="#b4628a" stroke-width="1" opacity="0.8"/>
+      <path d="M32 12 Q30 6 27 4 M32 12 Q34 6 37 3" fill="none" stroke="#7a5a4a" stroke-width="1.6" stroke-linecap="round"/>
+      ${shine(23, 36, 4, 8, 15)}
+    `),
+
+  springonion: () =>
+    svg(
+      [18, 26, 34, 42]
+        .map(
+          (x, i) => `<path d="M${x} 48 Q${x + 2} 26 ${x + 8 - i * 3} 4" fill="none" stroke="${INK}" stroke-width="5.2" stroke-linecap="round"/>
+        <path d="M${x} 48 Q${x + 2} 26 ${x + 8 - i * 3} 4" fill="none" stroke="${i % 2 ? "#5f9c45" : "#6faa4f"}" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="${x}" cy="52" rx="4.2" ry="6" fill="#f4efe0" ${THIN}/>
+        <path d="M${x - 2} 58 l-1 3 M${x} 58 v3.5 M${x + 2} 58 l1 3" stroke="#a89878" stroke-width="0.9"/>`,
+        )
+        .join(""),
+    ),
+
+  cucumber: () =>
+    svg(`
+      <path d="M8 46 Q6 38 14 34 L48 16 Q56 12 58 20 Q60 26 54 30 L20 50 Q12 54 8 46 z" fill="#3f6e2c" ${LINE}/>
+      <path d="M14 42 L50 22" stroke="#6f9a4a" stroke-width="1.6" stroke-dasharray="2 4" stroke-linecap="round"/>
+      <path d="M18 48 L54 28" stroke="#2c5220" stroke-width="2" opacity="0.6"/>
+      <ellipse cx="54" cy="22" rx="4.5" ry="7" transform="rotate(-28 54 22)" fill="#e2ebc0" ${THIN}/>
+      <ellipse cx="54" cy="22" rx="2.5" ry="4.6" transform="rotate(-28 54 22)" fill="#cbd99a"/>
+    `),
+
+  spinach: () =>
+    svg(
+      [
+        [18, 34, -30, "#3f7a32"],
+        [46, 34, 30, "#3f7a32"],
+        [32, 26, 0, "#4f8a3a"],
+        [24, 40, -15, "#468236"],
+        [40, 40, 15, "#468236"],
+      ]
+        .map(
+          ([x, y, a, c]) => `<g transform="translate(${x} ${y}) rotate(${a})">
+        <path d="M0 22 V8" stroke="#8fb366" stroke-width="2"/>
+        <path d="M0 10 C-12 4 -12 -14 0 -20 C12 -14 12 4 0 10 z" fill="${c}" ${LINE}/>
+        <path d="M0 8 V-16 M0 -2 l-5 -4 M0 -8 l5 -4 M0 2 l5 -4" stroke="#7fae5a" stroke-width="1"/></g>`,
+        )
+        .join(""),
+    ),
+
+  greenbeans: () =>
+    svg(`
+      ${[-12, -6, 0, 6, 12]
+        .map(
+          (dx, i) => `<path d="M${30 + dx} 6 Q${26 + dx * 1.4} 32 ${32 + dx * 0.6} 58" fill="none" stroke="${INK}" stroke-width="6.4" stroke-linecap="round"/>
+        <path d="M${30 + dx} 6 Q${26 + dx * 1.4} 32 ${32 + dx * 0.6} 58" fill="none" stroke="${i % 2 ? "#6aa23a" : "#7db44a"}" stroke-width="4.2" stroke-linecap="round"/>`,
+        )
+        .join("")}
+      <path d="M16 32 Q32 38 48 32" fill="none" stroke="#c9a46a" stroke-width="3"/>
+      <path d="M16 32 Q32 38 48 32" fill="none" stroke="${INK}" stroke-width="0.8" opacity="0.5"/>
+    `),
+
+  /* -------------------------------------------------- pulses and rice */
+  gigantes: () =>
+    jar(
+      `<rect x="0" y="24" width="64" height="40" fill="#e9e1cf"/>` +
+        heap(16, 24, (x, y, r) => `<g transform="rotate(${(r() * 180).toFixed(0)} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="5.2" ry="3.3" fill="#f7f2e6" ${THIN}/><path d="M${x - 1.5} ${y - 3} q1.5 1.6 3 0" fill="none" stroke="#c9bfa8" stroke-width="0.9"/></g>`, 19),
+      24,
+    ),
+
+  splitpeas: () =>
+    jar(
+      `<rect x="0" y="28" width="64" height="40" fill="#e3b53a"/>` +
+        heap(44, 28, (x, y, r) => `<path d="M${x - 2.4} ${y} A2.4 2.4 0 0 1 ${x + 2.4} ${y} z" transform="rotate(${r() * 360} ${x} ${y})" fill="#f0c94e"/>`, 23),
+      28,
+      "#6b7a3a",
+    ),
+
+  rice: () =>
+    jar(
+      `<rect x="0" y="27" width="64" height="40" fill="#efeadf"/>` +
+        heap(70, 27, (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="1.8" ry="0.9" transform="rotate(${r() * 180} ${x} ${y})" fill="#fbf9f3" stroke="#d6cfbf" stroke-width="0.4"/>`, 29),
+      27,
+    ),
+
+  /* --------------------------------------------------------- jars */
+  olives: () =>
+    svg(`
+      <ellipse cx="32" cy="44" rx="24" ry="9" fill="#2c6a96" ${LINE}/>
+      <path d="M8 44 q24 20 48 0" fill="#2c6a96" ${LINE}/>
+      <path d="M12 46 q20 9 40 0" fill="none" stroke="#f7f4ec" stroke-width="1.4"/>
+      ${[[20, 40], [28, 37], [36, 38], [44, 40], [24, 44], [32, 42], [40, 44], [30, 33], [38, 33]]
+        .map(([x, y], i) => `<ellipse cx="${x}" cy="${y}" rx="5" ry="3.4" transform="rotate(${i * 23 - 30} ${x} ${y})" fill="${i % 2 ? "#4a2a3a" : "#5a3346"}" ${THIN}/><ellipse cx="${x - 1.5}" cy="${y - 1.2}" rx="1.4" ry="0.7" fill="#fff" opacity="0.45"/>`)
+        .join("")}
+    `),
+
+  capers: () =>
+    svg(`
+      <path d="M22 22 h20 q3 0 3 4 v26 q0 6 -6 6 h-14 q-6 0 -6 -6 v-26 q0 -4 3 -4 z" fill="#dfe6cf" opacity="0.7" ${LINE}/>
+      <rect x="20" y="30" width="24" height="27" fill="#c8d3a2" opacity="0.6"/>
+      ${heap(16, 31, (x, y) => `<circle cx="${(x * 0.68 + 10).toFixed(1)}" cy="${y}" r="2" fill="#6b7f3a" ${THIN}/>`, 31)}
+      <rect x="21" y="15" width="22" height="8" rx="2" fill="#2c6a96" ${LINE}/>
+      <path d="M25 26 v24" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+    `),
+
+  tahini: () =>
+    jar(
+      `<rect x="0" y="22" width="64" height="40" fill="#d8bf92"/>
+       <path d="M18 30 q8 -4 14 0 t14 0" fill="none" stroke="#b89a68" stroke-width="2"/>
+       <path d="M18 40 q8 -4 14 0 t14 0" fill="none" stroke="#c7aa7a" stroke-width="1.6"/>`,
+      22,
+      "#8a5a34",
+    ),
+
+  /* --------------------------------------------------------- cold */
+  chicken: () =>
+    svg(`
+      <path d="M6 34 L32 18 L60 34 L32 52 z" fill="#efe6d2" ${LINE}/>
+      <path d="M14 36 Q14 22 32 22 Q50 22 50 34 Q50 46 32 46 Q14 46 14 36 z" fill="#f0cfae" ${LINE}/>
+      <path d="M48 32 Q50 44 34 46 Q46 40 46 30 z" fill="#ddb08a" opacity="0.8"/>
+      <path d="M46 26 q8 -6 12 -2 q-2 6 -10 6 z" fill="#f0cfae" ${LINE}/>
+      <path d="M18 28 q-8 -6 -12 -2 q2 6 10 6 z" fill="#f0cfae" ${LINE}/>
+      <path d="M24 34 q8 4 16 0" fill="none" stroke="#d9a885" stroke-width="1.4"/>
+      ${shine(24, 28, 6, 2.5, -10)}
+    `),
+
+  eggs: () =>
+    svg(`
+      <path d="M8 40 h48 q-2 18 -24 18 q-22 0 -24 -18 z" fill="#b35a36" ${LINE}/>
+      ${[[20, 34, "#e9d2b0"], [32, 30, "#f4ece0"], [44, 34, "#d9b48a"], [26, 38, "#f2e6d4"], [38, 38, "#e4c49c"]]
+        .map(([x, y, c]) => `<ellipse cx="${x}" cy="${y}" rx="7" ry="9" fill="${c}" ${LINE}/><ellipse cx="${x - 2.5}" cy="${y - 3}" rx="1.8" ry="3" fill="#fff" opacity="0.45"/>`)
+        .join("")}
+      <path d="M8 40 h48" stroke="${INK}" stroke-width="1.6"/>
+      <path d="M14 46 q18 8 36 0" fill="none" stroke="#f1ddb8" stroke-width="1.6" stroke-dasharray="1 5" stroke-linecap="round"/>
+    `),
 };
 
 export function ingredient(id) {
@@ -452,66 +616,222 @@ const PIECE = {
   pepper: (x, y, r) => `<path d="M${x - 4} ${y} h8" transform="rotate(${r() * 180} ${x} ${y})" stroke="#5c9433" stroke-width="2.6" stroke-linecap="round"/>`,
   tomato: (x, y, r) => `<path d="M${x - 3} ${y - 2} l5 -1 l2 4 l-4 2 z" transform="rotate(${r() * 180} ${x} ${y})" fill="#d8442f"/>`,
   bay: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 180})"><path d="M-6 0 Q0 -3.5 6 0 Q0 3.5 -6 0 z" fill="#7a8946" ${THIN}/></g>`,
+
+  rice: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="1.7" ry="0.8" transform="rotate(${r() * 180} ${x} ${y})" fill="#fbf9f3"/>`,
+  gigante: (x, y, r) => `<g transform="rotate(${(r() * 180).toFixed(0)} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="5" ry="3.2" fill="#f7efe0" ${THIN}/><path d="M${x - 1.4} ${y - 2.9} q1.4 1.5 2.8 0" fill="none" stroke="#c9bfa8" stroke-width="0.8"/></g>`,
+  pea: (x, y, r) => `<path d="M${x - 2.4} ${y} A2.4 2.4 0 0 1 ${x + 2.4} ${y} z" transform="rotate(${r() * 360} ${x} ${y})" fill="#f0c94e"/>`,
+  cucumber: (x, y) => `<circle cx="${x}" cy="${y}" r="4.4" fill="#e2ebc0" stroke="#3f6e2c" stroke-width="1.6"/><circle cx="${x}" cy="${y}" r="1.8" fill="#cbd99a"/>`,
+  ring: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="4.5" ry="3.4" transform="rotate(${r() * 180} ${x} ${y})" fill="none" stroke="#9a4a70" stroke-width="1.6"/>`,
+  greenring: (x, y) => `<circle cx="${x}" cy="${y}" r="2" fill="none" stroke="#5f9c45" stroke-width="1.4"/>`,
+  olive: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="3.6" ry="2.5" transform="rotate(${r() * 180} ${x} ${y})" fill="#4a2a3a" ${THIN}/><ellipse cx="${x - 1}" cy="${y - 0.8}" rx="1" ry="0.5" fill="#fff" opacity="0.4"/>`,
+  caper: (x, y) => `<circle cx="${x}" cy="${y}" r="1.5" fill="#6b7f3a"/>`,
+  spinach: (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r() * 360})"><path d="M-5 0 Q0 -4 5 0 Q0 4 -5 0 z" fill="#2f6428"/></g>`,
+  greenbean: (x, y, r) => `<path d="M${x - 6} ${y} q6 -2 12 0" transform="rotate(${r() * 180} ${x} ${y})" fill="none" stroke="#5c8f30" stroke-width="3.2" stroke-linecap="round"/>`,
+  chicken: (x, y, r) => `<path d="M${x - 4} ${y} q4 -3 8 0" transform="rotate(${r() * 180} ${x} ${y})" fill="none" stroke="#efd8bc" stroke-width="2.6" stroke-linecap="round"/>`,
+  dill: (x, y, r) => `<path d="M${x - 2} ${y} l4 -2 M${x} ${y} l2 2" transform="rotate(${r() * 180} ${x} ${y})" stroke="#4f8a3a" stroke-width="0.9" stroke-linecap="round"/>`,
+  mint: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="2" ry="1.2" transform="rotate(${r() * 180} ${x} ${y})" fill="#4f9a4a"/>`,
+  garlic: (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="1.8" ry="1.2" transform="rotate(${r() * 180} ${x} ${y})" fill="#f6eed8" stroke="#d8c8a0" stroke-width="0.5"/>`,
+  berry: (x, y) => `<circle cx="${x}" cy="${y}" r="1.4" fill="#4a2b1d"/>`,
+  speck: (x, y) => `<circle cx="${x}" cy="${y}" r="0.7" fill="#2b2622"/>`,
+  stuffedTomato: (x, y) => `<circle cx="${x}" cy="${y}" r="9" fill="#c73b28" ${THIN}/><ellipse cx="${x}" cy="${y - 2}" rx="6" ry="4" fill="#9e2e1e"/><path d="M${x - 2} ${y - 4} l2 -3 l2 3" fill="#5e8a3a"/><ellipse cx="${x - 3}" cy="${y + 2}" rx="2" ry="3" fill="#fff" opacity="0.3"/>`,
+  stuffedPepper: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="9" fill="#5c9433" ${THIN}/><ellipse cx="${x}" cy="${y - 5}" rx="4" ry="2.4" fill="#4a7e2a"/><path d="M${x} ${y - 7} v-3" stroke="#4a6e2c" stroke-width="1.6"/>`,
   cinnamon: (x, y) => `<rect x="${x - 7}" y="${y - 1.8}" width="14" height="3.6" rx="1.8" transform="rotate(-15 ${x} ${y})" fill="#a5633a" ${THIN}/>`,
 };
 
-/* What each dish looks like in the bowl: its sauce and what floats in it. */
+/* What each finished dish looks like: its vessel, its sauce, what is in it. */
 const BOWLS = {
   fasolada: { sauce: "#d9763a", sheen: true, pieces: [["bean", 24], ["carrot", 6], ["celery", 6], ["parsley", 10]] },
-  revithada: { sauce: "#e2b45a", sheen: true, pieces: [["chickpea", 26], ["onion", 8], ["bay", 1]], lemon: true },
-  soufico: { sauce: "#c8502e", sheen: true, pieces: [["aubergine", 6], ["potato", 5], ["courgette", 6], ["pepper", 6], ["tomato", 4], ["oregano", 10]] },
-  stifado: { sauce: "#7a2a1e", sheen: true, pieces: [["beef", 7], ["pearl", 10], ["bay", 1], ["cinnamon", 1]] },
   fakes: { sauce: "#7a5634", sheen: true, pieces: [["lentil", 70], ["carrot", 4], ["bay", 2]] },
-  lemonates: { sauce: "#e7c46a", dish: true, pieces: [["wedge", 8], ["oregano", 22]], lemon: true },
+  avgolemono: { sauce: "#f2e0a0", sheen: true, pieces: [["rice", 40], ["chicken", 9], ["speck", 8]] },
+  tahinosoupa: { sauce: "#e8d5aa", sheen: true, pieces: [["rice", 40], ["speck", 10]], lemon: true },
+  revithada: { sauce: "#e2b45a", sheen: true, pieces: [["chickpea", 26], ["onion", 8], ["bay", 1]], lemon: true },
+  fasolakia: { sauce: "#c8502e", sheen: true, pieces: [["greenbean", 16], ["potato", 5], ["parsley", 6]] },
+  spanakorizo: { sauce: "#7d9a45", sheen: true, pieces: [["rice", 34], ["spinach", 9], ["dill", 10]], lemon: true },
+  soufico: { sauce: "#c8502e", sheen: true, pieces: [["aubergine", 6], ["potato", 5], ["courgette", 6], ["pepper", 6], ["tomato", 4], ["oregano", 10]] },
+  gemista: { vessel: "tin", sauce: "#c24a2a", pieces: [["wedge", 6], ["stuffedPepper", 3], ["stuffedTomato", 4]] },
+  gigantes: { vessel: "tin", sauce: "#b33a22", sheen: true, pieces: [["gigante", 18], ["dill", 8], ["carrot", 3]] },
+  briam: { vessel: "tin", sauce: "#b84a26", sheen: true, pieces: [["potato", 6], ["courgette", 6], ["aubergine", 5], ["pepper", 5], ["onion", 4]] },
+  lemonates: { vessel: "tin", sauce: "#e7c46a", pieces: [["wedge", 8], ["oregano", 22]], lemon: true },
+  stifado: { sauce: "#7a2a1e", sheen: true, pieces: [["beef", 7], ["pearl", 10], ["bay", 1], ["cinnamon", 1]] },
+  horiatiki: { glaze: "#2c6a96", sauce: "#f3ead2", pieces: [["cucumber", 8], ["tomato", 12], ["ring", 6], ["olive", 7], ["pepper", 3], ["oregano", 12]] },
+  fava: { sauce: "#f0cc58", sheen: true, pieces: [["ring", 6], ["caper", 10]] },
+  melitzanosalata: { sauce: "#c9b494", sheen: true, pieces: [["parsley", 12], ["olive", 2]] },
+  skordalia: { sauce: "#f3eacb", sheen: true, pieces: [["olive", 2], ["parsley", 4]] },
 };
 
-export function dish(recipe) {
-  const b = BOWLS[recipe.id] || { sauce: "#c9954a", pieces: [] };
-  const r = rng(recipe.id);
+/*
+ * One vessel seen from a little above: a glazed bowl, a terracotta casserole
+ * with handles, or a round metal tapsi for the oven. `pieces` are [kind,
+ * count] pairs from PIECE, scattered inside by a generator seeded from `seed`
+ * so the same contents always land in the same places.
+ */
+function vessel({ kind = "bowl", sauce = null, pieces = [], seed = "x", sheen = false, lemon = false, glaze = "#b35a36", heat = null }) {
+  const r = rng(seed);
   const clip = uid();
   const cx = 60;
   const cy = 36;
   const rx = 46;
   const ry = 17;
 
-  // The vessel: a glazed terracotta bowl, or a shallow roasting dish.
-  const vessel = b.dish
-    ? `<path d="M6 36 Q8 66 60 66 Q112 66 114 36 z" fill="#b35a36" ${LINE}/>
-       <path d="M100 44 Q96 62 60 64 Q94 58 104 40 z" fill="#8f4428" opacity="0.7"/>`
-    : `<path d="M8 36 Q10 74 46 80 L46 84 Q60 88 74 84 L74 80 Q110 74 112 36 z" fill="#b35a36" ${LINE}/>
-       <path d="M100 44 Q98 72 62 80 Q96 68 104 40 z" fill="#8f4428" opacity="0.7"/>
-       <path d="M18 52 Q60 66 102 52" fill="none" stroke="#f1ddb8" stroke-width="2.4" stroke-dasharray="1 6" stroke-linecap="round"/>`;
+  let body;
+  if (kind === "tin") {
+    body = `<path d="M8 36 Q8 58 60 60 Q112 58 112 36 z" fill="#a9adb1" ${LINE}/>
+      <path d="M100 42 Q98 56 60 58 Q96 52 106 38 z" fill="#8a8e93" opacity="0.7"/>`;
+  } else if (kind === "pot") {
+    body = `<path d="M8 36 Q8 72 60 74 Q112 72 112 36 z" fill="#8f4428" ${LINE}/>
+      <path d="M100 42 Q98 68 62 72 Q96 64 106 38 z" fill="#6e321d" opacity="0.7"/>
+      <rect x="-2" y="34" width="12" height="7" rx="3.5" fill="#7a3a22" ${LINE}/>
+      <rect x="110" y="34" width="12" height="7" rx="3.5" fill="#7a3a22" ${LINE}/>`;
+  } else {
+    body = `<path d="M8 36 Q10 74 46 80 L46 84 Q60 88 74 84 L74 80 Q110 74 112 36 z" fill="${glaze}" ${LINE}/>
+      <path d="M100 44 Q98 72 62 80 Q96 68 104 40 z" fill="#000" opacity="0.18"/>
+      <path d="M18 52 Q60 66 102 52" fill="none" stroke="#f1ddb8" stroke-width="2.4" stroke-dasharray="1 6" stroke-linecap="round"/>`;
+  }
+  const rim = kind === "tin" ? "#c3c6c9" : kind === "pot" ? "#a3502f" : glaze === "#b35a36" ? "#c46a43" : glaze;
 
-  let pieces = "";
+  // Flames under a pot on the hob: as many tongues as the heat is high.
+  let fire = "";
+  if (typeof heat === "number" && heat > 0) {
+    const tall = [0, 6, 10, 15][heat];
+    for (let i = 0; i < 7; i++) {
+      const x = 30 + i * 10;
+      fire += `<path d="M${x - 3} 86 Q${x} ${86 - tall * (0.8 + (i % 3) * 0.15)} ${x + 3} 86 z" fill="#4a7ae0" opacity="0.85"/>`;
+    }
+  }
+
   const placed = [];
-  for (const [kind, count] of b.pieces) {
+  for (const [k, count] of pieces) {
     for (let i = 0; i < count; i++) {
-      // Uniform inside the ellipse, kept off the rim.
       const a = r() * Math.PI * 2;
       const d = Math.sqrt(r()) * 0.86;
-      placed.push([cx + Math.cos(a) * rx * d, cy + Math.sin(a) * ry * d, kind]);
+      placed.push([cx + Math.cos(a) * rx * d, cy + Math.sin(a) * ry * d, k]);
     }
   }
   placed.sort((p, q) => p[1] - q[1]);
-  for (const [x, y, kind] of placed) pieces += PIECE[kind](x.toFixed(1), y.toFixed(1), r);
+  let bits = "";
+  for (const [x, y, k] of placed) if (PIECE[k]) bits += PIECE[k](x.toFixed(1), y.toFixed(1), r);
 
-  const lemon = b.lemon
+  const slice = lemon
     ? `<g transform="translate(98 26) rotate(-20)"><path d="M-10 0 A10 10 0 0 1 10 0 z" fill="#f3d84a" ${LINE}/>
        <path d="M-7 0 A7 7 0 0 1 7 0" fill="none" stroke="#fbf3c6" stroke-width="1.2"/>
        <path d="M0 0 L-5 -5 M0 0 L0 -7 M0 0 L5 -5" stroke="#fbf3c6" stroke-width="1"/></g>`
     : "";
 
   return svg(
-    `<ellipse cx="60" cy="82" rx="40" ry="5" fill="#000" opacity="0.08"/>
-     ${vessel}
-     <ellipse cx="${cx}" cy="${cy}" rx="${rx + 6}" ry="${ry + 5}" fill="#c46a43" ${LINE}/>
+    `${fire}<ellipse cx="60" cy="82" rx="40" ry="5" fill="#000" opacity="0.08"/>
+     ${body}
+     <ellipse cx="${cx}" cy="${cy}" rx="${rx + 6}" ry="${ry + 5}" fill="${rim}" ${LINE}/>
      <defs><clipPath id="${clip}"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/></clipPath></defs>
-     <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${b.sauce}" ${THIN}/>
+     <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sauce || (kind === "tin" ? "#8a8e93" : "#4a2e22")}" ${THIN}/>
      <g clip-path="url(#${clip})">
-       ${pieces}
-       ${b.sheen ? `<ellipse cx="${cx - 14}" cy="${cy - 6}" rx="16" ry="3.5" fill="#ffe8a8" opacity="0.28"/>` : ""}
+       ${bits}
+       ${sheen ? `<ellipse cx="${cx - 14}" cy="${cy - 6}" rx="16" ry="3.5" fill="#ffe8a8" opacity="0.28"/>` : ""}
      </g>
-     ${lemon}`,
+     ${slice}`,
     "0 0 120 90",
   );
+}
+
+/* The finished dish, as it comes to the table. */
+export function dish(recipe) {
+  const b = BOWLS[recipe.id] || { sauce: "#c9954a", pieces: [] };
+  return vessel({ kind: b.vessel || "bowl", seed: recipe.id, ...b });
+}
+
+/* What one ingredient adds to a pot in the cook-along: [piece kind, count]. */
+const IN_POT = {
+  onion: ["onion", 10], redonion: ["ring", 6], springonion: ["greenring", 10], pearl: ["pearl", 10], garlic: ["garlic", 6],
+  tomato: ["tomato", 8], carrot: ["carrot", 7], celery: ["celery", 6], potato: ["potato", 7], aubergine: ["aubergine", 7],
+  courgette: ["courgette", 7], pepper: ["pepper", 6], cucumber: ["cucumber", 8], spinach: ["spinach", 12], greenbeans: ["greenbean", 16],
+  beans: ["bean", 24], chickpeas: ["chickpea", 24], lentils: ["lentil", 60], gigantes: ["gigante", 16], splitpeas: ["pea", 40], rice: ["rice", 36],
+  beef: ["beef", 7], chicken: ["chicken", 9], olives: ["olive", 7], capers: ["caper", 10],
+  bay: ["bay", 1], cinnamon: ["cinnamon", 1], allspice: ["berry", 5], cloves: ["berry", 3], oregano: ["oregano", 12],
+  blackpepper: ["speck", 8], parsley: ["parsley", 10], dill: ["dill", 10], mint: ["mint", 8],
+};
+
+/*
+ * The vessel partway through a cook: what has gone in so far (pantry ids, in
+ * order), the sauce colour now, and the heat under it. Gemista's stuffed
+ * vegetables are the one case where what goes in is not what shows.
+ */
+export function cooking({ recipe, added, sauce, heat }) {
+  const kind = recipe.vessel === "tin" ? "tin" : recipe.vessel === "bowl" ? "bowl" : "pot";
+  let pieces = [...new Set(added)].map((id) => IN_POT[id]).filter(Boolean);
+  if (recipe.id === "gemista" && added.includes("rice")) {
+    pieces = [["wedge", 6], ["stuffedPepper", 3], ["stuffedTomato", 4], ["parsley", 6]];
+  }
+  const sheen = added.includes("oil");
+  return vessel({ kind, seed: recipe.id + added.length, sauce, pieces, sheen, heat, glaze: kind === "bowl" ? "#2c6a96" : "#b35a36" });
+}
+
+/*
+ * An ingredient once it is prepared: a chopped pile on an olive-wood board,
+ * or, for whatever has become liquid or pulp (grated, juiced, beaten,
+ * whisked, charred), a small bowl of it. Anything a cook does not prepare —
+ * spices, oil — keeps its pantry picture.
+ */
+const PREPARED = {
+  onion: ["onion", 14], redonion: ["ring", 9], springonion: ["greenring", 14], pearl: ["pearl", 7], garlic: ["garlic", 9],
+  tomato: ["tomato", 10], carrot: ["carrot", 9], celery: ["celery", 9], potato: ["potato", 9], aubergine: ["aubergine", 8],
+  courgette: ["courgette", 8], pepper: ["pepper", 8], cucumber: ["cucumber", 7], spinach: ["spinach", 14], greenbeans: ["greenbean", 12],
+  beans: ["bean", 22], chickpeas: ["chickpea", 20], lentils: ["lentil", 50], gigantes: ["gigante", 12], splitpeas: ["pea", 34],
+  beef: ["beef", 6], parsley: ["parsley", 22], dill: ["dill", 18], mint: ["mint", 14], capers: ["caper", 12],
+};
+const PULP = [
+  [/grated/, { tomato: "#d8442f", onion: "#efe2c0", redonion: "#c9a0b8" }],
+  [/juiced/, { lemon: "#f3dc6a" }],
+  [/beaten/, { eggs: "#f2c84a" }],
+  [/whisked/, { tahini: "#e2cfa6" }],
+  [/charred/, { aubergine: "#a8906e" }],
+  [/crushed|pounded/, { garlic: "#efe6cc" }],
+];
+
+export function prepared(id, how = "") {
+  for (const [re, fills] of PULP) {
+    if (re.test(how) && fills[id]) return pulpBowl(fills[id], id === "lemon");
+  }
+  if (/hollowed/.test(how) && (id === "tomato" || id === "pepper")) {
+    const k = id === "tomato" ? "stuffedTomato" : "stuffedPepper";
+    return board([[k, 3]], id);
+  }
+  if (/soaked|drained|rinsed|boiled|simmered/.test(how) && ["beans", "chickpeas", "lentils", "gigantes", "splitpeas"].includes(id)) {
+    return pulpBowl("#dfe9ec", false, PREPARED[id]);
+  }
+  const p = PREPARED[id];
+  return p ? board([p], id) : ingredient(id);
+}
+
+function board(pieces, seed) {
+  const r = rng(seed + "board");
+  let bits = "";
+  for (const [k, n] of pieces) {
+    for (let i = 0; i < n; i++) {
+      const a = r() * Math.PI * 2;
+      const d = Math.sqrt(r()) * 0.8;
+      bits += PIECE[k]((32 + Math.cos(a) * 17 * d).toFixed(1), (36 + Math.sin(a) * 9 * d).toFixed(1), r);
+    }
+  }
+  return svg(`
+    <rect x="4" y="22" width="56" height="30" rx="8" fill="#c9a777" ${LINE}/>
+    <path d="M8 30 q24 -2 48 0 M8 40 q24 2 48 0" fill="none" stroke="#a8865a" stroke-width="1" opacity="0.7"/>
+    <rect x="4" y="48" width="56" height="5" rx="2.5" fill="#a8865a" opacity="0.6"/>
+    ${bits}`);
+}
+
+function pulpBowl(fill, lemon = false, pieces = null) {
+  const c = uid();
+  let bits = "";
+  if (pieces) {
+    const r = rng(fill + pieces[0]);
+    for (let i = 0; i < Math.min(pieces[1], 18); i++) bits += PIECE[pieces[0]]((18 + r() * 28).toFixed(1), (30 + r() * 9).toFixed(1), r);
+  }
+  return svg(`
+    <ellipse cx="32" cy="34" rx="25" ry="9" fill="#e9ddc6" ${LINE}/>
+    <defs><clipPath id="${c}"><ellipse cx="32" cy="34" rx="21" ry="6.5"/></clipPath></defs>
+    <ellipse cx="32" cy="34" rx="21" ry="6.5" fill="${fill}"/>
+    <g clip-path="url(#${c})">${bits}</g>
+    <path d="M7 34 q25 26 50 0" fill="#2c6a96" ${LINE}/>
+    <path d="M12 38 q20 12 40 0" fill="none" stroke="#f7f4ec" stroke-width="1.4"/>
+    ${lemon ? `<g transform="translate(48 22) rotate(25)"><path d="M-8 0 A8 8 0 0 1 8 0 z" fill="#f0cf3a" ${LINE}/><path d="M-5 0 A5 5 0 0 1 5 0" fill="none" stroke="#fbf3c6"/></g>` : ""}
+  `);
 }

@@ -12,14 +12,20 @@
  * Content lives in js/pantry.js and js/recipes.js; every picture comes from
  * js/art.js. This file only arranges them and keeps the counter.
  *
+ * A DISH CAN LIGHT UP THE PANTRY: from its recipe page, every jar and
+ * vegetable it uses glows on the shelves, and one button carries them all to
+ * the counter. And any recipe can be cooked along with, one illustrated step
+ * at a time (js/cookalong.js).
+ *
  * SCREENS are sibling <section>s and exactly one is visible. The ingredient
  * card and the menu are sheets over whatever screen is showing.
  */
 
 import { loadDiet, saveDiet, loadCounter, saveCounter, loadSound, saveSound, NEEDS } from "./store.js";
 import { INGREDIENTS, SHELVES, BY_ID } from "./pantry.js";
-import { RECIPES, RECIPE_BY_ID, dishesWith, suggest, FASTING_NOTE } from "./recipes.js";
+import { RECIPES, RECIPE_BY_ID, dishesWith, suggest, containsOf, FASTING_NOTE } from "./recipes.js";
 import { ingredient, dish } from "./art.js";
+import { CookAlong } from "./cookalong.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -42,7 +48,7 @@ const sound = loadSound();
 
 /* ---------------------------------------------------------------- screens */
 
-const SCREENS = ["home", "table", "pantry", "recipe"];
+const SCREENS = ["home", "table", "pantry", "recipe", "cook"];
 let current = "home";
 const cameFrom = {};
 
@@ -127,14 +133,22 @@ function paintShelves() {
   markShelves();
 }
 
-/* Which jars are on the counter, and which the counter's best idea still wants. */
+/*
+ * Which jars are on the counter, which the counter's best idea still wants,
+ * and — when a dish has lit up the pantry — which ones that dish uses.
+ */
+let lit = null;
+
 function markShelves() {
   const ideas = suggest(counter);
   const wanted = new Set(ideas.length ? ideas[0].missing : []);
+  const uses = lit ? new Set(RECIPE_BY_ID[lit].ingredients.map((i) => i.id)) : null;
+  $("pantry").classList.toggle("lighting", !!uses);
   for (const b of document.querySelectorAll("#shelf-list .item")) {
     const on = counter.has(b.dataset.id);
     b.classList.toggle("on", on);
-    b.classList.toggle("wanted", !on && wanted.has(b.dataset.id));
+    b.classList.toggle("lit", !!uses && uses.has(b.dataset.id));
+    b.classList.toggle("wanted", !uses && !on && wanted.has(b.dataset.id));
     b.setAttribute("aria-label", `${BY_ID[b.dataset.id].name}${on ? ", on the counter" : ""}`);
   }
 }
@@ -217,9 +231,18 @@ function ideaCard({ recipe, have, missing }) {
     need.append(el("span", "sr", listOf(missing.map((id) => BY_ID[id].name.toLowerCase()))));
     text.append(need);
   }
+  clashMark(recipe, text);
   b.append(text);
   b.addEventListener("click", () => openRecipe(recipe.id));
   return b;
+}
+
+/* A small mark on a dish card when the dish brings something the table cannot eat. */
+function clashMark(recipe, into) {
+  const hit = containsOf(recipe, BY_ID).filter((n) => diet[n]);
+  if (!hit.length) return;
+  const m = el("span", "dish-clash", `has ${listOf(hit)} — see the table notes`);
+  into.append(m);
 }
 
 function dishLink(recipe) {
@@ -228,6 +251,7 @@ function dishLink(recipe) {
   b.append(art("idea-art", dish(recipe)));
   const text = el("span", "idea-text");
   text.append(el("b", null, recipe.name), el("span", "idea-score", recipe.line));
+  clashMark(recipe, text);
   b.append(text);
   b.addEventListener("click", () => openRecipe(recipe.id));
   return b;
@@ -251,10 +275,54 @@ $("counter-toggle").addEventListener("click", () => {
   $("counter-toggle").setAttribute("aria-expanded", String(open));
 });
 
+/* The bar across the top of the pantry while a dish is lighting it up. */
+function paintLitBar(note = "") {
+  const bar = $("lit-bar");
+  bar.hidden = !lit;
+  if (!lit) return;
+  const r = RECIPE_BY_ID[lit];
+  $("lit-art").innerHTML = dish(r);
+  $("lit-title").textContent = `What goes into ${r.name}`;
+  const have = r.ingredients.filter((i) => counter.has(i.id)).length;
+  $("lit-note").textContent = note || `${r.ingredients.length} things, glowing on the shelves${have ? ` — ${have} already on the counter` : ""}.`;
+}
+
+/*
+ * Everything a dish uses, onto the counter — except what this table cannot
+ * eat, which stays on the shelf and is named, so nothing is quietly dropped.
+ */
+function putAll(recipe) {
+  const left = [];
+  for (const ing of recipe.ingredients) {
+    if (clashes(BY_ID[ing.id]).length) left.push(BY_ID[ing.id].name.toLowerCase());
+    else counter.add(ing.id);
+  }
+  changed();
+  return left.length ? `On the counter — but the ${listOf(left)} stayed on the shelf, for this table.` : "Everything is on the counter.";
+}
+
+function lightUp(id) {
+  lit = id;
+  paintPantry();
+  show("pantry");
+  // The first lit jar, brought into view so the glow is seen and not missed.
+  const first = document.querySelector("#shelf-list .item.lit");
+  if (first) first.scrollIntoView({ block: "center", behavior: "smooth" });
+}
+
+$("lit-all").addEventListener("click", () => paintLitBar(putAll(RECIPE_BY_ID[lit])));
+$("lit-recipe").addEventListener("click", () => openRecipe(lit));
+$("lit-off").addEventListener("click", () => {
+  lit = null;
+  paintLitBar();
+  markShelves();
+});
+
 function paintPantry() {
   paintTable();
   paintShelves();
   paintCounter();
+  paintLitBar();
 }
 
 /* --------------------------------------------------------- the card sheet */
@@ -334,7 +402,7 @@ $("card-close").addEventListener("click", closeSheets);
 
 /* ------------------------------------------------------------ the recipe */
 
-function openRecipe(id) {
+function openRecipe(id, inPlace = false) {
   const r = RECIPE_BY_ID[id];
   $("recipe-art").innerHTML = dish(r);
   $("recipe-greek").textContent = r.greek;
@@ -363,12 +431,22 @@ function openRecipe(id) {
     t.append(box);
   }
 
+  // Anything in the dish itself this table cannot eat, said before the list.
+  const hit = containsOf(r, BY_ID).filter((n) => diet[n]);
+  if (hit.length) {
+    const offenders = r.ingredients.filter((i) => clashes(BY_ID[i.id]).length).map((i) => BY_ID[i.id].name.toLowerCase());
+    t.prepend(el("p", "note clash-note", `The ${listOf(offenders)} in this recipe is not for a ${listOf(hit)}-free plate — see below for what to do instead.`));
+  }
+
+  recipeId = id;
+  if (!inPlace) $("recipe-all-note").textContent = "";
+
   // The ingredients, as pictures. What is on the counter is ticked.
   const tiles = $("recipe-ingredients");
   tiles.replaceChildren();
   for (const ing of r.ingredients) {
     const item = BY_ID[ing.id];
-    const b = el("button", `tile${counter.has(ing.id) ? " have" : ""}`);
+    const b = el("button", `tile${counter.has(ing.id) ? " have" : ""}${clashes(item).length ? " clash" : ""}`);
     b.type = "button";
     b.append(art("tile-art", ingredient(ing.id)));
     const words = el("span", "tile-words");
@@ -393,12 +471,28 @@ function openRecipe(id) {
     ol.append(li);
   }
   $("recipe-serve").textContent = `To serve: ${r.serve}`;
-  show("recipe");
+  if (!inPlace) show("recipe");
 }
+
+let recipeId = null;
 
 $("recipe-back").addEventListener("click", () => {
   paintPantry();
   show("pantry");
+});
+$("recipe-cook").addEventListener("click", () => {
+  show("cook");
+  cookAlong.start(RECIPE_BY_ID[recipeId]);
+});
+$("recipe-light").addEventListener("click", () => lightUp(recipeId));
+$("recipe-all").addEventListener("click", () => {
+  $("recipe-all-note").textContent = putAll(RECIPE_BY_ID[recipeId]);
+  openRecipe(recipeId, true);
+});
+
+const cookAlong = new CookAlong({
+  openCard: (id) => openCard(id),
+  onExit: () => openRecipe(cookAlong.recipe.id),
 });
 
 function cap(s) {
