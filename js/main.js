@@ -32,7 +32,7 @@
  * card is a sheet over whatever screen is showing.
  */
 
-import { loadDiet, saveDiet, loadHome, saveHome, NEEDS } from "./store.js";
+import { loadTable, saveTable, loadHome, saveHome, NEEDS } from "./store.js";
 import { dishesWith, suggest, containsOf } from "./recipes.js";
 import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
@@ -54,7 +54,27 @@ const art = (cls, markup) => {
   return n;
 };
 
-let diet = loadDiet();
+/*
+ * The table: adults and children, no names, each with their own needs. What
+ * the rest of the cookbook calls `diet` is what the whole table must cook
+ * without — every need anyone has — and `childNeeds` is what the children's
+ * plain sides must avoid, since those are made for them.
+ */
+const table = loadTable();
+let diet = {};
+let childNeeds = {};
+function deriveDiet() {
+  diet = {};
+  childNeeds = {};
+  for (const p of table.people) {
+    for (const n of NEEDS) {
+      if (!p.needs[n]) continue;
+      diet[n] = true;
+      if (p.kind === "child") childNeeds[n] = true;
+    }
+  }
+}
+deriveDiet();
 /* The kitchen being browsed, and what is at home — one list for the house. */
 let K = localize(KITCHENS[0]);
 const home = loadHome();
@@ -82,23 +102,93 @@ function show(id, from) {
 
 const activeNeeds = () => NEEDS.filter((n) => diet[n]);
 
-const tableWords = () => t("table", activeNeeds());
+const tableWords = () => t("tableShort", table.people, activeNeeds());
 
-function paintTable() {
-  for (const b of document.querySelectorAll(".need")) {
-    b.setAttribute("aria-pressed", String(!!diet[b.dataset.need]));
-  }
-  $("table-summary").textContent = `${tableWords()}.`;
-  $("table-chip").textContent = tableWords();
+/* "Adult 1", "Child 2": numbered within their kind, in the reader's language. */
+function personLabel(i) {
+  const p = table.people[i];
+  const n = table.people.slice(0, i + 1).filter((q) => q.kind === p.kind).length;
+  return t(p.kind === "child" ? "personChild" : "personAdult", n);
 }
 
-for (const b of document.querySelectorAll(".need")) {
-  b.addEventListener("click", () => {
-    diet = { ...diet, [b.dataset.need]: !diet[b.dataset.need] };
-    saveDiet(diet);
-    plan.week = null;
-    paintTable();
-  });
+/* Who at the table has a need, as words: "adult 1 and child 2". */
+function whoNeeds(need) {
+  return whoAny([need]);
+}
+
+/* Who has any of these needs, each person named once. */
+function whoAny(needs) {
+  return listOf(table.people.map((p, i) => (needs.some((n) => p.needs[n]) ? personLabel(i).toLowerCase() : null)).filter(Boolean));
+}
+
+function tableChanged() {
+  saveTable(table);
+  deriveDiet();
+  plan.week = null;
+  paintTable();
+}
+
+/*
+ * The table screen: how many adults and children, then one row per person
+ * with their three needs as toggles. Adding a person adds a row with no
+ * needs; taking one away takes the last of that kind.
+ */
+function paintTable() {
+  const counts = $("table-counts");
+  counts.replaceChildren(
+    ...["adult", "child"].map((kind) => {
+      const n = table.people.filter((p) => p.kind === kind).length;
+      const row = el("div", "count-row");
+      const less = el("button", "chip step", "−");
+      less.type = "button";
+      less.disabled = n === 0 || table.people.length === 1;
+      less.setAttribute("aria-label", t(kind === "child" ? "lessChild" : "lessAdult"));
+      less.addEventListener("click", () => {
+        const at = table.people.map((p) => p.kind).lastIndexOf(kind);
+        if (at >= 0) table.people.splice(at, 1);
+        tableChanged();
+      });
+      const more = el("button", "chip step", "+");
+      more.type = "button";
+      more.disabled = table.people.length >= 12;
+      more.setAttribute("aria-label", t(kind === "child" ? "moreChild" : "moreAdult"));
+      more.addEventListener("click", () => {
+        const needs = Object.fromEntries(NEEDS.map((x) => [x, false]));
+        // A new adult goes after the adults, a new child at the end.
+        const at = kind === "adult" ? table.people.filter((p) => p.kind === "adult").length : table.people.length;
+        table.people.splice(at, 0, { kind, needs });
+        tableChanged();
+      });
+      row.append(el("span", "label", t(kind === "child" ? "children" : "adults")), less, el("b", "count", String(n)), more);
+      return row;
+    }),
+  );
+
+  const people = $("table-people");
+  people.replaceChildren(
+    ...table.people.map((p, i) => {
+      const row = el("div", `person person-${p.kind}`);
+      const name = el("span", "person-name", personLabel(i));
+      const needs = el("div", "person-needs");
+      needs.setAttribute("role", "group");
+      needs.setAttribute("aria-label", t("cooksWithout", personLabel(i)));
+      for (const need of NEEDS) {
+        const b = el("button", "chip need-chip", t(`need.${need}`));
+        b.type = "button";
+        b.setAttribute("aria-pressed", String(p.needs[need]));
+        b.addEventListener("click", () => {
+          p.needs[need] = !p.needs[need];
+          tableChanged();
+        });
+        needs.append(b);
+      }
+      row.append(name, needs);
+      return row;
+    }),
+  );
+  $("table-summary").textContent = `${tableWords()}.`;
+  $("table-summary-big").textContent = `${tableWords()}.`;
+  $("table-chip").textContent = tableWords();
 }
 
 document.querySelector("#table .back-btn").addEventListener("click", () => {
@@ -457,7 +547,7 @@ function openRecipe(id, inPlace = false) {
     box.append(el("p", "kicker", t("table.for")));
     for (const need of needs) {
       const p = el("p");
-      p.append(el("b", null, t("tableNo", need)), (r.table || {})[need] || t("asWritten", need));
+      p.append(el("b", null, t("tableFor", need, whoNeeds(need))), (r.table || {})[need] || t("asWritten", need));
       box.append(p);
     }
     box0.append(box);
@@ -536,13 +626,13 @@ const kitchenNow = (id) => everyKitchen().find((k) => k.id === id);
 
 function openPlan() {
   delete document.documentElement.dataset.kitchen;
-  if (!plan.week) plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet, home });
+  if (!plan.week) plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet, childNeeds, home });
   paintPlan();
   show("plan");
 }
 
 function remake() {
-  plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet, home });
+  plan.week = planWeek(everyKitchen(), { mood: plan.mood, n: plan.n, diet, childNeeds, home });
   paintPlan();
 }
 
@@ -648,13 +738,13 @@ function paintPlan() {
       // when one carries what this table cooks without (its recipe has the
       // free version).
       const hit = containsOf(er, ek.byId).filter((n) => diet[n]);
-      if (hit.length) words.append(el("span", "dish-clash", t("dishClash", hit)));
+      if (hit.length) words.append(el("span", "dish-clash", t("sideClash", hit, whoAny(hit))));
       b.append(art("plan-extra-art", dish(er)), words);
       b.addEventListener("click", () => openFromPlan(d[which]));
       box.append(
         b,
         swapBtn(swapLabel, () => {
-          plan.week = swapSide(plan.week, i, which);
+          plan.week = swapSide(everyKitchen(), plan.week, i, which, childNeeds);
           paintPlan();
         }),
       );

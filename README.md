@@ -28,7 +28,10 @@ Working name; the slug is `kitchens` until it is not.
   main with a plain side and a veg from the everyday kitchen (rice,
   potatoes, pasta, carrots — what the children will eat). Swap any part,
   open any dish, copy one shopping list. Rough: nothing is saved yet.
-- **Who is eating?** Mark what the table cooks without (dairy, eggs, gluten).
+- **Who is eating?** How many adults and children, no names, and what each
+  of them cooks without (dairy, eggs, gluten). Recipes say who a note is
+  for; the planner fits every main to everyone, and steers the children's
+  plain sides only around what a child cannot eat.
   Shelf tags, the planner and every recipe then say what that means.
   Stored on this device only.
 

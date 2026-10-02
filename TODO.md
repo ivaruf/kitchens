@@ -18,9 +18,9 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     would eat it and the younger (5) maybe only carrots: *"we need to keep
     serving still"*. Veg is offered at every table, not left out because it
     may be refused.
-  - *Who the planner knows:* **keep it simple**: no people, no "children"
-    switch. Every planned meal gets a plain side and a veg from the everyday
-    kitchen, whatever the main is.
+  - *Who the planner knows:* first **keep it simple** (no people); superseded
+    the same day by the people at the table below. Every planned meal still
+    gets a plain side and a veg from the everyday kitchen.
   - *How the planner starts:* **pick a kitchen mood**: "Greek week",
     "Vietnamese week" or "mix it up", then it proposes the week.
   - *How many dinners:* **you choose**, 3 to 7, when you start.
@@ -34,18 +34,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     fried rice, wheat pasta, mash with milk and butter — with the free
     version as a note for the plate that needs it.
 
-- **"Who is eating?" knows the people.** Asked for 2026-10-02 (in Norwegian):
-  allergies, and how many children and adults, and who has which allergy, so
-  the data is easier to use. This reverses the planner's earlier "keep it
-  simple, no people" answer. Stays on the device only, like the diet today.
-  Being scoped one question at a time.
-  - *How the table is described:* **no names** — a number of adults and
-    children, and allergies ticked per person ("Adult 1: milk, egg, gluten",
-    "Child 1: none"). Nothing personal stored beyond that.
-  - *What it is used for:* **both** — the allergies decide who gets what
-    (the main suits everyone with an allergy; the children's plain sides stay
-    ordinary unless a child has one), and the number of people scales the
-    amounts in recipes and shopping lists. Note: amounts are free text today,
-    so scaling needs them as number + unit — a real content job.
-  - *Which allergies:* **the three we have** — milk, egg and gluten — now per
-    person instead of for the whole table.
+- **Scale amounts to the people at the table.** Agreed 2026-10-02, after the
+  per-person allergies. Needs every amount rewritten as number + unit, in
+  English and bokmål, before recipes and shopping lists can be scaled.

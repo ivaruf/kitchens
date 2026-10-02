@@ -72,20 +72,13 @@
         <p class="kicker" data-i18n="table.kicker">Before anything is cooked</p>
         <h2 id="table-title" data-i18n="table.title">Who is eating?</h2>
         <p class="hint" data-i18n="table.hint">
-          Mark what the table cooks without. Every ingredient and every recipe then
-          says what it means for that plate. This stays on this device and nowhere else.
+          Who sits at the table, and what each of them cooks without.
         </p>
-        <div class="needs" role="group" aria-label="Cook without">
-          <button type="button" class="need" data-need="dairy" aria-pressed="false">
-            <b data-i18n="need.dairy">No dairy</b><small data-i18n="need.dairy.sub">Milk, butter, cheese, yogurt</small>
-          </button>
-          <button type="button" class="need" data-need="egg" aria-pressed="false">
-            <b data-i18n="need.egg">No eggs</b><small data-i18n="need.egg.sub">Including in sauces and pastry</small>
-          </button>
-          <button type="button" class="need" data-need="gluten" aria-pressed="false">
-            <b data-i18n="need.gluten">No gluten</b><small data-i18n="need.gluten.sub">Wheat, barley, rye — and what hides them</small>
-          </button>
-        </div>
+        <!-- How many adults and children, then one row per person with their
+             own needs. No names: "Adult 1", "Child 2". js/main.js draws both. -->
+        <div id="table-counts" class="table-counts"></div>
+        <div id="table-people" class="table-people"></div>
+        <p id="table-summary-big" class="hint"></p>
         <p class="hint small" data-i18n="table.coeliac">
           Cooking for coeliac disease? Ingredients are only half of it: crumbs on a
           shared board, a floured counter, a toaster or a ladle that touched the

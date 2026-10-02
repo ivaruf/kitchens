@@ -6,7 +6,9 @@
  * seven. Every dinner is a main, a plain side and a veg. The side and the veg
  * come from the everyday kitchen, whatever the main is, because the children
  * at the table eat plain rice and carrots even on stifado night; the veg is
- * served every day whether or not it gets eaten. Nothing is saved yet: a plan
+ * served every day whether or not it gets eaten. The plain sides are written
+ * the ordinary way, for children who eat egg, milk and gluten; when a child at
+ * the table does not, the sides that carry it are skipped for them. Nothing is saved yet: a plan
  * lives as long as the page does, while the layout is being found.
  *
  * Choosing the mains is the same idea as js/sets.js, a week built around what
@@ -83,7 +85,7 @@ function mainsFor(kitchens, mood, diet) {
 }
 
 /** A fresh week: `n` dinners for `mood` ("greek" | "vietnam" | "mix"). */
-export function planWeek(kitchens, { mood, n, diet, home = null }) {
+export function planWeek(kitchens, { mood, n, diet, childNeeds = null, home = null }) {
   const byKitchen = Object.fromEntries(kitchens.map((k) => [k.id, k]));
   const { own, others } = mainsFor(kitchens, mood, diet);
   const week = [];
@@ -106,17 +108,25 @@ export function planWeek(kitchens, { mood, n, diet, home = null }) {
   }
   const days = [];
   week.forEach((main, i) => {
-    const side = sideFor(main, i, i ? days[i - 1].side.recipe : null);
+    const list = sidesOk(kitchens, childNeeds, SIDES_FOR[main.kitchen] || SIDES_FOR.greek);
+    const side = sideFor(main, i, i ? days[i - 1].side.recipe : null, list);
     days.push({ main, side, veg: { kitchen: EVERYDAY, recipe: VEG[i % VEG.length] } });
   });
-  return { mood, n, days, borrowed, short: days.length < n };
+  return { mood, n, days, borrowed, short: days.length < n, childNeeds };
+}
+
+/* The plain sides a child at this table can eat: none that carry what a child cannot. */
+function sidesOk(kitchens, childNeeds, list) {
+  const ed = kitchens.find((k) => k.id === EVERYDAY);
+  if (!ed || !childNeeds) return list;
+  const ok = list.filter((id) => !ed.recipeById[id].ingredients.some((i) => (ed.byId[i.id].contains || []).some((n) => childNeeds[n])));
+  return ok.length ? ok : list;
 }
 
 /* A plain side to suit the main, round its kitchen's list, never the same as the night before. */
-function sideFor(main, i, prev) {
-  const list = SIDES_FOR[main.kitchen] || SIDES_FOR.greek;
+function sideFor(main, i, prev, list = SIDES_FOR[main.kitchen] || SIDES_FOR.greek) {
   let recipe = list[i % list.length];
-  if (recipe === prev) recipe = list[(i + 1) % list.length];
+  if (recipe === prev && list.length > 1) recipe = list[(i + 1) % list.length];
   return { kitchen: EVERYDAY, recipe };
 }
 
@@ -135,15 +145,16 @@ export function swapMain(kitchens, plan, i, diet, home = null) {
     if (s > bestScore) [best, bestScore] = [c, s];
   }
   const days = plan.days.slice();
-  days[i] = { ...days[i], main: best, side: sideFor(best, i, i ? days[i - 1].side.recipe : null) };
+  const list = sidesOk(kitchens, plan.childNeeds, SIDES_FOR[best.kitchen] || SIDES_FOR.greek);
+  days[i] = { ...days[i], main: best, side: sideFor(best, i, i ? days[i - 1].side.recipe : null, list) };
   return { ...plan, days };
 }
 
-/** The next plain side (or veg) for day `i`, round the list. */
-export function swapSide(plan, i, which) {
+/** The next plain side (or veg) for day `i`, round the list of what the children can eat. */
+export function swapSide(kitchens, plan, i, which, childNeeds = null) {
   const days = plan.days.slice();
   const d = days[i];
-  const list = which === "veg" ? [...new Set(VEG)] : SIDES_FOR[d.main.kitchen] || SIDES_FOR.greek;
+  const list = sidesOk(kitchens, childNeeds, which === "veg" ? [...new Set(VEG)] : SIDES_FOR[d.main.kitchen] || SIDES_FOR.greek);
   const at = list.indexOf(d[which].recipe);
   days[i] = { ...d, [which]: { kitchen: EVERYDAY, recipe: list[(at + 1) % list.length] } };
   return { ...plan, days };

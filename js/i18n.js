@@ -92,7 +92,24 @@ const STRINGS = {
     "update.sub": "Tap to take it",
     "table.kicker": "Before anything is cooked",
     "table.title": "Who is eating?",
-    "table.hint": "Mark what the table cooks without. Every ingredient and every recipe then says what it means for that plate. This stays on this device and nowhere else.",
+    "table.hint": "Who sits at the table, and what each of them cooks without. Every ingredient, recipe and planned week then says what it means for them. This stays on this device and nowhere else.",
+    tableShort: (people, needs) => {
+      const a = people.filter((p) => p.kind === "adult").length;
+      const c = people.length - a;
+      const who = list([a && `${a} ${a === 1 ? "adult" : "adults"}`, c && `${c} ${c === 1 ? "child" : "children"}`].filter(Boolean));
+      return needs.length ? `${who} · without ${list(needs.map(noun))}` : `${who} · eating everything`;
+    },
+    personAdult: (n) => `Adult ${n}`,
+    personChild: (n) => `Child ${n}`,
+    adults: "Adults",
+    children: "Children",
+    lessAdult: "One adult fewer",
+    moreAdult: "One more adult",
+    lessChild: "One child fewer",
+    moreChild: "One more child",
+    cooksWithout: (who) => `What ${who.toLowerCase()} cooks without`,
+    tableFor: (need, who) => `No ${noun(need)} (${who}). `,
+    sideClash: (needs, who) => `has ${list(needs.map(noun))} — the free way is in its notes, for ${who}`,
     "need.dairy": "No dairy",
     "need.dairy.sub": "Milk, butter, cheese, yogurt",
     "need.egg": "No eggs",
@@ -220,7 +237,24 @@ const STRINGS = {
     "update.sub": "Trykk for å hente den",
     "table.kicker": "Før noe blir laget",
     "table.title": "Hvem skal spise?",
-    "table.hint": "Kryss av for det bordet lager mat uten. Hver ingrediens og hver oppskrift sier da hva det betyr for den tallerkenen. Dette blir liggende på denne enheten og ingen andre steder.",
+    "table.hint": "Hvem som sitter rundt bordet, og hva hver av dem ikke tåler. Hver ingrediens, oppskrift og planlagt uke sier da hva det betyr for dem. Dette blir liggende på denne enheten og ingen andre steder.",
+    tableShort: (people, needs) => {
+      const a = people.filter((p) => p.kind === "adult").length;
+      const c = people.length - a;
+      const who = list([a && `${a} ${a === 1 ? "voksen" : "voksne"}`, c && `${c} barn`].filter(Boolean));
+      return needs.length ? `${who} · uten ${list(needs.map(noun))}` : `${who} · spiser alt`;
+    },
+    personAdult: (n) => `Voksen ${n}`,
+    personChild: (n) => `Barn ${n}`,
+    adults: "Voksne",
+    children: "Barn",
+    lessAdult: "Én voksen færre",
+    moreAdult: "Én voksen til",
+    lessChild: "Ett barn færre",
+    moreChild: "Ett barn til",
+    cooksWithout: (who) => `Hva ${who.toLowerCase()} ikke tåler`,
+    tableFor: (need, who) => `Uten ${noun(need)} (${who}). `,
+    sideClash: (needs, who) => `har ${list(needs.map(noun))} — den frie varianten står i notatene, for ${who}`,
     "need.dairy": "Uten melk",
     "need.dairy.sub": "Melk, smør, ost, yoghurt",
     "need.egg": "Uten egg",
