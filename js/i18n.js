@@ -1,0 +1,364 @@
+/*
+ * i18n.js — which language the cookbook speaks, and every word it says that
+ * is not cookbook content.
+ *
+ * TWO LAYERS, KEPT APART:
+ *   STRINGS   the interface: buttons, headings, and the sentences the game
+ *             assembles itself ("3 of 4 — still wants"). Some are functions,
+ *             because a language is not a template with blanks in it —
+ *             Norwegian says "melkefri og glutenfri", English "dairy- and
+ *             gluten-free".
+ *   localize  the content: each kitchen's ingredient notes and recipes,
+ *             written in English in js/pantry.js, js/recipes.js and
+ *             js/vietnam.js, with a bokmål overlay from js/nb.js laid over it
+ *             by id (and recipe steps by position). Anything the overlay lacks
+ *             falls back to English, so a missing line shows English, never a
+ *             gap — and says so in the console.
+ *
+ * Native dish and ingredient names (Greek, Vietnamese) are never translated.
+ *
+ * ONE THING MUST SURVIVE TRANSLATION UNCHANGED: the English preparation words
+ * ("grated", "juiced") that js/art.js reads to pick a picture. localize keeps
+ * them on each step as `prepKey` beside the translated `prep` label.
+ *
+ * The choice is stored as kitchens.lang.v1. With nothing stored, a browser
+ * that prefers Norwegian (nb, nn or no) gets bokmål and everyone else English.
+ */
+
+import { NB } from "./nb.js";
+
+const LANG_KEY = "kitchens.lang.v1";
+export const LANGS = [
+  { id: "en", name: "English" },
+  { id: "nb", name: "Norsk" },
+];
+
+function initial() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === "en" || saved === "nb") return saved;
+  } catch {
+    // No storage: fall through to the browser's preference.
+  }
+  const prefs = navigator.languages || [navigator.language || "en"];
+  return prefs.some((l) => /^(nb|nn|no)\b/i.test(l)) ? "nb" : "en";
+}
+
+let lang = initial();
+document.documentElement.lang = lang;
+
+export const getLang = () => lang;
+
+export function setLang(next) {
+  if (next !== "en" && next !== "nb") return;
+  lang = next;
+  document.documentElement.lang = lang;
+  try {
+    localStorage.setItem(LANG_KEY, lang);
+  } catch {
+    // Not remembered; this visit still switches.
+  }
+  // js/screen.js and js/update.js are self-contained and listen for this.
+  document.dispatchEvent(new CustomEvent("kitchens:lang", { detail: lang }));
+}
+
+/* ------------------------------------------------------------- the words */
+
+const NOUN = {
+  en: { dairy: "dairy", egg: "egg", gluten: "gluten" },
+  nb: { dairy: "melk", egg: "egg", gluten: "gluten" },
+};
+const FREE = {
+  en: { dairy: "dairy-free", egg: "egg-free", gluten: "gluten-free" },
+  nb: { dairy: "melkefri", egg: "eggfri", gluten: "glutenfri" },
+};
+
+/** "a, b and c", in the current language. */
+export function list(words) {
+  const and = lang === "nb" ? "og" : "and";
+  if (words.length < 2) return words.join("");
+  return `${words.slice(0, -1).join(", ")} ${and} ${words[words.length - 1]}`;
+}
+export const noun = (need) => NOUN[lang][need];
+export const free = (needs) => list(needs.map((n) => FREE[lang][n]));
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const STRINGS = {
+  en: {
+    "home.kicker": "An immersive cookbook",
+    "home.tagline": "Choose a kitchen. Browse its pantry. Put what tempts you on the counter, and see what it could become.",
+    "home.table": "Who is eating?",
+    "update.title": "A new edition is ready",
+    "update.sub": "Tap to take it",
+    "table.kicker": "Before anything is cooked",
+    "table.title": "Who is eating?",
+    "table.hint": "Mark what the table cooks without. Every ingredient and every recipe then says what it means for that plate. This stays on this device and nowhere else.",
+    "need.dairy": "No dairy",
+    "need.dairy.sub": "Milk, butter, cheese, yogurt",
+    "need.egg": "No eggs",
+    "need.egg.sub": "Including in sauces and pastry",
+    "need.gluten": "No gluten",
+    "need.gluten.sub": "Wheat, barley, rye — and what hides them",
+    "table.coeliac": "Cooking for coeliac disease? Ingredients are only half of it: crumbs on a shared board, a floured counter, a toaster or a ladle that touched the orzo are enough. Clean surfaces and separate utensils first.",
+    back: "Back",
+    "pantry.title": "The pantry",
+    "lit.all": "Put it all on the counter",
+    "lit.recipe": "The recipe",
+    "lit.done": "Done",
+    "counter.title": "On the counter",
+    "counter.clear": "Clear the counter",
+    "aside.ideas": "It could become",
+    "aside.all": "Every dish in this kitchen",
+    "recipe.cook": "Cook it step by step",
+    "recipe.light": "Light it up in the pantry",
+    "recipe.in": "What goes in",
+    "recipe.how": "How",
+    "recipe.back": "Back to the pantry",
+    "cook.backRecipe": "Back to the recipe",
+    "cook.prev": "Previous step",
+    "cook.do": "Do it",
+    why: "Why?",
+    "card.into": "Goes into",
+    "card.put": "Put on the counter",
+    "card.on": "On the counter ✓ — put it back",
+    "card.close": "Back",
+    "menu.title": "Menu",
+    "menu.music": "Music",
+    "menu.sfx": "Effects",
+    "menu.silent": "The kitchen is silent for now. These levels are kept for the day it is not.",
+    "menu.lang": "Language",
+    exit: "Back to arcade",
+    close: "Close",
+    "corner.menu": "Menu",
+    "corner.mute": "Mute",
+    "corner.unmute": "Unmute",
+
+    table: (needs) => (needs.length ? `Cooking without ${list(needs.map(noun))}` : "Cooking for everyone"),
+    containsSr: (needs) => ` — contains ${list(needs.map(noun))}`,
+    onCounter: ", on the counter",
+    "counter.empty": "Nothing yet. Pick whatever tempts you from the shelves.",
+    putBackTitle: (name) => `${name} — tap to put back`,
+    putBackLabel: (name) => `${name}, put back on the shelf`,
+    counterWarn: (needs, names) => `Not for a ${free(needs)} plate: ${names}. Serve it on its own plate, or leave it out.`,
+    "ideas.empty": "Put a few things on the counter and the dishes they could become will gather here.",
+    "ideas.none": "Nothing in this kitchen starts from these alone. Try adding an onion — almost everything does.",
+    score: (have, total) => `${have} of ${total} — still wants`,
+    "idea.ready": "Everything it needs is here",
+    dishClash: (needs) => `has ${list(needs.map(noun))} — see the table notes`,
+    litTitle: (name) => `What goes into ${name}`,
+    litNote: (n, have) => `${n} things, glowing on the shelves${have ? ` — ${have} already on the counter` : ""}.`,
+    putLeft: (names) => `On the counter — but the ${names} stayed on the shelf, for this table.`,
+    putOk: "Everything is on the counter.",
+    cardContains: (c, hit) => (hit.length ? `Contains ${list(c.map(noun))} — not for a ${free(hit)} plate.` : `Contains ${list(c.map(noun))}.`),
+    "card.alongside": "Served alongside rather than cooked in — see the recipes' table notes.",
+    meta: (serves, time) => `Serves ${serves} · ${time}`,
+    "fasting.summary": "A fasting dish — dairy-free and egg-free by tradition",
+    "table.for": "For your table",
+    tableNo: (need) => `No ${noun(need)}. `,
+    asWritten: (need) => `${cap(FREE.en[need])} as written.`,
+    clashNote: (names, hit) => `The ${names} in this recipe is not for a ${free(hit)} plate — see below for what to do instead.`,
+    "tile.on": ", on your counter",
+    serve: (s) => `To serve: ${s}`,
+    heat: ["Off the heat", "Low heat", "Medium heat", "High heat"],
+    "heat.oven": "In the oven",
+    into: { pot: "Into the pot", tin: "Into the tin", bowl: "Into the bowl", wok: "Into the wok", plate: "Onto the plate" },
+    "cook.prepare": "Prepare them",
+    "cook.oven": "Into the oven",
+    "cook.wait": "Let it cook",
+    "cook.done": "Done",
+    "cook.next": "Next step",
+    "cook.table": "To the table",
+    step: (i, n) => `Step ${i} of ${n}`,
+    tapPrep: (how) => `tap to prepare — ${how}`,
+    "cook.ready": "ready",
+    "cook.asIs": "goes in as it is",
+    "cook.atTable": "At the table",
+    "cook.finished": "Ready",
+  },
+  nb: {
+    "home.kicker": "En kokebok å gå inn i",
+    "home.tagline": "Velg et kjøkken. Se deg rundt i spiskammeret. Legg det som frister på benken, og se hva det kan bli til.",
+    "home.table": "Hvem skal spise?",
+    "update.title": "En ny utgave er klar",
+    "update.sub": "Trykk for å hente den",
+    "table.kicker": "Før noe blir laget",
+    "table.title": "Hvem skal spise?",
+    "table.hint": "Kryss av for det bordet lager mat uten. Hver ingrediens og hver oppskrift sier da hva det betyr for den tallerkenen. Dette blir liggende på denne enheten og ingen andre steder.",
+    "need.dairy": "Uten melk",
+    "need.dairy.sub": "Melk, smør, ost, yoghurt",
+    "need.egg": "Uten egg",
+    "need.egg.sub": "Også i sauser og bakverk",
+    "need.gluten": "Uten gluten",
+    "need.gluten.sub": "Hvete, bygg, rug — og der de gjemmer seg",
+    "table.coeliac": "Lager du mat til noen med cøliaki? Ingrediensene er bare halve jobben: smuler på et felles skjærebrett, en melet benk, en brødrister eller en øse som har vært i orzoen er nok. Rene flater og egne redskaper først.",
+    back: "Tilbake",
+    "pantry.title": "Spiskammeret",
+    "lit.all": "Legg alt på benken",
+    "lit.recipe": "Oppskriften",
+    "lit.done": "Ferdig",
+    "counter.title": "På benken",
+    "counter.clear": "Rydd benken",
+    "aside.ideas": "Det kan bli til",
+    "aside.all": "Alle rettene på dette kjøkkenet",
+    "recipe.cook": "Lag den steg for steg",
+    "recipe.light": "Lys den opp i spiskammeret",
+    "recipe.in": "Dette trenger du",
+    "recipe.how": "Slik gjør du",
+    "recipe.back": "Tilbake til spiskammeret",
+    "cook.backRecipe": "Tilbake til oppskriften",
+    "cook.prev": "Forrige steg",
+    "cook.do": "Gjør det",
+    why: "Hvorfor?",
+    "card.into": "Brukes i",
+    "card.put": "Legg på benken",
+    "card.on": "På benken ✓ — legg tilbake",
+    "card.close": "Tilbake",
+    "menu.title": "Meny",
+    "menu.music": "Musikk",
+    "menu.sfx": "Effekter",
+    "menu.silent": "Kjøkkenet er stille foreløpig. Nivåene huskes til den dagen det ikke er det lenger.",
+    "menu.lang": "Språk",
+    exit: "Tilbake til arkaden",
+    close: "Lukk",
+    "corner.menu": "Meny",
+    "corner.mute": "Lyd av",
+    "corner.unmute": "Lyd på",
+
+    table: (needs) => (needs.length ? `Lager mat uten ${list(needs.map(noun))}` : "Lager mat til alle"),
+    containsSr: (needs) => ` — inneholder ${list(needs.map(noun))}`,
+    onCounter: ", på benken",
+    "counter.empty": "Ingenting ennå. Plukk det som frister fra hyllene.",
+    putBackTitle: (name) => `${name} — trykk for å legge tilbake`,
+    putBackLabel: (name) => `${name}, legg tilbake på hylla`,
+    counterWarn: (needs, names) => `Ikke for en ${free(needs)} tallerken: ${names}. Server det på egen tallerken, eller dropp det.`,
+    "ideas.empty": "Legg noen ting på benken, så samler rettene de kan bli til seg her.",
+    "ideas.none": "Ingenting på dette kjøkkenet starter med bare dette. Prøv å legge til en løk — nesten alt gjør det.",
+    score: (have, total) => `${have} av ${total} — mangler`,
+    "idea.ready": "Alt den trenger er her",
+    dishClash: (needs) => `har ${list(needs.map(noun))} — se notatene for bordet`,
+    litTitle: (name) => `Dette går i ${name}`,
+    litNote: (n, have) => `${n} ting lyser på hyllene${have ? ` — ${have} ligger allerede på benken` : ""}.`,
+    putLeft: (names) => `Lagt på benken — men ${names} ble liggende igjen på hylla, for dette bordets skyld.`,
+    putOk: "Alt ligger på benken.",
+    cardContains: (c, hit) =>
+      hit.length ? `Inneholder ${list(c.map(noun))} — ikke for en ${free(hit)} tallerken.` : `Inneholder ${list(c.map(noun))}.`,
+    "card.alongside": "Serveres ved siden av heller enn å lages med — se notatene for bordet i oppskriftene.",
+    meta: (serves, time) => `Porsjoner: ${serves} · ${time}`,
+    "fasting.summary": "En fasterett — melkefri og eggfri etter tradisjon",
+    "table.for": "For ditt bord",
+    tableNo: (need) => `Uten ${noun(need)}. `,
+    asWritten: (need) => `${cap(FREE.nb[need])} slik den står.`,
+    clashNote: (names, hit) => `${cap(names)} i denne oppskriften passer ikke for en ${free(hit)} tallerken — se under for hva du kan gjøre i stedet.`,
+    "tile.on": ", på benken din",
+    serve: (s) => `Servering: ${s}`,
+    heat: ["Av platen", "Lav varme", "Middels varme", "Høy varme"],
+    "heat.oven": "I ovnen",
+    into: { pot: "I gryta", tin: "I formen", bowl: "I bollen", wok: "I woken", plate: "På fatet" },
+    "cook.prepare": "Gjør dem klare",
+    "cook.oven": "Inn i ovnen",
+    "cook.wait": "La det koke",
+    "cook.done": "Ferdig",
+    "cook.next": "Neste steg",
+    "cook.table": "Til bords",
+    step: (i, n) => `Steg ${i} av ${n}`,
+    tapPrep: (how) => `trykk for å gjøre klar — ${how}`,
+    "cook.ready": "klar",
+    "cook.asIs": "går i som den er",
+    "cook.atTable": "Til bords",
+    "cook.finished": "Ferdig",
+  },
+};
+
+/** A string, or the function that builds one, called with `args`. */
+export function t(key, ...args) {
+  const v = key in STRINGS[lang] ? STRINGS[lang][key] : STRINGS.en[key];
+  return typeof v === "function" ? v(...args) : v;
+}
+
+/** Every [data-i18n] in the page gets its words; [data-i18n-label] its aria-label and title. */
+export function paintStatic(root = document) {
+  for (const n of root.querySelectorAll("[data-i18n]")) n.textContent = t(n.dataset.i18n);
+  for (const n of root.querySelectorAll("[data-i18n-label]")) {
+    const words = t(n.dataset.i18nLabel);
+    n.setAttribute("aria-label", words);
+    n.title = words;
+  }
+}
+
+/* ----------------------------------------------------------- the content */
+
+const cache = new Map();
+const warned = new Set();
+
+function missing(where) {
+  if (warned.has(where)) return;
+  warned.add(where);
+  console.warn(`Kitchens: no ${lang} text for ${where}; showing English.`);
+}
+
+/**
+ * A kitchen in the current language: the English content with this
+ * language's overlay laid over it. Cached per kitchen and language, and
+ * returned in the same shape js/kitchens.js builds, so nothing downstream
+ * knows a translation happened.
+ */
+export function localize(k) {
+  if (lang === "en") return k;
+  const key = `${k.id}:${lang}`;
+  if (cache.has(key)) return cache.get(key);
+  const o = (NB && NB[k.id]) || {};
+
+  const shelves = k.shelves.map((s) => {
+    const x = o.shelves?.[s.id];
+    if (!x) missing(`shelf ${k.id}/${s.id}`);
+    return { ...s, ...(x || {}) };
+  });
+  const ingredients = k.ingredients.map((i) => {
+    const x = o.ingredients?.[i.id];
+    if (!x) missing(`ingredient ${k.id}/${i.id}`);
+    return { ...i, ...(x ? { name: x.name || i.name, info: x.info || i.info } : {}) };
+  });
+  const recipes = k.recipes.map((r) => {
+    const x = o.recipes?.[r.id];
+    if (!x) {
+      missing(`recipe ${k.id}/${r.id}`);
+      return { ...r, method: r.method.map((s) => ({ ...s, prepKey: s.prep })) };
+    }
+    return {
+      ...r,
+      name: x.name || r.name,
+      line: x.line || r.line,
+      story: x.story || r.story,
+      serves: x.serves || r.serves,
+      time: x.time || r.time,
+      serve: x.serve || r.serve,
+      ingredients: r.ingredients.map((i) => ({ ...i, amount: x.ingredients?.[i.id] || i.amount })),
+      method: r.method.map((s, n) => {
+        const y = x.method?.[n] || {};
+        return {
+          ...s,
+          text: y.text || s.text,
+          why: s.why ? y.why || s.why : s.why,
+          wait: s.wait ? y.wait || s.wait : s.wait,
+          prep: s.prep ? { ...s.prep, ...(y.prep || {}) } : s.prep,
+          prepKey: s.prep,
+        };
+      }),
+      table: { ...r.table, ...(x.table || {}) },
+    };
+  });
+
+  const out = {
+    ...k,
+    name: o.kitchen?.name || k.name,
+    intro: o.kitchen?.intro || k.intro,
+    fastingNote: o.fastingNote || k.fastingNote,
+    shelves,
+    ingredients,
+    recipes,
+    byId: Object.fromEntries(ingredients.map((i) => [i.id, i])),
+    recipeById: Object.fromEntries(recipes.map((r) => [r.id, r])),
+  };
+  cache.set(key, out);
+  return out;
+}

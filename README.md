@@ -43,6 +43,11 @@ Greek one and brings its own palette, border and lessons, among them that
 soy sauce and most hoisin contain wheat. Kitchens are registered in
 `js/kitchens.js`; the Vietnamese content is `js/vietnam.js`.
 
+The whole cookbook reads in English or Norwegian bokmål, chosen on the front
+door or in the menu, and defaulting to bokmål for a browser that prefers
+Norwegian. Interface words are in `js/i18n.js`; the Norwegian content is
+overlaid from `js/nb/`.
+
 Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 
 ## Files

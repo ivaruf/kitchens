@@ -50,7 +50,7 @@ function offer(worker) {
     accepted = true;
     button.disabled = true;
     const sub = button.querySelector(".update-sub");
-    if (sub) sub.textContent = "Fetching the new edition…";
+    if (sub) sub.textContent = document.documentElement.lang === "nb" ? "Henter den nye utgaven …" : "Fetching the new edition…";
     worker.postMessage({ type: "SKIP_WAITING" });
   };
 }
@@ -70,7 +70,7 @@ function showBuild() {
     channel.port1.onmessage = (event) => {
       const version = event.data && event.data.version;
       if (!version) return;
-      buildLine.textContent = `Build ${version}`;
+      buildLine.textContent = `${document.documentElement.lang === "nb" ? "Utgave" : "Build"} ${version}`;
       buildLine.hidden = false;
     };
     worker.postMessage({ type: "GET_VERSION" }, [channel.port2]);

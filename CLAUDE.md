@@ -25,4 +25,13 @@ choices and timing bars was built first and rejected for exactly that reason.
   (a family member needs all three), and each recipe says plainly what it is
   usually *served* with that is not.
 - Diet claims are about the dish, never about a product or a brand.
-- Content lives in `js/pantry.js` and `js/recipes.js`; check facts there.
+- Content lives in `js/pantry.js`, `js/recipes.js` and `js/vietnam.js`;
+  check facts there.
+- **Two languages, English and bokmål** (owner's choice, 2026-10-02: the
+  whole cookbook, bokmål only, not nynorsk). English is the source; the
+  bokmål overlays are in `js/nb/`, matched by id and recipe steps by
+  position, and `js/i18n.js` holds every interface string. Any content change
+  is made in both, in the same commit. A missing Norwegian line falls back to
+  English and is named once in the console. Native names (Greek, Vietnamese)
+  are never translated. Recipe `prep` words stay English in the source:
+  `js/art.js` reads them to pick a picture.

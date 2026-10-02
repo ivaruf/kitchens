@@ -243,6 +243,22 @@ input:focus-visible {
   border-color: var(--blue);
 }
 
+/* English / Norsk: two equal chips, the chosen one filled. */
+.lang-pick {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 7rem));
+  gap: 6px;
+  justify-content: center;
+}
+#menu .lang-pick {
+  justify-content: start;
+}
+.chip.lang[aria-pressed="true"] {
+  background: var(--blue);
+  border-color: var(--blue-deep);
+  color: #fff;
+}
+
 /* Peers in a row get one size (hub §2). */
 .pair {
   display: grid;

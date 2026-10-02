@@ -36,22 +36,24 @@
     <section id="home" class="screen" aria-labelledby="logo">
       <div class="paper home">
         <div class="key" aria-hidden="true"></div>
-        <p class="kicker">An immersive cookbook</p>
+        <p class="kicker" data-i18n="home.kicker">An immersive cookbook</p>
         <h1 id="logo">Kitchens</h1>
-        <p class="tagline">Choose a kitchen. Browse its pantry. Put what tempts you on the counter, and see what it could become.</p>
+        <p class="tagline" data-i18n="home.tagline">Choose a kitchen. Browse its pantry. Put what tempts you on the counter, and see what it could become.</p>
         <div class="home-doors">
           <!-- One door per kitchen, each with a few things off its shelves;
                built by js/main.js from js/kitchens.js. -->
           <div id="doors" class="doors"></div>
-          <button type="button" id="open-table" class="ghost">Who is eating?</button>
+          <button type="button" id="open-table" class="ghost" data-i18n="home.table">Who is eating?</button>
           <p id="table-summary" class="hint"></p>
           <!-- Hidden until a new worker is waiting; the only thing that posts
                SKIP_WAITING, and it only exists on this screen (hub §1, §3). -->
           <button type="button" id="update" hidden>
-            <span class="update-title">A new edition is ready</span>
-            <span class="update-sub">Tap to take it</span>
+            <span class="update-title" data-i18n="update.title">A new edition is ready</span>
+            <span class="update-sub" data-i18n="update.sub">Tap to take it</span>
           </button>
           <button type="button" class="ghost exit-btn" hidden>Back to arcade</button>
+          <!-- English or Norsk; js/main.js fills it from js/i18n.js. -->
+          <div class="lang-pick" role="group" aria-label="Language / Språk"></div>
           <p id="build" hidden></p>
         </div>
       </div>
@@ -61,29 +63,29 @@
     <section id="table" class="screen" hidden aria-labelledby="table-title">
       <div class="paper">
         <div class="key" aria-hidden="true"></div>
-        <p class="kicker">Before anything is cooked</p>
-        <h2 id="table-title">Who is eating?</h2>
-        <p class="hint">
+        <p class="kicker" data-i18n="table.kicker">Before anything is cooked</p>
+        <h2 id="table-title" data-i18n="table.title">Who is eating?</h2>
+        <p class="hint" data-i18n="table.hint">
           Mark what the table cooks without. Every ingredient and every recipe then
           says what it means for that plate. This stays on this device and nowhere else.
         </p>
         <div class="needs" role="group" aria-label="Cook without">
           <button type="button" class="need" data-need="dairy" aria-pressed="false">
-            <b>No dairy</b><small>Milk, butter, cheese, yogurt</small>
+            <b data-i18n="need.dairy">No dairy</b><small data-i18n="need.dairy.sub">Milk, butter, cheese, yogurt</small>
           </button>
           <button type="button" class="need" data-need="egg" aria-pressed="false">
-            <b>No eggs</b><small>Including in sauces and pastry</small>
+            <b data-i18n="need.egg">No eggs</b><small data-i18n="need.egg.sub">Including in sauces and pastry</small>
           </button>
           <button type="button" class="need" data-need="gluten" aria-pressed="false">
-            <b>No gluten</b><small>Wheat, barley, rye — and what hides them</small>
+            <b data-i18n="need.gluten">No gluten</b><small data-i18n="need.gluten.sub">Wheat, barley, rye — and what hides them</small>
           </button>
         </div>
-        <p class="hint small">
+        <p class="hint small" data-i18n="table.coeliac">
           Cooking for coeliac disease? Ingredients are only half of it: crumbs on a
           shared board, a floured counter, a toaster or a ladle that touched the
           orzo are enough. Clean surfaces and separate utensils first.
         </p>
-        <button type="button" class="primary back-btn">Back</button>
+        <button type="button" class="primary back-btn" data-i18n="back">Back</button>
       </div>
     </section>
 
@@ -94,11 +96,11 @@
       <div class="shelves">
         <header class="pantry-head">
           <p class="kicker" id="pantry-kicker"></p>
-          <h2 id="pantry-title">The pantry</h2>
+          <h2 id="pantry-title" data-i18n="pantry.title">The pantry</h2>
           <p class="hint" id="pantry-intro"></p>
           <div class="head-tools">
             <button type="button" id="table-chip" class="chip"></button>
-            <button type="button" id="pantry-home" class="chip">Back</button>
+            <button type="button" id="pantry-home" class="chip" data-i18n="back">Back</button>
           </div>
         </header>
         <!-- Shown while a dish is lighting up the pantry: what it is, and the
@@ -110,9 +112,9 @@
             <span id="lit-note"></span>
           </span>
           <span class="lit-tools">
-            <button type="button" id="lit-all" class="primary">Put it all on the counter</button>
-            <button type="button" id="lit-recipe" class="chip">The recipe</button>
-            <button type="button" id="lit-off" class="chip">Done</button>
+            <button type="button" id="lit-all" class="primary" data-i18n="lit.all">Put it all on the counter</button>
+            <button type="button" id="lit-recipe" class="chip" data-i18n="lit.recipe">The recipe</button>
+            <button type="button" id="lit-off" class="chip" data-i18n="lit.done">Done</button>
           </span>
         </div>
         <div id="shelf-list"></div>
@@ -120,18 +122,18 @@
 
       <aside id="counter" aria-labelledby="counter-title">
         <button type="button" id="counter-toggle" class="counter-head" aria-expanded="false">
-          <span class="counter-title" id="counter-title">On the counter</span>
+          <span class="counter-title" id="counter-title" data-i18n="counter.title">On the counter</span>
           <span id="counter-peek" class="counter-peek" aria-hidden="true"></span>
           <span id="counter-count" class="counter-count"></span>
         </button>
         <div class="counter-body">
           <div class="board-top">
             <div id="counter-items" class="counter-items"></div>
-            <button type="button" id="counter-clear" class="chip" hidden>Clear the counter</button>
+            <button type="button" id="counter-clear" class="chip" hidden data-i18n="counter.clear">Clear the counter</button>
           </div>
-          <h3 class="aside-head">It could become</h3>
+          <h3 class="aside-head" data-i18n="aside.ideas">It could become</h3>
           <div id="ideas" class="ideas"></div>
-          <h3 class="aside-head">Every dish in this kitchen</h3>
+          <h3 class="aside-head" data-i18n="aside.all">Every dish in this kitchen</h3>
           <div id="all-dishes" class="ideas compact"></div>
         </div>
       </aside>
@@ -151,19 +153,19 @@
           </div>
         </div>
         <div class="recipe-tools">
-          <button type="button" id="recipe-cook" class="primary">Cook it step by step</button>
-          <button type="button" id="recipe-light" class="ghost">Light it up in the pantry</button>
-          <button type="button" id="recipe-all" class="ghost">Put it all on the counter</button>
+          <button type="button" id="recipe-cook" class="primary" data-i18n="recipe.cook">Cook it step by step</button>
+          <button type="button" id="recipe-light" class="ghost" data-i18n="recipe.light">Light it up in the pantry</button>
+          <button type="button" id="recipe-all" class="ghost" data-i18n="lit.all">Put it all on the counter</button>
         </div>
         <p id="recipe-all-note" class="hint" aria-live="polite"></p>
         <p id="recipe-story" class="story"></p>
         <div id="recipe-table" class="for-table"></div>
-        <h3>What goes in</h3>
+        <h3 data-i18n="recipe.in">What goes in</h3>
         <div id="recipe-ingredients" class="tiles"></div>
-        <h3>How</h3>
+        <h3 data-i18n="recipe.how">How</h3>
         <ol id="recipe-method" class="method"></ol>
         <p id="recipe-serve" class="serve"></p>
-        <button type="button" id="recipe-back" class="primary">Back to the pantry</button>
+        <button type="button" id="recipe-back" class="primary" data-i18n="recipe.back">Back to the pantry</button>
       </article>
     </section>
 
@@ -184,8 +186,8 @@
         <div id="cook-board" class="cook-board"></div>
         <details id="cook-why" class="why"><summary>Why?</summary><p></p></details>
         <div class="pair">
-          <button type="button" id="cook-prev" class="ghost">Back to the recipe</button>
-          <button type="button" id="cook-go" class="primary">Do it</button>
+          <button type="button" id="cook-prev" class="ghost" data-i18n="cook.backRecipe">Back to the recipe</button>
+          <button type="button" id="cook-go" class="primary" data-i18n="cook.do">Do it</button>
         </div>
       </article>
     </section>
@@ -200,35 +202,39 @@
       <h2 id="card-title"></h2>
       <p id="card-info"></p>
       <p id="card-contains" class="contains" hidden></p>
-      <p class="kicker">Goes into</p>
+      <p class="kicker" data-i18n="card.into">Goes into</p>
       <div id="card-dishes" class="dish-chips"></div>
       <div class="pair">
         <button type="button" id="card-put" class="primary" aria-pressed="false">Put on the counter</button>
-        <button type="button" id="card-close" class="ghost">Back</button>
+        <button type="button" id="card-close" class="ghost" data-i18n="card.close">Back</button>
       </div>
     </section>
 
     <!-- ============================= THE MENU ============================= -->
     <section id="menu" class="sheet" hidden tabindex="-1" aria-labelledby="menu-title">
       <p class="kicker">Kitchens</p>
-      <h2 id="menu-title">Menu</h2>
+      <h2 id="menu-title" data-i18n="menu.title">Menu</h2>
       <div class="row">
-        <label class="label" for="music-vol">Music</label>
+        <label class="label" for="music-vol" data-i18n="menu.music">Music</label>
         <div class="slider">
           <input type="range" id="music-vol" min="0" max="100" step="1" value="60" />
           <output id="music-vol-out" for="music-vol">60</output>
         </div>
       </div>
       <div class="row">
-        <label class="label" for="sfx-vol">Effects</label>
+        <label class="label" for="sfx-vol" data-i18n="menu.sfx">Effects</label>
         <div class="slider">
           <input type="range" id="sfx-vol" min="0" max="100" step="1" value="80" />
           <output id="sfx-vol-out" for="sfx-vol">80</output>
         </div>
       </div>
-      <p class="hint small">The kitchen is silent for now. These levels are kept for the day it is not.</p>
+      <p class="hint small" data-i18n="menu.silent">The kitchen is silent for now. These levels are kept for the day it is not.</p>
+      <div class="row">
+        <span class="label" data-i18n="menu.lang">Language</span>
+        <div class="lang-pick" role="group" aria-label="Language / Språk"></div>
+      </div>
       <div class="pair">
-        <button type="button" id="menu-close" class="primary">Back</button>
+        <button type="button" id="menu-close" class="primary" data-i18n="back">Back</button>
         <button type="button" class="ghost exit-btn" hidden>Back to arcade</button>
       </div>
     </section>
@@ -238,7 +244,7 @@
          first sanctioned placement in hub §2. The glyphs are the hub's own
          paths, and CSS picks each toggle's state off aria-pressed. -->
     <div id="corner">
-      <button type="button" id="menu-open" class="icon-button" aria-label="Menu" title="Menu (Esc)">
+      <button type="button" id="menu-open" class="icon-button" aria-label="Menu" title="Menu" data-i18n-label="corner.menu">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
       </button>
       <button type="button" id="mute-toggle" class="icon-button" aria-pressed="false" aria-label="Mute" title="Mute">

@@ -26,9 +26,16 @@ function isFullscreen() {
   return !!(document.fullscreenElement || document.webkitFullscreenElement);
 }
 
+/* Its own two words per language: this file imports nothing, js/i18n.js included. */
+const WORDS = {
+  en: ["Fullscreen", "Exit fullscreen"],
+  nb: ["Fullskjerm", "Avslutt fullskjerm"],
+};
+
 function paint() {
   const active = isFullscreen();
-  const label = active ? "Exit fullscreen" : "Fullscreen";
+  const words = WORDS[document.documentElement.lang] || WORDS.en;
+  const label = active ? words[1] : words[0];
   button.setAttribute("aria-pressed", String(active));
   button.setAttribute("aria-label", label);
   button.title = label;
@@ -46,4 +53,6 @@ if (button && request && exit) {
   });
   document.addEventListener("fullscreenchange", paint);
   document.addEventListener("webkitfullscreenchange", paint);
+  // js/i18n.js announces a language switch; repaint the label in the new one.
+  document.addEventListener("kitchens:lang", paint);
 }

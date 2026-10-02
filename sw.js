@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.4.0'; // a second kitchen: Vietnam, five dishes, beside the Greek one
+const VERSION = 'v0.5.0'; // the whole cookbook in bokmål as well as English
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -34,6 +34,12 @@ const ASSETS = [
   './js/cookalong.js',
   './js/kitchens.js',
   './js/vietnam.js',
+  './js/i18n.js',
+  './js/nb.js',
+  './js/nb/greek-pantry.js',
+  './js/nb/greek-recipes-1.js',
+  './js/nb/greek-recipes-2.js',
+  './js/nb/vietnam.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-180.png',

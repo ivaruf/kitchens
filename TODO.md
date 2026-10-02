@@ -20,8 +20,3 @@ Things agreed as wanted but not yet built. Newest at the bottom.
 
 - **Alternative ingredient suggestions.** Asked for 2026-10-02. To be scoped
   with the owner after the synergy item, one question at a time.
-
-- **Norwegian as a choosable language.** Asked for 2026-10-02.
-  - *Scope:* **everything**: interface, ingredient names and notes, recipes,
-    steps and every "Why?". Native names (Greek, Vietnamese) stay as they are.
-  - *Which Norwegian:* **bokmål** only.
