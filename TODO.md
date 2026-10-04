@@ -43,3 +43,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   compare amounts and method, discard outliers, and follow the path most
   cooks choose. Research and sources kept in research/greek/<dish>.md, then
   merged into js/recipes.js and js/nb/ by hand.
+  - *Weighting (owner, 2026-10-04):* prefer food blogs whose authors actually
+    make the food; weight cooks native to the country higher. Native and
+    hands-on counts 2, ordinary 1, aggregators and recipe farms 0.5 or out.
