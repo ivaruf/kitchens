@@ -37,3 +37,9 @@ Things agreed as wanted but not yet built. Newest at the bottom.
 - **Scale amounts to the people at the table.** Agreed 2026-10-02, after the
   per-person allergies. Needs every amount rewritten as number + unit, in
   English and bokmål, before recipes and shopping lists can be scaled.
+
+- **Consensus recipes, Greek kitchen first.** Asked for 2026-10-04: online
+  recipes vary a lot, so for each Greek dish find at least 10 recipes,
+  compare amounts and method, discard outliers, and follow the path most
+  cooks choose. Research and sources kept in research/greek/<dish>.md, then
+  merged into js/recipes.js and js/nb/ by hand.
