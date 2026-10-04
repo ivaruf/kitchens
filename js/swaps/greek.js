@@ -452,6 +452,16 @@ export const SWAPS_GREEK = {
   ],
 
   /* -------------------------------------------------------------- cold */
+  sugar: [
+    {
+      en: { use: "Honey", amount: "The same amount", changes: "Rounds the sharpness just as well, with a faint floral note." },
+      nb: { use: "Honning", amount: "Samme mengde", changes: "Runder av det syrlige like godt, med en svak blomstertone." },
+    },
+    {
+      en: { use: "Leave it out", amount: "—", changes: "A little sharper; let the onions brown longer for their sweetness." },
+      nb: { use: "Dropp det", amount: "—", changes: "Litt mer syrlig; la løken brunes lenger for sødmens skyld." },
+    },
+  ],
   beef: [
     {
       en: { use: "Beef shin", amount: "The same weight", changes: "Even more collagen; give it an extra half hour and the sauce is glossier still." },

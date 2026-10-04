@@ -307,6 +307,13 @@ export const INGREDIENTS = [
 
   /* -------------------------------------------------------------- cold */
   {
+    id: "sugar",
+    name: "Sugar",
+    native: "ζάχαρη",
+    shelf: "bottles",
+    info: "A teaspoon, not a sweetener: in stifado and tomato sauces it rounds off the sharpness of vinegar and tomato. Most Greek cooks add it; taste first.",
+  },
+  {
     id: "beef",
     name: "Beef chuck",
     native: "μοσχάρι",

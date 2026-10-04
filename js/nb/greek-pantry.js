@@ -182,6 +182,10 @@ export const NB_GREEK_PANTRY = {
     },
 
     /* -------------------------------------------------------------- cold */
+    sugar: {
+      name: "Sukker",
+      info: "En teskje, ikke søtning: i stifado og tomatsauser runder den av det syrlige fra eddik og tomat. De fleste greske kokker bruker det; smak først.",
+    },
     beef: {
       name: "Storfebog",
       info: "Det billige, senete stykket med vilje. Kollagenet smelter til gelatin over flere timer, så kjøttet faller fra hverandre og sausen blir blank. Et magert stykke ville bare tørket ut.",

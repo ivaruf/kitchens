@@ -38,6 +38,14 @@ choices and timing bars was built first and rejected for exactly that reason.
   are written the ordinary way — buttered pasta, egg fried rice — and the
   free version is the table note. They stay *cookable* free; they are just
   not written free.
+- **Recipes are consensus, not one source** (owner, 2026-10-04: *"recipes
+  are not to be trusted, since when you pull them online they tend to vary —
+  a lot"*). Each Greek dish was rebuilt from 14–20 recipes, amounts
+  normalised to the same servings, outliers dropped, and the majority method
+  followed, with native cooks who actually make the dish weighted double and
+  recipe farms half. The evidence is in `research/greek/<dish>.md`: sources
+  with links, the comparison table, what was dropped and why. Change a recipe
+  by changing its research first; a lone recipe found online is not a reason.
 - Diet claims are about the dish, never about a product or a brand.
 - Content lives in `js/pantry.js`, `js/recipes.js` and `js/vietnam.js`;
   check facts there.
