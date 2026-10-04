@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.11.0'; // the table knows its adults and children, and who cooks without what
+const VERSION = 'v0.12.0'; // every Greek recipe rebuilt as a consensus of many
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;

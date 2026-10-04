@@ -65,6 +65,10 @@ flags in the corner, and defaulting to bokmål for a browser that prefers
 Norwegian. Interface words are in `js/i18n.js`; the Norwegian content is
 overlaid from `js/nb/`.
 
+Every Greek recipe is a consensus of 14–20 recipes found online, weighted
+towards native cooks who actually make the dish, with outliers dropped. The
+sources and comparison for each dish are in `research/greek/`.
+
 Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 
 ## Files

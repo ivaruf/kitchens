@@ -38,11 +38,7 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   per-person allergies. Needs every amount rewritten as number + unit, in
   English and bokmål, before recipes and shopping lists can be scaled.
 
-- **Consensus recipes, Greek kitchen first.** Asked for 2026-10-04: online
-  recipes vary a lot, so for each Greek dish find at least 10 recipes,
-  compare amounts and method, discard outliers, and follow the path most
-  cooks choose. Research and sources kept in research/greek/<dish>.md, then
-  merged into js/recipes.js and js/nb/ by hand.
-  - *Weighting (owner, 2026-10-04):* prefer food blogs whose authors actually
-    make the food; weight cooks native to the country higher. Native and
-    hands-on counts 2, ordinary 1, aggregators and recipe farms 0.5 or out.
+- **Consensus recipes for the other kitchens.** The Greek kitchen was rebuilt
+  2026-10-04 (research/greek/, 14–20 weighted sources per dish). Vietnam and
+  the everyday kitchen are still recipes written from knowledge, not checked
+  against many sources.
