@@ -42,3 +42,7 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   2026-10-04 (research/greek/, 14–20 weighted sources per dish). Vietnam and
   the everyday kitchen are still recipes written from knowledge, not checked
   against many sources.
+
+- **Our favourites kitchen.** Asked for 2026-10-05: a kitchen of dishes the
+  family has made, modified and liked. Added via git (the CMS is git), not
+  in the app. Being scoped one question at a time.

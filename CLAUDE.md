@@ -28,6 +28,15 @@ step-by-step cook-along. Not a form: choosing should feel like picking things
 up, never like answering questions. A step-by-step "simulated cook" with
 choices and timing bars was built first and rejected for exactly that reason.
 
+## Git is the CMS
+
+The owner, 2026-10-05: *"all interactions should be via git (the CMS *is*
+git)"*. Content — dishes, favourites, notes, research — lives in files in this
+repo and changes by commit, never through an in-app editor or a backend.
+Device storage is only for per-reader conveniences (language, who is at the
+table, what is at home). When the owner wants a dish added or changed, the
+change is a commit to the content files.
+
 ## Content rules
 
 - Every dish must be cookable dairy-free, egg-free and gluten-free together
