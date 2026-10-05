@@ -1857,6 +1857,58 @@ input:focus-visible {
   top: calc(env(safe-area-inset-top, 0px) + 10px);
   left: max(10px, env(safe-area-inset-left, 0px));
 }
+#home-corner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 200px);
+}
+/* The trail: small, on a pill like the corner's, never wrapping onto the page. */
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(251, 248, 241, 0.94);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(60, 40, 20, 0.1);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.crumbs[hidden] {
+  display: none;
+}
+.crumb {
+  min-height: 36px;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: var(--blue-deep);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.crumb:hover {
+  text-decoration: underline;
+}
+.crumb.here {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  font-weight: 600;
+}
+.crumb-sep {
+  color: var(--line);
+}
+/* On a phone only the last two steps of the trail fit; the house is the rest. */
+@media (max-width: 640px) {
+  .crumbs > :not(:nth-last-child(-n + 3)) {
+    display: none;
+  }
+}
 #home-btn {
   padding: 4px;
   width: 50px;

@@ -20,6 +20,13 @@ Sits under the hub's `../CLAUDE.md` and wins where the two disagree.
   them back. Fullscreen stays, with all four of the hub's rules for it, and so
   does the way back to the arcade on the front door.
 
+- **Every screen is an address** (owner, 2026-10-05: *"we must be able to
+  deep link and navigate to a much larger degree"*). Clicks change the
+  address and `render()` in js/main.js draws whatever it says; nothing opens
+  a screen directly. A new screen gets a route there, and its own breadcrumb.
+  Framed by the arcade, addresses are replaced rather than pushed, so the
+  arcade keeps its back button (hub §5).
+
 ## What this is
 
 A browsable Greek pantry (painted shelves of SVG ingredients), a counter

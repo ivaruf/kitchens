@@ -38,10 +38,12 @@ export class CookAlong {
    * @param {(id: string) => void} o.openCard   shows an ingredient's card
    * @param {() => void} o.onExit               back to the recipe page
    * @param {() => object} o.byId               the current kitchen's pantry
+   * @param {(i: number) => void} [o.onStep]   told each step shown, for the address
    */
-  constructor({ openCard, onExit, byId }) {
+  constructor({ openCard, onExit, byId, onStep = () => {} }) {
     this.openCard = openCard;
     this.byId = byId;
+    this.onStep = onStep;
     this.onExit = onExit;
     this.root = document.getElementById("cook");
     this.vesselEl = document.getElementById("cook-vessel");
@@ -88,9 +90,18 @@ export class CookAlong {
   }
 
   start(recipe) {
+    this.open(recipe, 0);
+  }
+
+  /* Open at step `i` — from a link, a reload or the back button. One past
+     the last step is the finished dish at the table. */
+  open(recipe, i) {
     this.recipe = recipe;
     this.titleEl.textContent = recipe.name;
-    this.show(0);
+    if (i >= recipe.method.length) {
+      this.show(recipe.method.length - 1);
+      this.finish();
+    } else this.show(i);
   }
 
   /*
@@ -148,6 +159,7 @@ export class CookAlong {
             : t("cook.done");
     this.goEl.disabled = false;
     this.root.querySelector(".cook-card").scrollTop = 0;
+    this.onStep(i);
   }
 
   kind() {
@@ -279,5 +291,6 @@ export class CookAlong {
     this.backEl.textContent = t("cook.prev");
     this.goEl.textContent = t("cook.backRecipe");
     this.index = this.recipe.method.length;
+    this.onStep(this.index);
   }
 }

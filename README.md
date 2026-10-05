@@ -71,6 +71,21 @@ liked, or found and meant to be cooked. It lives in one hand-editable file,
 or a tweak of an existing dish that lists only what we changed. Added through
 git, like all content here.
 
+**Every place has an address**, so anything can be bookmarked, shared or
+returned to, and back and forward walk through the cookbook:
+
+```
+#/greek                     a pantry          ?item=onion  a card open on any page
+#/greek/stifado             a recipe          ?lang=nb     in Norwegian
+#/greek/stifado/cook/3      cook-along, step 3
+#/greek/stifado/set/week    a dish's week set
+#/plan/greek/5?w=…          a planned week, shareable as a link
+```
+
+A breadcrumb trail beside the house, top left, shows where you are. Inside
+the arcade the addresses replace each other instead of stacking, so the
+browser's back button still leaves the game.
+
 Every recipe names its sources at the foot of its page. Every Greek recipe is a consensus of 14–20 recipes found online, weighted
 towards native cooks who actually make the dish, with outliers dropped. The
 sources and comparison for each dish are in `research/greek/`.

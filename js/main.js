@@ -84,10 +84,9 @@ const home = loadHome();
 
 const SCREENS = ["home", "table", "pantry", "recipe", "cook", "set", "plan"];
 let current = "home";
-const cameFrom = {};
 
-function show(id, from) {
-  if (from) cameFrom[id] = from;
+/* Show one screen. Only render() calls this: the address decides the page. */
+function show(id) {
   for (const s of SCREENS) $(s).hidden = s !== id;
   current = id;
   $("home-btn").hidden = id === "home";
@@ -192,11 +191,7 @@ function paintTable() {
   $("table-chip").textContent = tableWords();
 }
 
-document.querySelector("#table .back-btn").addEventListener("click", () => {
-  const to = cameFrom.table || "home";
-  if (to === "pantry") paintPantry();
-  show(to);
-});
+document.querySelector("#table .back-btn").addEventListener("click", () => goBack("/"));
 
 /* Does this ingredient clash with the table? Returns the needs it breaks. */
 const clashes = (item) => (item.contains || []).filter((n) => diet[n]);
@@ -227,7 +222,7 @@ function paintShelves() {
         tag.append(el("span", "sr", t("containsSr", clashes(item))));
       }
       b.append(tag);
-      b.addEventListener("click", () => openCard(item.id));
+      b.addEventListener("click", () => openItem(item.id));
       const tick = el("button", "item-have");
       tick.type = "button";
       tick.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>';
@@ -298,7 +293,7 @@ function paintCounter() {
     b.title = item.name;
     b.setAttribute("aria-label", item.name);
     b.append(art("mini", ingredient(id)));
-    b.addEventListener("click", () => openCard(id));
+    b.addEventListener("click", () => openItem(id));
     const x = el("button", "counter-x", "×");
     x.type = "button";
     x.title = t("putBackLabel", item.name);
@@ -359,7 +354,7 @@ function ideaCard({ recipe, have, missing }) {
   }
   clashMark(recipe, text);
   b.append(text);
-  b.addEventListener("click", () => openRecipe(recipe.id));
+  b.addEventListener("click", () => go(`/${K.id}/${recipe.id}`));
   return b;
 }
 
@@ -379,7 +374,7 @@ function dishLink(recipe) {
   text.append(el("b", null, recipe.name), el("span", "idea-score", recipe.line));
   clashMark(recipe, text);
   b.append(text);
-  b.addEventListener("click", () => openRecipe(recipe.id));
+  b.addEventListener("click", () => go(`/${K.id}/${recipe.id}`));
   return b;
 }
 
@@ -417,21 +412,8 @@ function paintLitBar(note = "") {
   $("lit-recipe").textContent = lit.set ? t("lit.set") : t("lit.recipe");
 }
 
-function lightUp(ids, set = null) {
-  lit = { ids, set };
-  paintPantry();
-  show("pantry");
-  // The first lit jar, brought into view so the glow is seen and not missed.
-  const first = document.querySelector("#shelf-list .item.lit");
-  if (first) first.scrollIntoView({ block: "center", behavior: "smooth" });
-}
-
-$("lit-recipe").addEventListener("click", () => (lit.set ? openSet(lit.set) : openRecipe(lit.ids[0])));
-$("lit-off").addEventListener("click", () => {
-  lit = null;
-  paintLitBar();
-  markShelves();
-});
+$("lit-recipe").addEventListener("click", () => go(lit.set ? `/${K.id}/${lit.set}` : `/${K.id}/${lit.ids[0]}`));
+$("lit-off").addEventListener("click", () => go(`/${K.id}`, {}, { replace: true }));
 
 function paintPantry() {
   paintTable();
@@ -461,7 +443,7 @@ function closeSheets() {
   if (sheetFrom && sheetFrom.focus && document.contains(sheetFrom)) sheetFrom.focus({ preventScroll: true });
   sheetFrom = null;
 }
-scrim.addEventListener("click", closeSheets);
+scrim.addEventListener("click", closeItem);
 
 function openCard(id) {
   const item = K.byId[id];
@@ -511,16 +493,13 @@ function openCard(id) {
     const b = el("button", "dish-chip");
     b.type = "button";
     b.append(art("chip-art", dish(r)), el("span", null, r.name));
-    b.addEventListener("click", () => {
-      closeSheets();
-      openRecipe(r.id);
-    });
+    b.addEventListener("click", () => go(`/${K.id}/${r.id}`));
     dishes.append(b);
   }
   openSheet($("card"));
 }
 
-$("card-close").addEventListener("click", closeSheets);
+$("card-close").addEventListener("click", closeItem);
 
 /* ------------------------------------------------------------ the recipe */
 
@@ -575,7 +554,7 @@ function openRecipe(id, inPlace = false) {
     words.append(el("b", null, item.name), el("span", null, ing.amount));
     b.append(words);
     if (home.has(ing.id)) b.append(el("span", "sr", t("tile.on")));
-    b.addEventListener("click", () => openCard(ing.id));
+    b.addEventListener("click", () => openItem(ing.id));
     tiles.append(b);
   }
 
@@ -658,20 +637,9 @@ function paintSources(r) {
   box.append(el("summary", null, summary), ...lines);
 }
 
-$("recipe-back").addEventListener("click", () => {
-  if (recipeReturn === "plan") {
-    recipeReturn = null;
-    openPlan();
-    return;
-  }
-  paintPantry();
-  show("pantry");
-});
-$("recipe-cook").addEventListener("click", () => {
-  show("cook");
-  cookAlong.start(K.recipeById[recipeId]);
-});
-$("recipe-light").addEventListener("click", () => lightUp([recipeId]));
+$("recipe-back").addEventListener("click", () => go(recipeReturn === "plan" ? planPath() : `/${K.id}`));
+$("recipe-cook").addEventListener("click", () => go(`/${K.id}/${recipeId}/cook/1`));
+$("recipe-light").addEventListener("click", () => go(`/${K.id}`, { lit: recipeId }));
 
 /* ------------------------------------------------------------- the week */
 
@@ -700,18 +668,12 @@ function remake() {
 $("plan-from-home").addEventListener("click", () => {
   plan.mood = K.id === "everyday" ? "mix" : K.id;
   plan.week = null;
-  openPlan();
+  go(`/plan/${plan.mood}/${plan.n}`);
 });
 
 /* Open a dish from the plan in its own kitchen; its Back comes home to the plan. */
 function openFromPlan(part) {
-  if (K.id !== part.kitchen) {
-    K = localize(KITCHEN_BY_ID[part.kitchen]);
-    lit = null;
-  }
-  document.documentElement.dataset.kitchen = K.id;
-  recipeReturn = "plan";
-  openRecipe(part.recipe);
+  go(`/${part.kitchen}/${part.recipe}`, { from: "plan" });
 }
 
 function paintPlan() {
@@ -739,7 +701,8 @@ function paintPlan() {
       b.append(pics, words);
       b.addEventListener("click", () => {
         plan.mood = m.id;
-        remake();
+        plan.week = null;
+        go(`/plan/${plan.mood}/${plan.n}`, {}, { replace: true });
       });
       return b;
     }),
@@ -753,7 +716,8 @@ function paintPlan() {
       b.setAttribute("aria-pressed", String(plan.n === n));
       b.addEventListener("click", () => {
         plan.n = n;
-        remake();
+        plan.week = null;
+        go(`/plan/${plan.mood}/${plan.n}`, {}, { replace: true });
       });
       return b;
     }),
@@ -783,6 +747,7 @@ function paintPlan() {
     const swapM = swapBtn(t("plan.swapMain"), () => {
       plan.week = swapMain(everyKitchen(), plan.week, i, diet, home);
       paintPlan();
+      keepPlanInAddress();
     });
 
     const extras = el("div", "plan-extras");
@@ -806,6 +771,7 @@ function paintPlan() {
         swapBtn(swapLabel, () => {
           plan.week = swapSide(everyKitchen(), plan.week, i, which, childNeeds);
           paintPlan();
+          keepPlanInAddress();
         }),
       );
       extras.append(box);
@@ -870,8 +836,11 @@ function planText() {
   return out.join("\n");
 }
 
-$("open-plan").addEventListener("click", openPlan);
-$("plan-again").addEventListener("click", remake);
+$("open-plan").addEventListener("click", () => go(`/plan/${plan.mood}/${plan.n}`));
+$("plan-again").addEventListener("click", () => {
+  remake();
+  keepPlanInAddress();
+});
 $("plan-copy").addEventListener("click", () => {
   const say = (key) => ($("plan-copy-note").textContent = t(key));
   try {
@@ -926,10 +895,7 @@ function paintSetPeek(from) {
   }
   const go = el("button", "primary", t("sets.see"));
   go.type = "button";
-  go.addEventListener("click", () => {
-    openSetFrom = { from, mode: setMode[from], anchor: recipeId };
-    openSet(set);
-  });
+  go.addEventListener("click", () => navigate(`/${K.id}/${recipeId}/set/${setMode[from]}`));
   box.append(row, go);
 }
 
@@ -947,7 +913,7 @@ function openSet(set) {
       const b = el("button", "set-dish");
       b.type = "button";
       b.append(art("set-dish-art", dish(r)), el("b", null, r.name), el("small", null, t("course")[r.course]));
-      b.addEventListener("click", () => openRecipe(r.id));
+      b.addEventListener("click", () => navigate(`/${K.id}/${r.id}`));
       return b;
     }),
   );
@@ -963,7 +929,7 @@ function openSet(set) {
     words.append(el("b", null, K.byId[s.id].name), el("small", null, t("sharedIn", s.n)));
     if (s.spoils) words.append(el("span", "fresh-tag", t("set.fresh")));
     b.append(words);
-    b.addEventListener("click", () => openCard(s.id));
+    b.addEventListener("click", () => openItem(s.id));
     shared.append(b);
   }
 
@@ -1042,30 +1008,21 @@ $("set-copy").addEventListener("click", () => {
     say("set.copyFail");
   }
 });
-$("set-light").addEventListener("click", () => lightUp(currentSet.dishes.map((r) => r.id), currentSet));
-$("set-back").addEventListener("click", () => {
-  openRecipe(openSetFrom.anchor);
-});
+$("set-light").addEventListener("click", () =>
+  go(`/${K.id}`, { lit: currentSet.dishes.map((r) => r.id).join(","), set: `${openSetFrom.anchor}/set/${openSetFrom.mode}` }),
+);
+$("set-back").addEventListener("click", () => go(`/${K.id}/${openSetFrom.anchor}`));
 
 const cookAlong = new CookAlong({
-  openCard: (id) => openCard(id),
+  openCard: (id) => openItem(id),
   byId: () => K.byId,
-  onExit: () => openRecipe(cookAlong.recipe.id),
+  onExit: () => go(`/${K.id}/${cookAlong.recipe.id}`),
+  // Every step keeps its own address, replaced rather than stacked, so a
+  // reload or a shared link lands on the same step without filling history.
+  onStep: (i) => go(`/${K.id}/${cookAlong.recipe.id}/cook/${i + 1}`, {}, { replace: true, quiet: true }),
 });
 
 /* -------------------------------------------------------------- the doors */
-
-/* Walk into a kitchen: its pantry and its colours. */
-function enterKitchen(id) {
-  if (K.id !== id) {
-    K = localize(KITCHEN_BY_ID[id]);
-    lit = null;
-  }
-  document.documentElement.dataset.kitchen = K.id;
-  paintPantryHead();
-  paintPantry();
-  show("pantry", "home");
-}
 
 function paintPantryHead() {
   $("pantry-kicker").replaceChildren(K.name + " ", Object.assign(el("span", "greek-inline", `· ${K.native}`), { lang: K.lang }));
@@ -1084,28 +1041,17 @@ function paintDoors() {
     const words = el("span", "door-words");
     words.append(el("b", null, k.name), Object.assign(el("span", "greek-inline", k.native), { lang: k.lang }));
     b.append(pics, words);
-    b.addEventListener("click", () => enterKitchen(k.id));
+    b.addEventListener("click", () => go(`/${k.id}`));
     return b;
   }));
 }
 paintDoors();
-/* Home, from the pantry's Back or from the house top left, anywhere. */
-function goHome() {
-  closeSheets();
-  // The front door belongs to no kitchen, so it takes back the house colours.
-  delete document.documentElement.dataset.kitchen;
-  show("home");
-}
-$("pantry-home").addEventListener("click", goHome);
-$("home-btn").addEventListener("click", goHome);
-$("open-table").addEventListener("click", () => {
-  paintTable();
-  show("table", "home");
-});
-$("table-chip").addEventListener("click", () => {
-  paintTable();
-  show("table", "pantry");
-});
+
+
+$("pantry-home").addEventListener("click", () => go("/"));
+$("home-btn").addEventListener("click", () => go("/"));
+$("open-table").addEventListener("click", () => go("/table"));
+$("table-chip").addEventListener("click", () => go("/table"));
 
 /*
  * The way back to the arcade. exit.js decides what quitting does; these
@@ -1126,8 +1072,239 @@ wireExits();
 
 /* Escape closes the ingredient card; there is no menu for it to open. */
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !$("card").hidden) closeSheets();
+  if (e.key === "Escape" && !$("card").hidden) closeItem();
 });
+
+/* ------------------------------------------------------------ addresses */
+
+/*
+ * EVERY PLACE HAS AN ADDRESS, after the # so it works on a static host:
+ *
+ *   #/                              the front door
+ *   #/table                         who is eating
+ *   #/greek                         a kitchen's pantry          ?lit=a,b  lit up
+ *   #/greek/stifado                 a recipe                    ?from=plan
+ *   #/greek/stifado/cook/3          the cook-along, at step 3
+ *   #/greek/stifado/set/week        a dish's meal or week set
+ *   #/plan/greek/5?w=…              the planner — mood, dinners, and the week
+ *                                   itself, so a plan can be sent as a link
+ *
+ * and on any of them ?item=onion opens that ingredient's card, ?lang=nb picks
+ * the language. Clicks change the address and the address draws the page —
+ * one path for a click, a bookmark, a shared link and the back button.
+ *
+ * INSIDE THE ARCADE the addresses are REPLACED, never stacked: the arcade
+ * owns the back button there (its #play entry is how a player leaves a game,
+ * arcade/exit.js), and a pile of our entries above it would make back step
+ * through the cookbook instead of out of it. On its own the cookbook pushes
+ * every move, so back and forward walk through it like any site.
+ */
+const framed = (() => {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+})();
+let depth = 0; // our own entries above where the reader came in
+
+function parseRoute() {
+  const raw = location.hash.replace(/^#/, "") || "/";
+  const [path, qs] = raw.split("?");
+  return {
+    seg: path.split("/").filter(Boolean).map((x) => decodeURIComponent(x)),
+    q: Object.fromEntries(new URLSearchParams(qs || "")),
+  };
+}
+
+function hashFor(path, q = {}) {
+  const qs = new URLSearchParams(Object.entries(q).filter(([, v]) => v != null && v !== "")).toString();
+  return `#${path}${qs ? `?${qs}` : ""}`;
+}
+
+/**
+ * Go somewhere. `replace` swaps this address for the new one instead of
+ * adding to history; `quiet` changes the address without redrawing (the
+ * cook-along telling the address which step it is already on).
+ */
+function go(path, q = {}, { replace = false, quiet = false } = {}) {
+  const hash = hashFor(path, q);
+  if (hash === location.hash) {
+    if (!quiet) render();
+    return;
+  }
+  if (replace || framed) history.replaceState(null, "", hash);
+  else {
+    history.pushState(null, "", hash);
+    depth++;
+  }
+  if (!quiet) render();
+}
+const navigate = go;
+
+/* Back to where the reader was, if it was here; otherwise to `fallback`. */
+function goBack(fallback) {
+  if (depth > 0 && !framed) history.back();
+  else go(fallback, {}, { replace: true });
+}
+
+window.addEventListener("popstate", () => {
+  depth = Math.max(0, depth - 1);
+  render();
+});
+window.addEventListener("hashchange", () => render());
+
+/* The ingredient card is part of the address too, over whatever page is open. */
+function openItem(id) {
+  const { seg, q } = parseRoute();
+  go(`/${seg.join("/")}`, { ...q, item: id });
+}
+function closeItem() {
+  const { seg, q } = parseRoute();
+  const rest = { ...q };
+  delete rest.item;
+  if (q.item) go(`/${seg.join("/")}`, rest, { replace: true });
+  else closeSheets();
+}
+
+/* Make `id` the kitchen being shown: its words, its colours. */
+function useKitchen(id) {
+  if (K.id !== id) {
+    K = localize(KITCHEN_BY_ID[id]);
+    lit = null;
+  }
+  document.documentElement.dataset.kitchen = K.id;
+}
+
+/* ------- the planner's week, as a word in the address (no storage needed) */
+
+const planPath = () => (plan.week ? `/plan/${plan.mood}/${plan.n}?w=${encodeWeek(plan.week)}` : `/plan/${plan.mood}/${plan.n}`);
+
+function encodeWeek(week) {
+  return week.days.map((d) => [d.main.kitchen, d.main.recipe, d.side.recipe, d.veg.recipe].join(".")).join("~");
+}
+
+function decodeWeek(text, mood, n) {
+  const ks = Object.fromEntries(everyKitchen().map((k) => [k.id, k]));
+  const days = [];
+  for (const part of String(text).split("~")) {
+    const [mk, mr, sr, vr] = part.split(".");
+    const ed = ks.everyday;
+    if (!ks[mk] || !ks[mk].recipeById[mr] || !ed.recipeById[sr] || !ed.recipeById[vr]) return null;
+    days.push({ main: { kitchen: mk, recipe: mr }, side: { kitchen: "everyday", recipe: sr }, veg: { kitchen: "everyday", recipe: vr } });
+  }
+  if (!days.length) return null;
+  const borrowed = mood === "mix" || mood === "favourites" ? 0 : days.filter((d) => d.main.kitchen !== mood && d.main.kitchen !== "favourites").length;
+  return { mood, n, days, borrowed, short: days.length < n, childNeeds };
+}
+
+function keepPlanInAddress() {
+  go(`/plan/${plan.mood}/${plan.n}`, { w: encodeWeek(plan.week) }, { replace: true, quiet: true });
+  paintCrumbs();
+}
+
+const MOODS = () => [...KITCHENS.filter((k) => k.id !== "everyday").map((k) => k.id), "mix"];
+
+/* ------------------------------------------------------------ drawing */
+
+/* Draw whatever the address says. Anything it cannot find falls back to the
+   nearest place that exists, and the address is corrected to match. */
+function render() {
+  const { seg, q } = parseRoute();
+  if (q.lang && q.lang !== getLang() && (q.lang === "en" || q.lang === "nb")) switchLang(q.lang, false);
+  closeSheets();
+  const [a, b, c, d] = seg;
+
+  if (!a) {
+    delete document.documentElement.dataset.kitchen;
+    show("home");
+  } else if (a === "table") {
+    paintTable();
+    show("table");
+  } else if (a === "plan") {
+    const mood = MOODS().includes(b) ? b : plan.mood;
+    const n = Math.min(7, Math.max(3, parseInt(c, 10) || plan.n));
+    const changed = mood !== plan.mood || n !== plan.n;
+    plan.mood = mood;
+    plan.n = n;
+    const fromLink = q.w ? decodeWeek(q.w, mood, n) : null;
+    if (fromLink) plan.week = fromLink;
+    else if (changed || !plan.week) plan.week = null;
+    openPlan();
+    if (!q.w || !fromLink) keepPlanInAddress();
+  } else if (KITCHEN_BY_ID[a]) {
+    useKitchen(a);
+    const r = b && K.recipeById[b];
+    if (b && !r) return go(`/${a}`, {}, { replace: true });
+    if (!b) {
+      const ids = (q.lit || "").split(",").filter((id) => K.recipeById[id]);
+      lit = ids.length ? { ids, set: q.set || null } : null;
+      paintPantryHead();
+      paintPantry();
+      show("pantry");
+      const first = lit && document.querySelector("#shelf-list .item.lit");
+      if (first) first.scrollIntoView({ block: "center" });
+    } else if (c === "cook") {
+      recipeId = b;
+      show("cook");
+      const step = Math.max(1, Math.min(r.method.length + 1, parseInt(d, 10) || 1));
+      cookAlong.open(r, step - 1);
+    } else if (c === "set") {
+      recipeId = b;
+      const mode = d === "week" ? "week" : "meal";
+      setMode.recipe = mode;
+      openSetFrom = { from: "recipe", mode, anchor: b };
+      const set = setFor("recipe", mode);
+      if (set) openSet(set);
+      else return go(`/${a}/${b}`, {}, { replace: true });
+    } else {
+      recipeReturn = q.from === "plan" ? "plan" : null;
+      openRecipe(b);
+    }
+    if (q.item && K.byId[q.item]) openCard(q.item);
+  } else {
+    return go("/", {}, { replace: true });
+  }
+  paintCrumbs();
+}
+
+/*
+ * The trail top left, beside the house: where you are, each step back up
+ * one tap away. "Home › The Greek kitchen › Stifado › Step 3".
+ */
+function paintCrumbs() {
+  const { seg } = parseRoute();
+  const [a, b, c, d] = seg;
+  const trail = [];
+  if (a === "table") trail.push([t("home.table"), "/table"]);
+  else if (a === "plan") trail.push([t("plan.door"), planPath()]);
+  else if (a && KITCHEN_BY_ID[a]) {
+    trail.push([K.name, `/${a}`]);
+    const r = b && K.recipeById[b];
+    if (r) {
+      trail.push([r.name, `/${a}/${b}`]);
+      if (c === "cook") trail.push([t("step", parseInt(d, 10) || 1, r.method.length), null]);
+      if (c === "set") trail.push([t(d === "week" ? "sets.week" : "sets.meal"), null]);
+    }
+  }
+  const nav = $("crumbs");
+  nav.hidden = !trail.length;
+  nav.replaceChildren();
+  trail.forEach(([label, path], i) => {
+    if (i) nav.append(el("span", "crumb-sep", "›"));
+    const last = i === trail.length - 1;
+    if (last || !path) {
+      const here = el("span", "crumb here", label);
+      if (last) here.setAttribute("aria-current", "page");
+      nav.append(here);
+    } else {
+      const b2 = el("button", "crumb", label);
+      b2.type = "button";
+      b2.addEventListener("click", () => go(path));
+      nav.append(b2);
+    }
+  });
+}
 
 /* ------------------------------------------------------------ language */
 
@@ -1146,9 +1323,17 @@ for (const b of document.querySelectorAll("#corner .flag")) {
   b.addEventListener("click", () => switchLang(b.dataset.lang));
 }
 
-function switchLang(id) {
+function switchLang(id, repaint = true) {
   if (id === getLang()) return;
   setLang(id);
+  if (!repaint) {
+    K = localize(KITCHEN_BY_ID[K.id]);
+    paintStatic();
+    paintFlags();
+    paintDoors();
+    wireExits();
+    return;
+  }
   K = localize(KITCHEN_BY_ID[K.id]);
   paintStatic();
   paintFlags();
@@ -1168,8 +1353,11 @@ function switchLang(id) {
   }
   if (!$("card").hidden && cardId) openCard(cardId);
   if (current === "plan") paintPlan();
+  paintCrumbs();
 }
 
 paintStatic();
 paintFlags();
 paintTable();
+// The address the reader arrived at decides the first page.
+render();
