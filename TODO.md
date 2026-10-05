@@ -49,3 +49,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   - *What a favourite is:* **both** — tweaked versions of existing dishes
     (the original stays; ours records what we changed and our notes) and
     whole recipes of our own, side by side in one kitchen.
+  - *How one is added:* **both** — a simple, well-commented file anyone can
+    edit by hand on GitHub, one block per favourite; or tell Claude in plain
+    words and Claude writes and commits it.
