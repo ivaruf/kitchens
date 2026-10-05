@@ -46,3 +46,6 @@ Things agreed as wanted but not yet built. Newest at the bottom.
 - **Our favourites kitchen.** Asked for 2026-10-05: a kitchen of dishes the
   family has made, modified and liked. Added via git (the CMS is git), not
   in the app. Being scoped one question at a time.
+  - *What a favourite is:* **both** — tweaked versions of existing dishes
+    (the original stays; ours records what we changed and our notes) and
+    whole recipes of our own, side by side in one kitchen.
