@@ -52,3 +52,5 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   - *How one is added:* **both** — a simple, well-commented file anyone can
     edit by hand on GitHub, one block per favourite; or tell Claude in plain
     words and Claude writes and commits it.
+  - *Language:* **both**, English and bokmål side by side, like the rest of
+    the cookbook.
