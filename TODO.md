@@ -54,3 +54,5 @@ Things agreed as wanted but not yet built. Newest at the bottom.
     words and Claude writes and commits it.
   - *Language:* **both**, English and bokmål side by side, like the rest of
     the cookbook.
+  - *In the planner:* **a mood and a nudge** — "Our favourites" is a mood of
+    its own, and in every other week a favourite is preferred when it fits.
