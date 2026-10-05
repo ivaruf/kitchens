@@ -55,6 +55,10 @@ change is a commit to the content files.
   recipe farms half. The evidence is in `research/greek/<dish>.md`: sources
   with links, the comparison table, what was dropped and why. Change a recipe
   by changing its research first; a lone recipe found online is not a reason.
+- **Every recipe names its sources** (owner, 2026-10-05), shown discreetly at
+  the foot of its page. A dish written from general knowledge says so plainly
+  rather than pretending to a source. A method taken from a source is
+  rewritten in our own words and credited with a link.
 - Diet claims are about the dish, never about a product or a brand.
 - Content lives in `js/pantry.js`, `js/recipes.js` and `js/vietnam.js`;
   check facts there.
