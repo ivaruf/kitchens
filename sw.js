@@ -14,7 +14,7 @@
 // carry it: every game here shares one origin and so one CacheStorage, and a
 // sloppy filter evicts a neighbour's offline copy.
 
-const VERSION = 'v0.12.0'; // every Greek recipe rebuilt as a consensus of many
+const VERSION = 'v0.13.0'; // our favourites kitchen, and sources on every recipe
 const CACHE = `kitchens-${VERSION}`;
 
 // Every shipped file. A file missing here works online and vanishes offline;
@@ -37,6 +37,8 @@ const ASSETS = [
   './js/i18n.js',
   './js/sets.js',
   './js/planner.js',
+  './js/favourites.js',
+  './js/sources.js',
   './js/everyday.js',
   './js/nb/everyday.js',
   './js/swaps/everyday.js',

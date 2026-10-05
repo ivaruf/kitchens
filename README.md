@@ -65,7 +65,13 @@ flags in the corner, and defaulting to bokmål for a browser that prefers
 Norwegian. Interface words are in `js/i18n.js`; the Norwegian content is
 overlaid from `js/nb/`.
 
-Every Greek recipe is a consensus of 14–20 recipes found online, weighted
+**Our favourites** is the family's own kitchen: dishes made, changed and
+liked, or found and meant to be cooked. It lives in one hand-editable file,
+`js/favourites.js`, which explains its own format: a whole recipe of our own,
+or a tweak of an existing dish that lists only what we changed. Added through
+git, like all content here.
+
+Every recipe names its sources at the foot of its page. Every Greek recipe is a consensus of 14–20 recipes found online, weighted
 towards native cooks who actually make the dish, with outliers dropped. The
 sources and comparison for each dish are in `research/greek/`.
 
@@ -82,6 +88,8 @@ Text is selectable on purpose; see `CLAUDE.md`. Open ideas are in `TODO.md`.
 | `js/store.js` | localStorage, all under `kitchens.` |
 | `js/swaps/` | Stand-ins per kitchen, English and bokmål side by side |
 | `js/planner.js`, `js/everyday.js` | The week planner, and the everyday kitchen of plain sides |
+| `js/favourites.js` | Our favourites: the family's own dishes, edited by hand |
+| `js/sources.js`, `tools/build-sources.mjs` | Every researched recipe's sources, generated from `research/` |
 | `js/sets.js` | Dish sets: the meal and week search over a kitchen's dishes |
 | `js/cookalong.js` | The step-by-step cook-along: prepare on the board, watch the pot fill |
 | `js/i18n.js`, `js/nb.js`, `js/nb/` | English and bokmål: interface words and the Norwegian content overlays |

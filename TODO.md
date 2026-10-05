@@ -42,24 +42,3 @@ Things agreed as wanted but not yet built. Newest at the bottom.
   2026-10-04 (research/greek/, 14–20 weighted sources per dish). Vietnam and
   the everyday kitchen are still recipes written from knowledge, not checked
   against many sources.
-
-- **Our favourites kitchen.** Asked for 2026-10-05: a kitchen of dishes the
-  family has made, modified and liked. Added via git (the CMS is git), not
-  in the app. Being scoped one question at a time.
-  - *What a favourite is:* **both** — tweaked versions of existing dishes
-    (the original stays; ours records what we changed and our notes) and
-    whole recipes of our own, side by side in one kitchen.
-  - *How one is added:* **both** — a simple, well-commented file anyone can
-    edit by hand on GitHub, one block per favourite; or tell Claude in plain
-    words and Claude writes and commits it.
-  - *Language:* **both**, English and bokmål side by side, like the rest of
-    the cookbook.
-  - *In the planner:* **a mood and a nudge** — "Our favourites" is a mood of
-    its own, and in every other week a favourite is preferred when it fits.
-  - *First favourite:* ragù di legumi from Our Cooking Journey, status
-    "to try", to be cooked the week of 2026-10-05.
-
-- **Sources on every recipe, as a rule.** Asked for 2026-10-05: every recipe
-  says where it was inspired from, visible discreetly on its page. Greek
-  dishes list their research sources; favourites their own; dishes written
-  from general knowledge say so until they are researched.

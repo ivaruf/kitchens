@@ -21,6 +21,10 @@
  * fridge scores higher, fresh things most of all, so "what I have" turns into
  * a week rather than sitting there.
  *
+ * Our favourites (js/favourites.js) are a mood of their own, and in every
+ * other week a favourite is preferred when it fits: one of its own cuisine in
+ * that kitchen's week, any of them in a mix.
+ *
  * A plan holds ids only ({ kitchen, recipe }), never dish objects, so it can
  * be redrawn in whichever language is current. Pure functions; the page is
  * drawn by js/main.js.
@@ -30,6 +34,7 @@ const EVERYDAY = "everyday";
 
 /* Which plain sides sit best beside a kitchen's mains, best first. */
 const SIDES_FOR = {
+  favourites: ["boiledpotatoes", "plainrice", "pasta", "mash"],
   greek: ["boiledpotatoes", "ovenchips", "mash", "pasta", "plainrice"],
   vietnam: ["plainrice", "plainnoodles", "friedrice"],
 };
@@ -67,6 +72,8 @@ function fit(byKitchen, week, cand, mood, home) {
     if (both / either > 0.45) s -= 16;
   }
   if (mood === "mix" && week.length && week[week.length - 1].kitchen === cand.kitchen) s -= 12;
+  // The nudge: a favourite is preferred whenever it fits.
+  if (cand.kitchen === "favourites" && mood !== "favourites") s += 3;
   return s + Math.random() * 2.5;
 }
 
@@ -77,10 +84,19 @@ function fit(byKitchen, week, cand, mood, home) {
  */
 function mainsFor(kitchens, mood, diet) {
   const ok = (k, r) => !r.ingredients.some((i) => (k.byId[i.id].contains || []).some((n) => diet[n]));
-  const pick = (k) => k.recipes.filter((r) => r.course === "main" && ok(k, r)).map((r) => ({ kitchen: k.id, recipe: r.id }));
+  const pick = (k, keep = () => true) =>
+    k.recipes.filter((r) => r.course === "main" && ok(k, r) && keep(r)).map((r) => ({ kitchen: k.id, recipe: r.id }));
   const cooking = kitchens.filter((k) => k.id !== EVERYDAY);
-  const own = mood === "mix" ? cooking.flatMap(pick) : pick(cooking.find((k) => k.id === mood));
-  const others = mood === "mix" ? [] : cooking.filter((k) => k.id !== mood).flatMap(pick);
+  const fav = kitchens.find((k) => k.id === "favourites");
+  let own;
+  if (mood === "mix") own = cooking.flatMap((k) => pick(k));
+  else if (mood === "favourites") own = fav ? pick(fav) : [];
+  else {
+    // A kitchen's week, and the favourites that belong to that kitchen.
+    own = pick(cooking.find((k) => k.id === mood));
+    if (fav) own = own.concat(pick(fav, (r) => r.cuisine === mood));
+  }
+  const others = mood === "mix" ? [] : cooking.filter((k) => k.id !== mood && k.id !== "favourites").flatMap((k) => pick(k));
   return { own, others };
 }
 

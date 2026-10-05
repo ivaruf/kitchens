@@ -38,6 +38,7 @@ import { KITCHENS, KITCHEN_BY_ID } from "./kitchens.js";
 import { ingredient, dish } from "./art.js";
 import { CookAlong } from "./cookalong.js";
 import { bestSet } from "./sets.js";
+import { SOURCES } from "./sources.js";
 import { planWeek, swapMain, swapSide, weekList } from "./planner.js";
 import { t, list as listOf, localize, getLang, setLang, paintStatic } from "./i18n.js";
 
@@ -592,11 +593,70 @@ function openRecipe(id, inPlace = false) {
     ol.append(li);
   }
   $("recipe-serve").textContent = t("serve", r.serve);
+  paintSources(r);
   paintSetPeek("recipe");
   if (!inPlace) show("recipe");
 }
 
 let recipeId = null;
+
+/*
+ * Where a recipe came from, at the foot of its page (CLAUDE.md: every recipe
+ * names its sources). A researched dish lists every recipe it was built from,
+ * with links, native cooks first; a favourite names its own source, or the
+ * dish it is our version of; anything else says plainly that it was written
+ * from general knowledge. Folded away, so it is there without being in the way.
+ */
+function paintSources(r) {
+  const box = $("recipe-sources");
+  box.replaceChildren();
+  const status = $("recipe-status");
+  status.hidden = !r.favourite;
+  if (r.favourite) {
+    status.textContent = t(`status.${r.status}`) || "";
+    status.className = `status status-${r.status}`;
+  }
+  const [baseKitchen, baseId] = r.base ? r.base.split("/") : [K.id, r.id];
+  const research = SOURCES[baseKitchen] && SOURCES[baseKitchen][baseId];
+  const lines = [];
+  if (r.favourite && r.base) {
+    const base = KITCHEN_BY_ID[baseKitchen] && localize(KITCHEN_BY_ID[baseKitchen]).recipeById[baseId];
+    lines.push(el("p", null, t("src.basedOn", base ? base.name : r.base)));
+  }
+  if (r.source) {
+    const p = el("p");
+    p.append(t("src.from") + " ");
+    const a = el("a", null, r.source.name);
+    a.href = r.source.url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    p.append(a);
+    lines.push(p);
+  }
+  let summary;
+  if (research) {
+    summary = t("src.built", research.sources.length);
+    lines.push(el("p", "hint small", t("src.how")));
+    const ol = el("ol", "source-list");
+    for (const s of research.sources.slice().sort((a, b) => b.weight - a.weight)) {
+      const li = el("li");
+      const a = el("a", null, s.name);
+      a.href = s.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      li.append(a);
+      if (s.weight >= 2) li.append(el("span", "native", t("src.native")));
+      ol.append(li);
+    }
+    lines.push(ol);
+  } else if (r.source) {
+    summary = t("src.one");
+  } else {
+    summary = t("src.knowledgeShort");
+    lines.push(el("p", "hint small", t("src.knowledge")));
+  }
+  box.append(el("summary", null, summary), ...lines);
+}
 
 $("recipe-back").addEventListener("click", () => {
   if (recipeReturn === "plan") {

@@ -18,6 +18,8 @@ import { SWAPS_GREEK } from "./swaps/greek.js";
 import { SWAPS_VIETNAM } from "./swaps/vietnam.js";
 import { ED_SHELVES, ED_INGREDIENTS, ED_RECIPES, ED_KITCHEN_INTRO } from "./everyday.js";
 import { SWAPS_EVERYDAY } from "./swaps/everyday.js";
+import { FAV_PANTRY, FAV_SHELVES, FAVOURITES } from "./favourites.js";
+import { NB } from "./nb.js";
 
 /*
  * Three facts the dish sets (js/sets.js) need, kept here beside each kitchen so
@@ -122,5 +124,168 @@ export const KITCHENS = [
     spoils: ["cucumber", "pepper", "corncob", "springonion", "milk"],
   }),
 ];
+
+/*
+ * OUR FAVOURITES, built from js/favourites.js — the one content file written
+ * by hand, so it is shaped for the writer, not for the code. This turns it
+ * into the same shape as every other kitchen, plus a bokmål overlay:
+ *
+ *   - a borrowed ingredient (onion: "greek") takes its words, picture,
+ *     contents and keeps-or-spoils from its home kitchen, English and bokmål;
+ *   - an "own" favourite becomes a recipe from its two language blocks and
+ *     its shared steps;
+ *   - a "tweak" copies its base dish (in both languages), changes the amounts
+ *     it names, leaves out what it lists, and puts our notes first.
+ *
+ * A mistake in the file (an unknown id, a missing base) is named in the
+ * console and that favourite skipped, so one typo never blanks the kitchen.
+ */
+function buildFavourites(kitchens) {
+  const byKitchen = Object.fromEntries(kitchens.map((k) => [k.id, k]));
+  const warn = (msg) => console.warn(`Kitchens favourites: ${msg}`);
+  const ingredients = [];
+  const nbIngredients = {};
+  const swaps = {};
+  for (const [id, entry] of Object.entries(FAV_PANTRY)) {
+    if (typeof entry === "string") {
+      const home = byKitchen[entry];
+      const item = home && home.byId[id];
+      if (!item) {
+        warn(`"${id}" is not in the ${entry} pantry`);
+        continue;
+      }
+      ingredients.push({ ...item, shelf: FAV_SHELVES.some((sh) => sh.id === item.shelf) ? item.shelf : guessShelf(item) });
+      const nb = NB[entry] && NB[entry].ingredients && NB[entry].ingredients[id];
+      if (nb) nbIngredients[id] = nb;
+      if (home.swaps && home.swaps[id]) swaps[id] = home.swaps[id];
+    } else {
+      ingredients.push({ id, native: entry.nb.name, shelf: entry.shelf, contains: entry.contains, spoils: !!entry.spoils, name: entry.en.name, info: entry.en.info });
+      nbIngredients[id] = { name: entry.nb.name, info: entry.nb.info };
+      if (entry.swaps) swaps[id] = entry.swaps;
+    }
+  }
+  const known = new Set(ingredients.map((i) => i.id));
+
+  const recipes = [];
+  const nbRecipes = {};
+  const courses = {};
+  for (const f of FAVOURITES) {
+    const meta = { status: f.status, added: f.added, source: f.source || null, cuisine: f.cuisine || null, favourite: true };
+    if (f.kind === "tweak") {
+      const [kid, rid] = String(f.base || "").split("/");
+      const base = byKitchen[kid] && byKitchen[kid].recipeById[rid];
+      if (!base) {
+        warn(`"${f.id}" tweaks "${f.base}", which does not exist`);
+        continue;
+      }
+      const missing = base.ingredients.map((i) => i.id).filter((i) => !known.has(i));
+      if (missing.length) {
+        warn(`"${f.id}" needs ${missing.join(", ")} in FAV_PANTRY`);
+        continue;
+      }
+      const without = new Set(f.without || []);
+      const en = f.en || {};
+      const recipe = {
+        ...base,
+        ...meta,
+        id: f.id,
+        base: f.base,
+        cuisine: f.cuisine || kid,
+        name: en.name || base.name,
+        story: en.notes ? `${en.notes} ${base.story}` : base.story,
+        ingredients: base.ingredients.filter((i) => !without.has(i.id)).map((i) => ({ ...i, amount: (f.amounts && f.amounts[i.id] && f.amounts[i.id].en) || i.amount })),
+        method: base.method.map((st) => ({
+          ...st,
+          add: st.add && st.add.filter((x) => !without.has(x)),
+          prep: st.prep && Object.fromEntries(Object.entries(st.prep).filter(([x]) => !without.has(x))),
+        })),
+      };
+      recipes.push(recipe);
+      courses[f.id] = base.course || "main";
+      const bnb = (NB[kid] && NB[kid].recipes && NB[kid].recipes[rid]) || {};
+      const nb = f.nb || {};
+      nbRecipes[f.id] = {
+        ...bnb,
+        name: nb.name || bnb.name,
+        story: nb.notes ? `${nb.notes} ${bnb.story || ""}`.trim() : bnb.story,
+        ingredients: Object.fromEntries(
+          recipe.ingredients.map((i) => [i.id, (f.amounts && f.amounts[i.id] && f.amounts[i.id].nb) || (bnb.ingredients && bnb.ingredients[i.id]) || i.amount]),
+        ),
+      };
+      continue;
+    }
+    // An own recipe: two language blocks and one list of steps for both.
+    const unknown = f.ingredients.filter((i) => !known.has(i));
+    if (unknown.length) {
+      warn(`"${f.id}" uses ${unknown.join(", ")}, which FAV_PANTRY does not have`);
+      continue;
+    }
+    const step = (lang, n) => ({ ...(f.steps[n] || {}), text: f[lang].steps[n].text, why: f[lang].steps[n].why });
+    recipes.push({
+      ...meta,
+      id: f.id,
+      name: f.en.name,
+      native: f.nb.name,
+      line: f.en.line,
+      story: f.en.story,
+      serves: f.serves,
+      time: f.en.time,
+      vessel: f.vessel || "pot",
+      key: f.key || f.ingredients.slice(0, 3),
+      look: f.look,
+      ingredients: f.ingredients.map((id) => ({ id, amount: f.en.amounts[id] || "" })),
+      method: f.en.steps.map((_, n) => step("en", n)),
+      serve: f.en.serve,
+      table: f.en.table || {},
+    });
+    courses[f.id] = f.course || "main";
+    nbRecipes[f.id] = {
+      name: f.nb.name,
+      line: f.nb.line,
+      story: f.nb.story,
+      serves: f.serves,
+      time: f.nb.time,
+      serve: f.nb.serve,
+      ingredients: f.nb.amounts,
+      method: f.nb.steps.map((st, n) => ({ text: st.text, why: st.why, prep: (f.steps[n] || {}).prep })),
+      table: f.nb.table || {},
+    };
+  }
+
+  // The bokmål overlay, registered beside the other kitchens' (js/nb.js).
+  NB.favourites = {
+    kitchen: { name: "Våre favoritter", intro: "Retter vi har laget, endret og likt — og noen vi skal prøve. Hver er lagt inn med git, og står med kilden sin." },
+    shelves: Object.fromEntries(FAV_SHELVES.map((sh) => [sh.id, sh.nb])),
+    ingredients: nbIngredients,
+    recipes: nbRecipes,
+  };
+
+  return kitchen({
+    id: "favourites",
+    name: "Our favourites",
+    native: "våre favoritter",
+    lang: "nb",
+    intro: "Dishes we have cooked, changed and liked — and a few we mean to try. Each is added through git, with where it came from.",
+    door: ["rosemary", "lentils", "tomato", "oil", "gnocchi"],
+    shelves: FAV_SHELVES.map((sh) => ({ id: sh.id, ...sh.en })),
+    ingredients,
+    recipes,
+    fastingNote: "",
+    swaps,
+    staples: ["salt", "blackpepper", "oil"],
+    courses,
+    spoils: ingredients.filter((i) => i.spoils).map((i) => i.id),
+  });
+}
+
+/* A borrowed ingredient on a shelf this kitchen has, by what it is. */
+function guessShelf(item) {
+  if (item.shelf === "spices") return item.spoils ? "herbs" : "spices";
+  if (["dry", "cupboard", "freezer", "fridge"].includes(item.shelf)) return "pulses";
+  if (item.shelf === "cold") return "market";
+  return "market";
+}
+
+KITCHENS.push(buildFavourites(KITCHENS));
 
 export const KITCHEN_BY_ID = Object.fromEntries(KITCHENS.map((k) => [k.id, k]));

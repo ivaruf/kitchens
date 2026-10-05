@@ -154,6 +154,7 @@
             <h2 id="recipe-title"></h2>
             <p id="recipe-line" class="lead"></p>
             <p id="recipe-meta" class="meta"></p>
+            <p id="recipe-status" class="status" hidden></p>
           </div>
         </div>
         <div class="recipe-tools">
@@ -169,6 +170,8 @@
         <p id="recipe-serve" class="serve"></p>
         <!-- Dishes that share this one's shopping: a meal, or a week. js/sets.js
              finds them; js/main.js draws the two tabs and the summary. -->
+        <!-- Where this recipe came from: discreet, folded away, always there. -->
+        <details id="recipe-sources" class="sources"></details>
         <section class="sets" aria-labelledby="recipe-sets-title">
           <h3 id="recipe-sets-title" data-i18n="sets.title">Make more of one shop</h3>
           <div class="set-tabs" role="group" data-for="recipe"></div>
